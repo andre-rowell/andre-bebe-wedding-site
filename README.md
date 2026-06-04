@@ -8,7 +8,7 @@ A polished Next.js wedding website with a guest experience and protected admin d
 - TypeScript
 - Tailwind CSS v4
 - Prisma ORM
-- SQLite for local development
+- PostgreSQL
 - Zod validation
 - Server actions for admin and RSVP mutations
 - Cookie-based admin auth with bcrypt password hashes
@@ -18,14 +18,12 @@ A polished Next.js wedding website with a guest experience and protected admin d
 ```bash
 npm install
 npm run db:generate
-npm run db:init
+npm run db:deploy
 npm run db:seed
 npm run dev
 ```
 
 Open `http://localhost:3000`.
-
-The normal Prisma `db:push` script is included, but this local environment had a Prisma schema-engine failure. The repo includes `prisma/migrations/20260603000000_init/migration.sql` and `npm run db:init` as a reliable SQLite initializer.
 
 ## Environment Variables
 
@@ -38,7 +36,7 @@ cp .env.example .env
 Local defaults:
 
 ```bash
-DATABASE_URL="file:/tmp/andre-bebe-wedding-dev.db"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
 ADMIN_SESSION_SECRET="replace-with-a-long-random-production-secret"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 ```
@@ -51,7 +49,7 @@ For production, do not use the default `ADMIN_SESSION_SECRET`. Generate a long r
 - Email: `andrerowell@outlook.com`
 - Password: `AndreBebe2026!`
 
-Change the password in `prisma/seed.js` before using real data.
+Change the password in `prisma/seed.js` before using real data. The seed script only runs against an empty database by default. To intentionally delete and reseed existing data, run it with `ALLOW_SEED_RESET=true`.
 
 ## Seed Data
 
@@ -172,11 +170,12 @@ npm run verify
 ## Deployment Notes
 
 - Use Node 22. The repo includes `.nvmrc` and `package.json` engines for this.
-- Use PostgreSQL for production. Local SQLite is convenient for development, but it is not appropriate for persistent RSVP data on Vercel.
+- Use PostgreSQL for persistent RSVP/admin data.
 - Recommended path:
   - Put the app on Vercel.
   - Put the production database on Render PostgreSQL, Vercel Postgres, Neon, Supabase, or another hosted PostgreSQL provider.
-  - Before importing real guests, switch the Prisma datasource provider from `sqlite` to `postgresql`, create a fresh migration against the hosted database, then run seed or admin-created data intentionally.
+  - Run `npm run db:deploy` against the production database before first launch.
+  - Run `npm run db:seed` only on an empty database. To intentionally reset sample data, run `ALLOW_SEED_RESET=true npm run db:seed`.
 - Add HTTPS at the hosting layer.
 - Set a strong `ADMIN_SESSION_SECRET`.
 - Set `NEXT_PUBLIC_SITE_URL` to the final deployed domain so invite links and email-ready templates use the right URL.

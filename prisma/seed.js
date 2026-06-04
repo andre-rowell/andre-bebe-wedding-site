@@ -6,19 +6,39 @@ const prisma = new PrismaClient();
 const weddingDate = new Date("2027-05-30T22:00:00.000Z");
 
 async function main() {
-  await prisma.auditLog.deleteMany();
-  await prisma.rSVP.deleteMany();
-  await prisma.eventInvitation.deleteMany();
-  await prisma.guest.deleteMany();
-  await prisma.household.deleteMany();
-  await prisma.event.deleteMany();
-  await prisma.registryLink.deleteMany();
-  await prisma.fAQItem.deleteMany();
-  await prisma.travelSection.deleteMany();
-  await prisma.siteSetting.deleteMany();
-  await prisma.photo.deleteMany();
-  await prisma.guestbookEntry.deleteMany();
-  await prisma.adminUser.deleteMany();
+  const resetAllowed = process.env.ALLOW_SEED_RESET === "true";
+  const existingCounts = await Promise.all([
+    prisma.adminUser.count(),
+    prisma.household.count(),
+    prisma.guest.count(),
+    prisma.event.count(),
+    prisma.registryLink.count(),
+    prisma.fAQItem.count(),
+    prisma.travelSection.count(),
+    prisma.siteSetting.count(),
+    prisma.photo.count(),
+    prisma.guestbookEntry.count(),
+  ]);
+
+  if (existingCounts.some((count) => count > 0) && !resetAllowed) {
+    throw new Error("Seed aborted because the database already contains data. Set ALLOW_SEED_RESET=true only when you intentionally want to delete and reseed.");
+  }
+
+  if (resetAllowed) {
+    await prisma.auditLog.deleteMany();
+    await prisma.rSVP.deleteMany();
+    await prisma.eventInvitation.deleteMany();
+    await prisma.guest.deleteMany();
+    await prisma.household.deleteMany();
+    await prisma.event.deleteMany();
+    await prisma.registryLink.deleteMany();
+    await prisma.fAQItem.deleteMany();
+    await prisma.travelSection.deleteMany();
+    await prisma.siteSetting.deleteMany();
+    await prisma.photo.deleteMany();
+    await prisma.guestbookEntry.deleteMany();
+    await prisma.adminUser.deleteMany();
+  }
 
   const admin = await prisma.adminUser.create({
     data: {
