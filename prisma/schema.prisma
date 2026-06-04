@@ -33,6 +33,12 @@ enum RSVPAttending {
   UNANSWERED
 }
 
+enum GuestSide {
+  ANDRE
+  BEBE
+  BOTH
+}
+
 model AdminUser {
   id           String     @id @default(cuid())
   name         String
@@ -79,6 +85,7 @@ model Guest {
   isChild           Boolean            @default(false)
   plusOneAllowed    Boolean            @default(false)
   plusOneName       String?
+  guestSide         GuestSide          @default(BOTH)
   relationshipGroup String?
   tags              String?
   notes             String?

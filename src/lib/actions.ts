@@ -1,5 +1,7 @@
 "use server";
 
+import { randomUUID } from "crypto";
+import type { GuestSide } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -161,6 +163,7 @@ export async function saveGuestAction(formData: FormData) {
     email: optionalEmail,
     phone: z.string().trim().optional(),
     relationshipGroup: z.string().trim().optional(),
+    guestSide: z.enum(["ANDRE", "BEBE", "BOTH"]).default("BOTH"),
     tags: z.string().trim().optional(),
     plusOneName: z.string().trim().optional(),
     notes: z.string().trim().optional(),
@@ -171,6 +174,7 @@ export async function saveGuestAction(formData: FormData) {
     email: formData.get("email"),
     phone: formData.get("phone"),
     relationshipGroup: formData.get("relationshipGroup"),
+    guestSide: formData.get("guestSide") || "BOTH",
     tags: formData.get("tags"),
     plusOneName: formData.get("plusOneName"),
     notes: formData.get("notes"),
@@ -186,6 +190,7 @@ export async function saveGuestAction(formData: FormData) {
     isChild: formData.get("isChild") === "on",
     plusOneAllowed: formData.get("plusOneAllowed") === "on",
     plusOneName: parsed.data.plusOneName || null,
+    guestSide: parsed.data.guestSide,
     relationshipGroup: parsed.data.relationshipGroup || null,
     tags: parsed.data.tags || null,
     notes: parsed.data.notes || null,
@@ -193,6 +198,128 @@ export async function saveGuestAction(formData: FormData) {
   if (id) await prisma.guest.update({ where: { id }, data });
   else await prisma.guest.create({ data });
   revalidatePath("/admin/manage/guests");
+}
+
+function parseCsvRows(text: string) {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let value = "";
+  let quoted = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+    if (quoted && char === '"' && next === '"') {
+      value += '"';
+      index += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (!quoted && char === ",") {
+      row.push(value);
+      value = "";
+    } else if (!quoted && (char === "\n" || char === "\r")) {
+      if (char === "\r" && next === "\n") index += 1;
+      row.push(value);
+      if (row.some((cell) => cell.trim())) rows.push(row);
+      row = [];
+      value = "";
+    } else {
+      value += char;
+    }
+  }
+  row.push(value);
+  if (row.some((cell) => cell.trim())) rows.push(row);
+  return rows;
+}
+
+function truthy(value?: string) {
+  return ["1", "true", "yes", "y", "on"].includes((value || "").trim().toLowerCase());
+}
+
+function normalizeGuestSide(value?: string) {
+  const normalized = (value || "").trim().toLowerCase();
+  if (normalized === "andre") return "ANDRE" as GuestSide;
+  if (normalized === "bebe") return "BEBE" as GuestSide;
+  return "BOTH" as GuestSide;
+}
+
+function tokenFromHousehold(name: string) {
+  return `${name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${randomUUID().slice(0, 8)}`;
+}
+
+export async function importGuestsCsvAction(formData: FormData) {
+  await requireAdmin();
+  const file = formData.get("csvFile");
+  const textInput = String(formData.get("csvText") || "").trim();
+  const text = file instanceof File && file.size > 0 ? await file.text() : textInput;
+  if (!text) return;
+
+  const rows = parseCsvRows(text);
+  const headers = rows.shift()?.map((header) => header.trim().toLowerCase()) || [];
+  const index = (name: string) => headers.indexOf(name);
+  const value = (row: string[], ...names: string[]) => {
+    for (const name of names) {
+      const found = index(name);
+      if (found >= 0) return row[found]?.trim() || "";
+    }
+    return "";
+  };
+
+  for (const row of rows) {
+    const firstName = value(row, "first", "firstname", "first name");
+    const lastName = value(row, "last", "lastname", "last name");
+    const householdName = value(row, "household", "householdname", "household name") || `${lastName || firstName} Household`;
+    if (!firstName || !lastName || !householdName) continue;
+
+    const inviteCode = (value(row, "invitecode", "invite code") || householdName.replace(/[^a-z0-9]/gi, "").slice(0, 16) || randomUUID().slice(0, 8)).toUpperCase();
+    const household = await prisma.household.upsert({
+      where: { inviteCode },
+      update: {
+        name: householdName,
+        primaryEmail: value(row, "householdemail", "primaryemail", "primary email") || value(row, "email") || null,
+        primaryPhone: value(row, "householdphone", "primaryphone", "primary phone") || value(row, "phone") || null,
+        mailingAddressLine1: value(row, "address", "address1", "mailingaddressline1") || null,
+        city: value(row, "city") || null,
+        state: value(row, "state") || null,
+        postalCode: value(row, "zip", "zipcode", "postalcode", "postal code") || null,
+      },
+      create: {
+        name: householdName,
+        primaryEmail: value(row, "householdemail", "primaryemail", "primary email") || value(row, "email") || null,
+        primaryPhone: value(row, "householdphone", "primaryphone", "primary phone") || value(row, "phone") || null,
+        mailingAddressLine1: value(row, "address", "address1", "mailingaddressline1") || null,
+        city: value(row, "city") || null,
+        state: value(row, "state") || null,
+        postalCode: value(row, "zip", "zipcode", "postalcode", "postal code") || null,
+        inviteCode,
+        inviteLinkToken: value(row, "invitetoken", "invite token") || tokenFromHousehold(householdName),
+      },
+    });
+
+    const email = value(row, "email") || null;
+    const guestData = {
+      householdId: household.id,
+      firstName,
+      lastName,
+      email,
+      phone: value(row, "phone") || null,
+      guestSide: normalizeGuestSide(value(row, "side", "guestside", "guest side")),
+      relationshipGroup: value(row, "relationshipgroup", "relationship group", "group") || null,
+      tags: value(row, "tags") || null,
+      notes: value(row, "notes") || null,
+      isAdult: !truthy(value(row, "ischild", "is child", "child")),
+      isChild: truthy(value(row, "ischild", "is child", "child")),
+      plusOneAllowed: truthy(value(row, "plusoneallowed", "plus one allowed", "plusone")),
+      plusOneName: value(row, "plusonename", "plus one name") || null,
+    };
+
+    const existing = email ? await prisma.guest.findFirst({ where: { email } }) : null;
+    if (existing) await prisma.guest.update({ where: { id: existing.id }, data: guestData });
+    else await prisma.guest.create({ data: guestData });
+  }
+
+  revalidatePath("/admin/manage/guests");
+  revalidatePath("/admin");
 }
 
 export async function saveEventAction(formData: FormData) {

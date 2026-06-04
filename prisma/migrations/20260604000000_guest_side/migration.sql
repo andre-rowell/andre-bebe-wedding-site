@@ -1,0 +1,3 @@
+CREATE TYPE "GuestSide" AS ENUM ('ANDRE', 'BEBE', 'BOTH');
+
+ALTER TABLE "Guest" ADD COLUMN "guestSide" "GuestSide" NOT NULL DEFAULT 'BOTH';
