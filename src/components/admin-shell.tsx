@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ClipboardList, FileDown, Gift, HelpCircle, Home, Hotel, LogOut, Mail, MessageSquareHeart, Settings, UsersRound } from "lucide-react";
+import { CalendarDays, ClipboardList, FileDown, Gift, HelpCircle, Home, Hotel, LogOut, Mail, Menu, MessageSquareHeart, Settings, UsersRound, X } from "lucide-react";
 import { logoutAction } from "@/lib/actions";
 
 const links = [
@@ -42,6 +42,33 @@ export function AdminShell({ children, adminName }: { children: React.ReactNode;
       <div className="lg:pl-64">
         <header className="sticky top-0 z-20 border-b border-[#eaded7] bg-[#fffaf7]/90 px-4 py-3 backdrop-blur">
           <div className="flex items-center justify-between gap-4">
+            <details className="group lg:hidden">
+              <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full border border-[#d8c9bd] bg-white px-3 py-2 text-sm font-bold text-[#241b18] shadow-sm">
+                <Menu className="group-open:hidden" size={18} />
+                <X className="hidden group-open:block" size={18} />
+                Menu
+              </summary>
+              <div className="absolute left-3 right-3 top-[3.8rem] max-h-[calc(100vh-5rem)] overflow-y-auto border border-[#eaded7] bg-[#fffaf7] p-3 shadow-2xl">
+                <div className="mb-3 flex items-center justify-between border-b border-[#eaded7] pb-3">
+                  <Link href="/admin" className="serif text-2xl font-bold">Manage</Link>
+                  <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#9b7039]">Admin</span>
+                </div>
+                <nav className="grid gap-1">
+                  {links.map(([label, href, Icon]) => (
+                    <Link key={href as string} href={href as string} className="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-bold text-[#241b18] hover:bg-[#f1e7df]">
+                      <Icon size={18} className="text-[#9b7039]" />
+                      {label as string}
+                    </Link>
+                  ))}
+                </nav>
+                <form action={logoutAction} className="mt-3 border-t border-[#eaded7] pt-3">
+                  <button className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm font-bold text-[#9d3f3b] hover:bg-[#fff1ec]">
+                    <LogOut size={18} />
+                    Logout
+                  </button>
+                </form>
+              </div>
+            </details>
             <Link href="/admin" className="serif text-2xl font-bold lg:hidden">
               Manage
             </Link>
