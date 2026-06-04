@@ -100,46 +100,92 @@ async function GuestsManager({ query, households }: { query: string; households:
   });
   return (
     <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-      <form action={saveGuestAction} className="card space-y-4 p-5">
+      <AdminActionForm action={saveGuestAction} resetOnSuccess className="card space-y-4 p-5" successMessage="Guest saved.">
         <h2 className="serif text-3xl font-bold">Add guest</h2>
-        <select name="householdId" required>
-          <option value="">Select household</option>
-          {households.map((household) => <option key={household.id} value={household.id}>{household.name}</option>)}
-        </select>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <input name="firstName" placeholder="First name" required />
-          <input name="lastName" placeholder="Last name" required />
-        </div>
-        <input name="email" placeholder="Email" />
-        <input name="phone" placeholder="Phone" />
-        <input name="relationshipGroup" placeholder="Relationship group" />
-        <input name="tags" placeholder="Tags: family,friends,out-of-town" />
-        <textarea name="notes" placeholder="Internal notes" rows={3} />
-        <div className="grid gap-2 text-sm">
-          <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="isAdult" type="checkbox" defaultChecked /> Adult</label>
-          <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="isChild" type="checkbox" /> Child</label>
-          <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="plusOneAllowed" type="checkbox" /> Plus-one allowed</label>
-        </div>
+        <GuestFields households={households} />
         <button className="btn btn-primary w-full">Save guest</button>
-      </form>
-      <div className="card overflow-x-auto p-1">
-        <table className="admin-table">
-          <thead><tr><th>Name</th><th>Household</th><th>Contact</th><th>Tags</th><th>Invited Events</th><th></th></tr></thead>
-          <tbody>
-            {guests.map((guest) => (
-              <tr key={guest.id}>
-                <td><strong>{guest.firstName} {guest.lastName}</strong><br />{guest.isChild ? "Child" : "Adult"}{guest.plusOneAllowed ? " · Plus-one" : ""}</td>
-                <td>{guest.household.name}</td>
-                <td>{guest.email}<br />{guest.phone}</td>
-                <td>{guest.relationshipGroup}<br />{guest.tags}</td>
-                <td>{guest.eventInvitations.map((invite) => invite.event.title).join(", ") || "None"}</td>
-                <td><DeleteButton id={guest.id} type="guest" /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      </AdminActionForm>
+      <div className="grid gap-4">
+        {guests.map((guest) => (
+          <details key={guest.id} className="card p-5">
+            <summary className="cursor-pointer list-none">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#b76768]">Edit guest</p>
+                  <h2 className="serif text-3xl font-bold">{guest.firstName} {guest.lastName}</h2>
+                  <p className="mt-1 text-sm text-[#6a5c55]">{guest.household.name} · {guest.email || "No email"} · {guest.isChild ? "Child" : "Adult"}</p>
+                </div>
+                <span className="rounded-full border border-[#eaded7] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">{guest.plusOneAllowed ? "Plus-one" : "No plus-one"}</span>
+              </div>
+            </summary>
+            <AdminActionForm action={saveGuestAction} className="mt-5 space-y-4 border-t border-[#eaded7] pt-5" successMessage="Guest updated.">
+              <GuestFields guest={guest} households={households} />
+              <button className="btn btn-primary w-full">Update guest</button>
+            </AdminActionForm>
+            <div className="mt-3 flex justify-between text-sm text-[#6a5c55]">
+              <span>Invited events: {guest.eventInvitations.map((invite) => invite.event.title).join(", ") || "None"}</span>
+              <DeleteButton id={guest.id} type="guest" />
+            </div>
+          </details>
+        ))}
       </div>
     </div>
+  );
+}
+
+function GuestFields({ guest, households }: { guest?: Awaited<ReturnType<typeof prisma.guest.findMany>>[number]; households: HouseholdWithGuests[] }) {
+  const id = guest?.id || "new";
+  return (
+    <>
+      {guest ? <input type="hidden" name="id" value={guest.id} /> : null}
+      <label htmlFor={`guest-household-${id}`}>Household</label>
+      <select id={`guest-household-${id}`} name="householdId" defaultValue={guest?.householdId || ""} required>
+        <option value="">Select household</option>
+        {households.map((household) => <option key={household.id} value={household.id}>{household.name}</option>)}
+      </select>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label htmlFor={`firstName-${id}`}>First name</label>
+          <input id={`firstName-${id}`} name="firstName" placeholder="First name" defaultValue={guest?.firstName || ""} required />
+        </div>
+        <div>
+          <label htmlFor={`lastName-${id}`}>Last name</label>
+          <input id={`lastName-${id}`} name="lastName" placeholder="Last name" defaultValue={guest?.lastName || ""} required />
+        </div>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label htmlFor={`guest-email-${id}`}>Email</label>
+          <input id={`guest-email-${id}`} name="email" type="email" placeholder="name@example.com" defaultValue={guest?.email || ""} />
+        </div>
+        <div>
+          <label htmlFor={`guest-phone-${id}`}>Phone</label>
+          <input id={`guest-phone-${id}`} name="phone" type="tel" placeholder="612-555-0101" defaultValue={guest?.phone || ""} />
+        </div>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label htmlFor={`relationshipGroup-${id}`}>Relationship group</label>
+          <select id={`relationshipGroup-${id}`} name="relationshipGroup" defaultValue={guest?.relationshipGroup || ""}>
+            <option value="">Select group</option>
+            {["Family", "Friends", "Wedding Party", "Work", "Out-of-town"].map((group) => <option key={group}>{group}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={`tags-${id}`}>Tags</label>
+          <input id={`tags-${id}`} name="tags" placeholder="family,friends,out-of-town" defaultValue={guest?.tags || ""} />
+        </div>
+      </div>
+      <label htmlFor={`plusOneName-${id}`}>Plus-one name</label>
+      <input id={`plusOneName-${id}`} name="plusOneName" placeholder="Optional guest name" defaultValue={guest?.plusOneName || ""} />
+      <label htmlFor={`guest-notes-${id}`}>Internal notes</label>
+      <textarea id={`guest-notes-${id}`} name="notes" placeholder="Internal notes" rows={3} defaultValue={guest?.notes || ""} />
+      <div className="grid gap-2 text-sm">
+        <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="isAdult" type="checkbox" defaultChecked={guest?.isAdult ?? true} /> Adult</label>
+        <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="isChild" type="checkbox" defaultChecked={guest?.isChild ?? false} /> Child</label>
+        <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="plusOneAllowed" type="checkbox" defaultChecked={guest?.plusOneAllowed ?? false} /> Plus-one allowed</label>
+      </div>
+    </>
   );
 }
 
@@ -147,40 +193,87 @@ function HouseholdsManager({ query, households }: { query: string; households: H
   const filtered = query ? households.filter((household) => `${household.name} ${household.primaryEmail} ${household.inviteCode}`.toLowerCase().includes(query.toLowerCase())) : households;
   return (
     <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-      <form action={saveHouseholdAction} className="card space-y-4 p-5">
+      <AdminActionForm action={saveHouseholdAction} resetOnSuccess className="card space-y-4 p-5" successMessage="Household saved.">
         <h2 className="serif text-3xl font-bold">Create household</h2>
-        <input name="name" placeholder="Household name" required />
-        <input name="primaryEmail" placeholder="Primary email" />
-        <input name="primaryPhone" placeholder="Primary phone" />
-        <input name="mailingAddressLine1" placeholder="Address line 1" />
-        <div className="grid gap-3 sm:grid-cols-3">
-          <input name="city" placeholder="City" />
-          <input name="state" placeholder="State" />
-          <input name="postalCode" placeholder="Postal code" />
-        </div>
-        <input name="inviteCode" placeholder="Invite code" required />
-        <input name="inviteLinkToken" placeholder="Secure invite token" required />
-        <textarea name="notes" placeholder="Notes" rows={3} />
+        <HouseholdFields />
         <button className="btn btn-primary w-full">Save household</button>
-      </form>
-      <div className="card overflow-x-auto p-1">
-        <table className="admin-table">
-          <thead><tr><th>Household</th><th>Guests</th><th>Invite</th><th>Status</th><th>Address</th><th></th></tr></thead>
-          <tbody>
-            {filtered.map((household) => (
-              <tr key={household.id}>
-                <td><strong>{household.name}</strong><br />{household.primaryEmail}</td>
-                <td>{household.guests.map((guest) => `${guest.firstName} ${guest.lastName}`).join(", ")}</td>
-                <td><code>{household.inviteCode}</code><br /><span className="text-xs">/rsvp?code={household.inviteCode}</span></td>
-                <td>{household.invitationStatus}</td>
-                <td>{household.mailingAddressLine1}<br />{household.city}, {household.state} {household.postalCode}</td>
-                <td><DeleteButton id={household.id} type="household" /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      </AdminActionForm>
+      <div className="grid gap-4">
+        {filtered.map((household) => (
+          <details key={household.id} className="card p-5">
+            <summary className="cursor-pointer list-none">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#b76768]">Edit household</p>
+                  <h2 className="serif text-3xl font-bold">{household.name}</h2>
+                  <p className="mt-1 text-sm text-[#6a5c55]">{household.primaryEmail || "No email"} · {household.guests.length} guests · {household.invitationStatus}</p>
+                </div>
+                <code className="rounded-full border border-[#eaded7] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">{household.inviteCode}</code>
+              </div>
+            </summary>
+            <AdminActionForm action={saveHouseholdAction} className="mt-5 space-y-4 border-t border-[#eaded7] pt-5" successMessage="Household updated.">
+              <HouseholdFields household={household} />
+              <button className="btn btn-primary w-full">Update household</button>
+            </AdminActionForm>
+            <div className="mt-3 flex justify-between text-sm text-[#6a5c55]">
+              <span>Guests: {household.guests.map((guest) => `${guest.firstName} ${guest.lastName}`).join(", ") || "None"}</span>
+              <DeleteButton id={household.id} type="household" />
+            </div>
+          </details>
+        ))}
       </div>
     </div>
+  );
+}
+
+function HouseholdFields({ household }: { household?: HouseholdWithGuests }) {
+  const id = household?.id || "new";
+  return (
+    <>
+      {household ? <input type="hidden" name="id" value={household.id} /> : null}
+      <label htmlFor={`household-name-${id}`}>Household name</label>
+      <input id={`household-name-${id}`} name="name" placeholder="The Rowell Household" defaultValue={household?.name || ""} required />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label htmlFor={`primaryEmail-${id}`}>Primary email</label>
+          <input id={`primaryEmail-${id}`} name="primaryEmail" type="email" placeholder="name@example.com" defaultValue={household?.primaryEmail || ""} />
+        </div>
+        <div>
+          <label htmlFor={`primaryPhone-${id}`}>Primary phone</label>
+          <input id={`primaryPhone-${id}`} name="primaryPhone" type="tel" placeholder="612-555-0101" defaultValue={household?.primaryPhone || ""} />
+        </div>
+      </div>
+      <label htmlFor={`mailingAddressLine1-${id}`}>Mailing address</label>
+      <input id={`mailingAddressLine1-${id}`} name="mailingAddressLine1" placeholder="Address line 1" autoComplete="street-address" defaultValue={household?.mailingAddressLine1 || ""} />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div>
+          <label htmlFor={`household-city-${id}`}>City</label>
+          <input id={`household-city-${id}`} name="city" placeholder="Minneapolis" autoComplete="address-level2" defaultValue={household?.city || ""} />
+        </div>
+        <div>
+          <label htmlFor={`household-state-${id}`}>State</label>
+          <select id={`household-state-${id}`} name="state" autoComplete="address-level1" defaultValue={household?.state || "MN"}>
+            {states.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={`household-postal-${id}`}>ZIP code</label>
+          <input id={`household-postal-${id}`} name="postalCode" placeholder="55414" inputMode="numeric" pattern="\\d{5}(-\\d{4})?" title="Use a 5-digit ZIP code or ZIP+4." autoComplete="postal-code" defaultValue={household?.postalCode || ""} />
+        </div>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label htmlFor={`inviteCode-${id}`}>Invite code</label>
+          <input id={`inviteCode-${id}`} name="inviteCode" placeholder="ROWELL2027" pattern="[A-Z0-9-]{4,32}" title="Use 4-32 uppercase letters, numbers, or hyphens." defaultValue={household?.inviteCode || ""} required />
+        </div>
+        <div>
+          <label htmlFor={`inviteLinkToken-${id}`}>Invite token</label>
+          <input id={`inviteLinkToken-${id}`} name="inviteLinkToken" placeholder="secure-token" pattern="[A-Za-z0-9_-]{10,80}" title="Use 10-80 letters, numbers, underscores, or hyphens." defaultValue={household?.inviteLinkToken || ""} required />
+        </div>
+      </div>
+      <label htmlFor={`household-notes-${id}`}>Notes</label>
+      <textarea id={`household-notes-${id}`} name="notes" placeholder="Notes" rows={3} defaultValue={household?.notes || ""} />
+    </>
   );
 }
 
@@ -210,15 +303,18 @@ async function RsvpsManager({ query }: { query: string }) {
                 <td>{rsvp.mealChoice}</td>
                 <td>{rsvp.dietaryRestrictions}<br />{rsvp.accessibilityNeeds}</td>
                 <td>
-                  <form action={updateRsvpAction} className="grid min-w-52 gap-2">
+                  <AdminActionForm action={updateRsvpAction} className="grid min-w-52 gap-2" successMessage="RSVP updated.">
                     <input type="hidden" name="id" value={rsvp.id} />
-                    <select name="attending" defaultValue={rsvp.attending}>
+                    <label htmlFor={`attending-${rsvp.id}`}>Attendance</label>
+                    <select id={`attending-${rsvp.id}`} name="attending" defaultValue={rsvp.attending}>
                       <option>YES</option><option>NO</option><option>UNANSWERED</option>
                     </select>
-                    <input name="mealChoice" defaultValue={rsvp.mealChoice || ""} placeholder="Meal" />
-                    <input name="dietaryRestrictions" defaultValue={rsvp.dietaryRestrictions || ""} placeholder="Dietary notes" />
+                    <label htmlFor={`meal-${rsvp.id}`}>Meal choice</label>
+                    <input id={`meal-${rsvp.id}`} name="mealChoice" defaultValue={rsvp.mealChoice || ""} placeholder="Meal" />
+                    <label htmlFor={`dietary-${rsvp.id}`}>Dietary notes</label>
+                    <input id={`dietary-${rsvp.id}`} name="dietaryRestrictions" defaultValue={rsvp.dietaryRestrictions || ""} placeholder="Dietary notes" />
                     <button className="btn btn-secondary">Save</button>
-                  </form>
+                  </AdminActionForm>
                 </td>
               </tr>
             ))}
@@ -376,17 +472,17 @@ function EventsManager({ events, households }: { events: EventRecord[]; househol
 
 async function RegistryManager() {
   const links = await prisma.registryLink.findMany({ orderBy: { sortOrder: "asc" } });
-  return <SimpleManager type="registry" rows={links} action={saveRegistryAction} fields={["title", "description", "url", "buttonText", "sortOrder"]} />;
+  return <StructuredManager type="registry" title="registry link" rows={links} action={saveRegistryAction} fields={registryFields} />;
 }
 
 async function FaqManager() {
   const rows = await prisma.fAQItem.findMany({ orderBy: { sortOrder: "asc" } });
-  return <SimpleManager type="faq" rows={rows} action={saveFaqAction} fields={["question", "answer", "category", "sortOrder"]} />;
+  return <StructuredManager type="faq" title="FAQ item" rows={rows} action={saveFaqAction} fields={faqFields} />;
 }
 
 async function TravelManager() {
   const rows = await prisma.travelSection.findMany({ orderBy: { sortOrder: "asc" } });
-  return <SimpleManager type="travel" rows={rows} action={saveTravelAction} fields={["title", "content", "category", "url", "sortOrder"]} />;
+  return <StructuredManager type="travel" title="travel section" rows={rows} action={saveTravelAction} fields={travelFields} />;
 }
 
 async function GuestbookManager() {
@@ -418,28 +514,107 @@ async function GuestbookManager() {
   );
 }
 
-function SimpleManager({ type, rows, action, fields }: { type: string; rows: Array<Record<string, unknown> & { id: string; isActive?: boolean }>; action: (formData: FormData) => Promise<void>; fields: string[] }) {
+type FieldConfig = {
+  name: string;
+  label: string;
+  type?: "text" | "url" | "number" | "textarea" | "select";
+  required?: boolean;
+  rows?: number;
+  placeholder?: string;
+  options?: string[];
+};
+
+const faqFields: FieldConfig[] = [
+  { name: "question", label: "Question", required: true, placeholder: "What should I wear?" },
+  { name: "answer", label: "Answer", type: "textarea", rows: 5, required: true, placeholder: "Share the guest-facing answer." },
+  { name: "category", label: "Category", type: "select", required: true, options: ["General", "RSVP", "Schedule", "Travel", "Attire", "Family", "Parking"] },
+  { name: "sortOrder", label: "Sort order", type: "number" },
+];
+
+const registryFields: FieldConfig[] = [
+  { name: "title", label: "Registry title", required: true, placeholder: "Honeymoon Fund" },
+  { name: "description", label: "Description", type: "textarea", rows: 4, required: true },
+  { name: "url", label: "Registry URL", type: "url", required: true, placeholder: "https://..." },
+  { name: "buttonText", label: "Button text", required: true, placeholder: "Open registry" },
+  { name: "sortOrder", label: "Sort order", type: "number" },
+];
+
+const travelFields: FieldConfig[] = [
+  { name: "title", label: "Title", required: true, placeholder: "Hotel Block" },
+  { name: "content", label: "Content", type: "textarea", rows: 5, required: true },
+  { name: "category", label: "Category", type: "select", required: true, options: ["Hotel", "Airport", "Transportation", "Parking", "Local", "Weather", "Things to do"] },
+  { name: "url", label: "URL", type: "url", placeholder: "https://..." },
+  { name: "sortOrder", label: "Sort order", type: "number" },
+];
+
+function StructuredFields({ row, fields }: { row?: Record<string, unknown> & { id?: string; isActive?: boolean }; fields: FieldConfig[] }) {
+  const id = row?.id || "new";
+  return (
+    <>
+      {row?.id ? <input type="hidden" name="id" value={row.id} /> : null}
+      {fields.map((field) => {
+        const fieldId = `${field.name}-${id}`;
+        const value = String(row?.[field.name] ?? (field.name === "sortOrder" ? 0 : ""));
+        if (field.type === "textarea") {
+          return (
+            <div key={field.name}>
+              <label htmlFor={fieldId}>{field.label}</label>
+              <textarea id={fieldId} name={field.name} rows={field.rows || 4} placeholder={field.placeholder} defaultValue={value} required={field.required} />
+            </div>
+          );
+        }
+        if (field.type === "select") {
+          return (
+            <div key={field.name}>
+              <label htmlFor={fieldId}>{field.label}</label>
+              <select id={fieldId} name={field.name} defaultValue={value || field.options?.[0] || ""} required={field.required}>
+                {field.options?.map((option) => <option key={option}>{option}</option>)}
+              </select>
+            </div>
+          );
+        }
+        return (
+          <div key={field.name}>
+            <label htmlFor={fieldId}>{field.label}</label>
+            <input id={fieldId} name={field.name} type={field.type || "text"} placeholder={field.placeholder} defaultValue={value} required={field.required} />
+          </div>
+        );
+      })}
+      <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="isActive" type="checkbox" defaultChecked={row?.isActive ?? true} /> Active</label>
+    </>
+  );
+}
+
+function StructuredManager({ type, title, rows, action, fields }: { type: string; title: string; rows: Array<Record<string, unknown> & { id: string; isActive?: boolean }>; action: (formData: FormData) => Promise<void>; fields: FieldConfig[] }) {
   return (
     <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-      <form action={action} className="card space-y-4 p-5">
-        <h2 className="serif text-3xl font-bold">Add {type}</h2>
-        {fields.map((field) => field === "sortOrder" ? <input key={field} name={field} type="number" defaultValue={0} placeholder={field} /> : field === "answer" || field === "description" || field === "content" ? <textarea key={field} name={field} placeholder={field} rows={4} /> : <input key={field} name={field} placeholder={field} />)}
-        <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="isActive" type="checkbox" defaultChecked /> Active</label>
+      <AdminActionForm action={action} resetOnSuccess className="card space-y-4 p-5" successMessage={`${title} saved.`}>
+        <h2 className="serif text-3xl font-bold">Add {title}</h2>
+        <StructuredFields fields={fields} />
         <button className="btn btn-primary w-full">Save</button>
-      </form>
-      <div className="card overflow-x-auto p-1">
-        <table className="admin-table">
-          <thead><tr>{fields.slice(0, 4).map((field) => <th key={field}>{field}</th>)}<th>Active</th><th></th></tr></thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.id}>
-                {fields.slice(0, 4).map((field) => <td key={field}>{String(row[field] || "")}</td>)}
-                <td>{row.isActive ? "Yes" : "No"}</td>
-                <td><DeleteButton id={row.id} type={type} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      </AdminActionForm>
+      <div className="grid gap-4">
+        {rows.map((row) => (
+          <details key={row.id} className="card p-5">
+            <summary className="cursor-pointer list-none">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#b76768]">Edit {title}</p>
+                  <h2 className="serif text-3xl font-bold">{String(row[fields[0].name] || title)}</h2>
+                  <p className="mt-1 line-clamp-2 text-sm text-[#6a5c55]">{String(row[fields[1]?.name] || "")}</p>
+                </div>
+                <span className="rounded-full border border-[#eaded7] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">{row.isActive ? "Active" : "Hidden"}</span>
+              </div>
+            </summary>
+            <AdminActionForm action={action} className="mt-5 space-y-4 border-t border-[#eaded7] pt-5" successMessage={`${title} updated.`}>
+              <StructuredFields row={row} fields={fields} />
+              <button className="btn btn-primary w-full">Update</button>
+            </AdminActionForm>
+            <div className="mt-3 flex justify-end">
+              <DeleteButton id={row.id} type={type} />
+            </div>
+          </details>
+        ))}
       </div>
     </div>
   );
@@ -450,12 +625,12 @@ async function ContentManager() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {settings.map((setting) => (
-        <form key={setting.id} action={saveSettingAction} className="card space-y-3 p-5">
+        <AdminActionForm key={setting.id} action={saveSettingAction} className="card space-y-3 p-5" successMessage="Setting saved.">
           <input type="hidden" name="key" value={setting.key} />
           <label htmlFor={setting.key}>{setting.key}</label>
           <textarea id={setting.key} name="value" defaultValue={setting.value} rows={setting.value.length > 80 ? 5 : 2} />
           <button className="btn btn-secondary">Save setting</button>
-        </form>
+        </AdminActionForm>
       ))}
     </div>
   );

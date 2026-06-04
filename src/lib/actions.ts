@@ -8,6 +8,10 @@ import { dateAtChicagoTime, timeInputValue } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
 
 const required = z.string().trim().min(1);
+const optionalEmail = z.string().trim().email().optional().or(z.literal(""));
+const optionalUrl = z.string().trim().url().optional().or(z.literal(""));
+const inviteCodeSchema = z.string().trim().regex(/^[A-Z0-9-]{4,32}$/);
+const inviteTokenSchema = z.string().trim().regex(/^[A-Za-z0-9_-]{10,80}$/);
 
 export async function loginAction(_prevState: { error?: string } | undefined, formData: FormData) {
   const parsed = z.object({ email: z.string().email(), password: required }).safeParse({
@@ -108,19 +112,40 @@ export async function submitGuestbookAction(formData: FormData) {
 export async function saveHouseholdAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") || "");
+  const parsed = z.object({
+    name: required,
+    primaryEmail: optionalEmail,
+    primaryPhone: z.string().trim().optional(),
+    mailingAddressLine1: z.string().trim().optional(),
+    city: z.string().trim().optional(),
+    state: z.string().trim().length(2).optional().or(z.literal("")),
+    postalCode: z.string().trim().regex(/^\d{5}(-\d{4})?$/).optional().or(z.literal("")),
+    inviteCode: inviteCodeSchema,
+    inviteLinkToken: inviteTokenSchema,
+    notes: z.string().trim().optional(),
+  }).safeParse({
+    name: formData.get("name"),
+    primaryEmail: formData.get("primaryEmail"),
+    primaryPhone: formData.get("primaryPhone"),
+    mailingAddressLine1: formData.get("mailingAddressLine1"),
+    city: formData.get("city"),
+    state: formData.get("state"),
+    postalCode: formData.get("postalCode"),
+    inviteCode: String(formData.get("inviteCode") || "").toUpperCase(),
+    inviteLinkToken: formData.get("inviteLinkToken"),
+    notes: formData.get("notes"),
+  });
+  if (!parsed.success) return;
   const data = {
-    name: String(formData.get("name") || "").trim(),
-    primaryEmail: String(formData.get("primaryEmail") || "").trim() || null,
-    primaryPhone: String(formData.get("primaryPhone") || "").trim() || null,
-    mailingAddressLine1: String(formData.get("mailingAddressLine1") || "").trim() || null,
-    city: String(formData.get("city") || "").trim() || null,
-    state: String(formData.get("state") || "").trim() || null,
-    postalCode: String(formData.get("postalCode") || "").trim() || null,
-    inviteCode: String(formData.get("inviteCode") || "").trim().toUpperCase(),
-    inviteLinkToken: String(formData.get("inviteLinkToken") || "").trim(),
-    notes: String(formData.get("notes") || "").trim() || null,
+    ...parsed.data,
+    primaryEmail: parsed.data.primaryEmail || null,
+    primaryPhone: parsed.data.primaryPhone || null,
+    mailingAddressLine1: parsed.data.mailingAddressLine1 || null,
+    city: parsed.data.city || null,
+    state: parsed.data.state || null,
+    postalCode: parsed.data.postalCode || null,
+    notes: parsed.data.notes || null,
   };
-  if (!data.name || !data.inviteCode || !data.inviteLinkToken) return;
   if (id) await prisma.household.update({ where: { id }, data });
   else await prisma.household.create({ data: { ...data, country: "United States" } });
   revalidatePath("/admin/manage/households");
@@ -129,20 +154,42 @@ export async function saveHouseholdAction(formData: FormData) {
 export async function saveGuestAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") || "");
+  const parsed = z.object({
+    householdId: required,
+    firstName: required,
+    lastName: required,
+    email: optionalEmail,
+    phone: z.string().trim().optional(),
+    relationshipGroup: z.string().trim().optional(),
+    tags: z.string().trim().optional(),
+    plusOneName: z.string().trim().optional(),
+    notes: z.string().trim().optional(),
+  }).safeParse({
+    householdId: formData.get("householdId"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+    relationshipGroup: formData.get("relationshipGroup"),
+    tags: formData.get("tags"),
+    plusOneName: formData.get("plusOneName"),
+    notes: formData.get("notes"),
+  });
+  if (!parsed.success) return;
   const data = {
-    householdId: String(formData.get("householdId") || ""),
-    firstName: String(formData.get("firstName") || "").trim(),
-    lastName: String(formData.get("lastName") || "").trim(),
-    email: String(formData.get("email") || "").trim() || null,
-    phone: String(formData.get("phone") || "").trim() || null,
+    householdId: parsed.data.householdId,
+    firstName: parsed.data.firstName,
+    lastName: parsed.data.lastName,
+    email: parsed.data.email || null,
+    phone: parsed.data.phone || null,
     isAdult: formData.get("isAdult") === "on",
     isChild: formData.get("isChild") === "on",
     plusOneAllowed: formData.get("plusOneAllowed") === "on",
-    relationshipGroup: String(formData.get("relationshipGroup") || "").trim() || null,
-    tags: String(formData.get("tags") || "").trim() || null,
-    notes: String(formData.get("notes") || "").trim() || null,
+    plusOneName: parsed.data.plusOneName || null,
+    relationshipGroup: parsed.data.relationshipGroup || null,
+    tags: parsed.data.tags || null,
+    notes: parsed.data.notes || null,
   };
-  if (!data.householdId || !data.firstName || !data.lastName) return;
   if (id) await prisma.guest.update({ where: { id }, data });
   else await prisma.guest.create({ data });
   revalidatePath("/admin/manage/guests");
@@ -222,15 +269,24 @@ export async function assignHouseholdToEventAction(formData: FormData) {
 export async function saveRegistryAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") || "");
+  const parsed = z.object({
+    title: required,
+    description: required,
+    url: z.string().trim().url(),
+    buttonText: required,
+    sortOrder: z.coerce.number().int().default(0),
+  }).safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+    url: formData.get("url"),
+    buttonText: formData.get("buttonText") || "Open registry",
+    sortOrder: formData.get("sortOrder") || 0,
+  });
+  if (!parsed.success) return;
   const data = {
-    title: String(formData.get("title") || "").trim(),
-    description: String(formData.get("description") || "").trim(),
-    url: String(formData.get("url") || "").trim(),
-    buttonText: String(formData.get("buttonText") || "Open registry").trim(),
-    sortOrder: Number(formData.get("sortOrder") || 0),
+    ...parsed.data,
     isActive: formData.get("isActive") === "on",
   };
-  if (!data.title || !data.url) return;
   if (id) await prisma.registryLink.update({ where: { id }, data });
   else await prisma.registryLink.create({ data });
   revalidatePath("/admin/manage/registry");
@@ -240,14 +296,22 @@ export async function saveRegistryAction(formData: FormData) {
 export async function saveFaqAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") || "");
+  const parsed = z.object({
+    question: required,
+    answer: required,
+    category: required,
+    sortOrder: z.coerce.number().int().default(0),
+  }).safeParse({
+    question: formData.get("question"),
+    answer: formData.get("answer"),
+    category: formData.get("category") || "General",
+    sortOrder: formData.get("sortOrder") || 0,
+  });
+  if (!parsed.success) return;
   const data = {
-    question: String(formData.get("question") || "").trim(),
-    answer: String(formData.get("answer") || "").trim(),
-    category: String(formData.get("category") || "General").trim(),
-    sortOrder: Number(formData.get("sortOrder") || 0),
+    ...parsed.data,
     isActive: formData.get("isActive") === "on",
   };
-  if (!data.question || !data.answer) return;
   if (id) await prisma.fAQItem.update({ where: { id }, data });
   else await prisma.fAQItem.create({ data });
   revalidatePath("/admin/manage/faqs");
@@ -257,15 +321,25 @@ export async function saveFaqAction(formData: FormData) {
 export async function saveTravelAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") || "");
+  const parsed = z.object({
+    title: required,
+    content: required,
+    category: required,
+    url: optionalUrl,
+    sortOrder: z.coerce.number().int().default(0),
+  }).safeParse({
+    title: formData.get("title"),
+    content: formData.get("content"),
+    category: formData.get("category") || "Travel",
+    url: formData.get("url"),
+    sortOrder: formData.get("sortOrder") || 0,
+  });
+  if (!parsed.success) return;
   const data = {
-    title: String(formData.get("title") || "").trim(),
-    content: String(formData.get("content") || "").trim(),
-    category: String(formData.get("category") || "Travel").trim(),
-    url: String(formData.get("url") || "").trim() || null,
-    sortOrder: Number(formData.get("sortOrder") || 0),
+    ...parsed.data,
+    url: parsed.data.url || null,
     isActive: formData.get("isActive") === "on",
   };
-  if (!data.title || !data.content) return;
   if (id) await prisma.travelSection.update({ where: { id }, data });
   else await prisma.travelSection.create({ data });
   revalidatePath("/admin/manage/travel");
