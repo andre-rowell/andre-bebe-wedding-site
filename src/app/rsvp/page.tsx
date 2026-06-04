@@ -1,5 +1,6 @@
 import { GuestPage, PageHero } from "@/components/site-shell";
 import { submitRsvpAction } from "@/lib/actions";
+import { formatTimeForDisplay } from "@/lib/event-time";
 import { formatDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -92,7 +93,7 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                           return (
                             <div key={invite.id} className="border border-[#eaded7] bg-[#fbf7f0] p-4">
                               <p className="font-bold">{event.title}</p>
-                              <p className="text-sm text-[#6a5c55]">{formatDate(event.date)} · {event.startTime}</p>
+                              <p className="text-sm text-[#6a5c55]">{formatDate(event.date)} · {formatTimeForDisplay(event.startTime)}</p>
                               <fieldset className="mt-3 flex gap-3" aria-label={`${guest.firstName} ${event.title} attendance`}>
                                 {["YES", "NO"].map((choice) => (
                                   <label key={choice} className="mb-0 flex flex-1 cursor-pointer items-center justify-center gap-2 border border-[#d9c8bf] bg-white px-4 py-2 text-sm">

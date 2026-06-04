@@ -1,6 +1,7 @@
 import { AlertCircle, Car, Clock, MapPin, Phone, Route } from "lucide-react";
 import { GuestPage, PageHero } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
+import { formatTimeForDisplay } from "@/lib/event-time";
 import { formatDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -30,7 +31,7 @@ export default async function DayOfPage() {
           <div className="grid gap-4">
             {events.map((event) => (
               <article key={event.id} className="section-frame p-5">
-                <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">{formatDate(event.date)} · {event.startTime}</p>
+                <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">{formatDate(event.date)} · {formatTimeForDisplay(event.startTime)}</p>
                 <h2 className="serif mt-1 text-3xl font-semibold uppercase tracking-[0.08em]">{event.title}</h2>
                 <p className="mt-2 text-sm text-[#6d625b]">
                   {event.venueName} · {event.venueName.includes("TBD") || event.city === "TBD" ? "Location to be announced" : `${event.addressLine1}, ${event.city}, ${event.state}`}

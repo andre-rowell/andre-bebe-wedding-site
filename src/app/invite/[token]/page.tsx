@@ -4,6 +4,7 @@ import { CalendarPlus, Car, MapPin, MessageSquareHeart, Utensils } from "lucide-
 import { GuestPage } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
 import { rsvpConfirmationTemplate } from "@/lib/email-templates";
+import { formatTimeForDisplay } from "@/lib/event-time";
 import { formatDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -73,7 +74,7 @@ export default async function InviteLandingPage({ params, searchParams }: { para
                   <div>
                     <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">{event.type}</p>
                     <h2 className="serif mt-1 text-3xl font-semibold uppercase tracking-[0.08em]">{event.title}</h2>
-                    <p className="mt-2 text-sm font-semibold">{formatDate(event.date)} · {event.startTime}</p>
+                    <p className="mt-2 text-sm font-semibold">{formatDate(event.date)} · {formatTimeForDisplay(event.startTime)}</p>
                     <p className="text-sm text-[#6d625b]">
                       {event.venueName} · {event.venueName.includes("TBD") || event.city === "TBD" ? "Location to be announced" : event.addressLine1}
                     </p>

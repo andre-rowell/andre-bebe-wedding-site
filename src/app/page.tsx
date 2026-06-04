@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CalendarDays, CalendarHeart, Gift, Heart, MapPin, Plane, Sparkles, Wine } from "lucide-react";
 import { Countdown } from "@/components/countdown";
 import { GuestPage } from "@/components/site-shell";
+import { formatTimeForDisplay, timeInputValue } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
 
 async function settingsMap() {
@@ -21,14 +22,7 @@ function chicagoDateParts(date: Date) {
 }
 
 function time24Hour(time: string) {
-  const match = time.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
-  if (!match) return "17:00";
-  let hour = Number(match[1]);
-  const minute = match[2] || "00";
-  const meridiem = match[3]?.toUpperCase();
-  if (meridiem === "PM" && hour < 12) hour += 12;
-  if (meridiem === "AM" && hour === 12) hour = 0;
-  return `${String(hour).padStart(2, "0")}:${minute}`;
+  return timeInputValue(time) || "17:00";
 }
 
 function ceremonyTargetIso(date: Date, startTime: string) {
@@ -43,6 +37,7 @@ export default async function Home() {
   ]);
   const ceremonyDate = ceremony?.date || new Date(`${settings.weddingDate || "2027-05-30"}T22:00:00.000Z`);
   const ceremonyStartTime = ceremony?.startTime || "5:00 PM";
+  const displayTime = formatTimeForDisplay(ceremonyStartTime);
   const targetIso = ceremonyTargetIso(ceremonyDate, ceremonyStartTime);
   const displayDate = ceremonyDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" });
   return (
@@ -66,7 +61,7 @@ export default async function Home() {
           <div className="mt-6 grid max-w-3xl gap-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#fff4ef] sm:grid-cols-2">
             <p className="flex items-center gap-2">
               <CalendarHeart size={20} />
-              {displayDate} · {ceremonyStartTime}
+              {displayDate} · {displayTime}
             </p>
             <p className="flex items-center gap-2">
               <MapPin size={20} />

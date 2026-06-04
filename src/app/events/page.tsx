@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GuestPage, PageHero } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
+import { formatTimeForDisplay } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
 
 export default async function EventsPage({ searchParams }: { searchParams?: Promise<{ code?: string }> }) {
@@ -33,7 +34,7 @@ export default async function EventsPage({ searchParams }: { searchParams?: Prom
                 <img src={event.slug === "ceremony" ? "/photos/bebe-veil-car-bw.jpg" : event.slug === "reception" ? "/photos/andre-bebe-car-laugh.jpg" : "/photos/andre-bebe-car.jpg"} alt="" loading="lazy" decoding="async" className="h-40 w-full object-cover md:h-full" />
               </div>
               <div className="p-5 sm:p-7">
-                <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">{event.startTime}{event.endTime ? ` - ${event.endTime}` : ""}</p>
+                <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">{formatTimeForDisplay(event.startTime)}{event.endTime ? ` - ${formatTimeForDisplay(event.endTime)}` : ""}</p>
                 <h2 className="serif mt-2 text-3xl font-semibold uppercase tracking-[0.08em]">{event.title}</h2>
                 <p className="mt-2 text-sm font-semibold">{event.venueName}</p>
                 <p className="text-sm text-[#6d625b]">

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { clearAdminSession, requireAdmin, setAdminSession, validateAdminLogin } from "@/lib/auth";
+import { dateAtChicagoTime, timeInputValue } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
 
 const required = z.string().trim().min(1);
@@ -150,20 +151,39 @@ export async function saveGuestAction(formData: FormData) {
 export async function saveEventAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") || "");
+  const rawDate = String(formData.get("date") || "").trim();
+  const startTime = timeInputValue(String(formData.get("startTime") || "")) || "TBD";
+  const endTime = timeInputValue(String(formData.get("endTime") || "")) || null;
+  const mapUrlValue = String(formData.get("mapUrl") || "").trim();
+  const addressLine1 = String(formData.get("addressLine1") || "").trim();
+  const city = String(formData.get("city") || "").trim();
+  const state = String(formData.get("state") || "").trim();
+  const generatedMapUrl = addressLine1.toUpperCase().includes("TBD") || city.toUpperCase() === "TBD" || !state
+    ? null
+    : `https://maps.google.com/?q=${encodeURIComponent(`${addressLine1}, ${city}, ${state}`)}`;
+  let mapUrl = generatedMapUrl;
+  if (mapUrlValue) {
+    try {
+      const parsed = new URL(mapUrlValue);
+      mapUrl = parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.toString() : generatedMapUrl;
+    } catch {
+      mapUrl = generatedMapUrl;
+    }
+  }
   const data = {
     title: String(formData.get("title") || "").trim(),
     slug: String(formData.get("slug") || "").trim(),
     type: String(formData.get("type") || "").trim(),
     description: String(formData.get("description") || "").trim(),
-    date: new Date(`${String(formData.get("date") || "")}T12:00:00.000Z`),
-    startTime: String(formData.get("startTime") || "").trim(),
-    endTime: String(formData.get("endTime") || "").trim() || null,
+    date: dateAtChicagoTime(rawDate, startTime),
+    startTime,
+    endTime,
     venueName: String(formData.get("venueName") || "").trim(),
-    addressLine1: String(formData.get("addressLine1") || "").trim(),
-    city: String(formData.get("city") || "").trim(),
-    state: String(formData.get("state") || "").trim(),
+    addressLine1,
+    city,
+    state,
     postalCode: String(formData.get("postalCode") || "").trim() || null,
-    mapUrl: String(formData.get("mapUrl") || "").trim() || null,
+    mapUrl,
     dressCode: String(formData.get("dressCode") || "").trim() || null,
     parkingInfo: String(formData.get("parkingInfo") || "").trim() || null,
     transportationInfo: String(formData.get("transportationInfo") || "").trim() || null,
@@ -174,7 +194,8 @@ export async function saveEventAction(formData: FormData) {
     sortOrder: Number(formData.get("sortOrder") || 0),
     isActive: formData.get("isActive") === "on",
   };
-  if (!data.title || !data.slug || !data.type || !data.venueName) return;
+  const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(data.slug);
+  if (!rawDate || !data.title || !validSlug || !data.type || !data.venueName || !data.addressLine1 || !data.city || !data.state) return;
   if (id) await prisma.event.update({ where: { id }, data });
   else await prisma.event.create({ data });
   revalidatePath("/");

@@ -14,6 +14,7 @@ import {
   updateRsvpAction,
 } from "@/lib/actions";
 import { requireAdmin } from "@/lib/auth";
+import { chicagoDateInputValue, formatTimeForDisplay, timeInputValue } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
 
 const titles: Record<string, string> = {
@@ -235,42 +236,85 @@ async function RsvpsManager({ query }: { query: string }) {
   );
 }
 
-function eventDateInput(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
+const states = [
+  ["", "Select state"],
+  ["AL", "Alabama"], ["AK", "Alaska"], ["AZ", "Arizona"], ["AR", "Arkansas"], ["CA", "California"], ["CO", "Colorado"], ["CT", "Connecticut"], ["DE", "Delaware"], ["DC", "District of Columbia"], ["FL", "Florida"], ["GA", "Georgia"], ["HI", "Hawaii"], ["ID", "Idaho"], ["IL", "Illinois"], ["IN", "Indiana"], ["IA", "Iowa"], ["KS", "Kansas"], ["KY", "Kentucky"], ["LA", "Louisiana"], ["ME", "Maine"], ["MD", "Maryland"], ["MA", "Massachusetts"], ["MI", "Michigan"], ["MN", "Minnesota"], ["MS", "Mississippi"], ["MO", "Missouri"], ["MT", "Montana"], ["NE", "Nebraska"], ["NV", "Nevada"], ["NH", "New Hampshire"], ["NJ", "New Jersey"], ["NM", "New Mexico"], ["NY", "New York"], ["NC", "North Carolina"], ["ND", "North Dakota"], ["OH", "Ohio"], ["OK", "Oklahoma"], ["OR", "Oregon"], ["PA", "Pennsylvania"], ["RI", "Rhode Island"], ["SC", "South Carolina"], ["SD", "South Dakota"], ["TN", "Tennessee"], ["TX", "Texas"], ["UT", "Utah"], ["VT", "Vermont"], ["VA", "Virginia"], ["WA", "Washington"], ["WV", "West Virginia"], ["WI", "Wisconsin"], ["WY", "Wyoming"],
+];
 
 function EventFields({ event }: { event?: EventRecord }) {
   return (
     <>
       {event ? <input type="hidden" name="id" value={event.id} /> : null}
-      <input name="title" placeholder="Event title" defaultValue={event?.title || ""} required />
+      <label htmlFor={`title-${event?.id || "new"}`}>Event title</label>
+      <input id={`title-${event?.id || "new"}`} name="title" placeholder="Ceremony" defaultValue={event?.title || ""} required />
       <div className="grid gap-3 sm:grid-cols-2">
-        <input name="slug" placeholder="slug" defaultValue={event?.slug || ""} required />
-        <input name="type" placeholder="Type" defaultValue={event?.type || ""} required />
+        <div>
+          <label htmlFor={`slug-${event?.id || "new"}`}>URL slug</label>
+          <input id={`slug-${event?.id || "new"}`} name="slug" placeholder="ceremony" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" title="Use lowercase letters, numbers, and hyphens only." defaultValue={event?.slug || ""} required />
+        </div>
+        <div>
+          <label htmlFor={`type-${event?.id || "new"}`}>Event type</label>
+          <select id={`type-${event?.id || "new"}`} name="type" defaultValue={event?.type || ""} required>
+            <option value="">Select type</option>
+            {["Dowry", "Ceremony", "Cocktail Hour", "Reception", "After Party", "After Party Cookout", "Farewell Brunch", "Rehearsal Dinner", "Welcome Party"].map((type) => <option key={type}>{type}</option>)}
+          </select>
+        </div>
       </div>
+      <label htmlFor={`description-${event?.id || "new"}`}>Description</label>
       <textarea name="description" placeholder="Description" rows={3} defaultValue={event?.description || ""} required />
       <div className="grid gap-3 sm:grid-cols-3">
-        <input name="date" type="date" defaultValue={event ? eventDateInput(event.date) : ""} required />
-        <input name="startTime" placeholder="Start" defaultValue={event?.startTime || ""} required />
-        <input name="endTime" placeholder="End" defaultValue={event?.endTime || ""} />
+        <div>
+          <label htmlFor={`date-${event?.id || "new"}`}>Date</label>
+          <input id={`date-${event?.id || "new"}`} name="date" type="date" defaultValue={event ? chicagoDateInputValue(event.date) : ""} required />
+        </div>
+        <div>
+          <label htmlFor={`startTime-${event?.id || "new"}`}>Start time</label>
+          <input id={`startTime-${event?.id || "new"}`} name="startTime" type="time" step="900" defaultValue={timeInputValue(event?.startTime)} />
+          <p className="mt-1 text-xs text-[#6a5c55]">Leave blank for TBD.</p>
+        </div>
+        <div>
+          <label htmlFor={`endTime-${event?.id || "new"}`}>End time</label>
+          <input id={`endTime-${event?.id || "new"}`} name="endTime" type="time" step="900" defaultValue={timeInputValue(event?.endTime)} />
+        </div>
       </div>
-      <input name="venueName" placeholder="Venue" defaultValue={event?.venueName || ""} required />
-      <input name="addressLine1" placeholder="Address" defaultValue={event?.addressLine1 || ""} required />
+      <label htmlFor={`venueName-${event?.id || "new"}`}>Venue name</label>
+      <input id={`venueName-${event?.id || "new"}`} name="venueName" placeholder="Urban Daisy" defaultValue={event?.venueName || ""} required />
+      <label htmlFor={`addressLine1-${event?.id || "new"}`}>Street address</label>
+      <input id={`addressLine1-${event?.id || "new"}`} name="addressLine1" placeholder="1621 E Hennepin Ave" autoComplete="street-address" defaultValue={event?.addressLine1 || ""} required />
       <div className="grid gap-3 sm:grid-cols-3">
-        <input name="city" placeholder="City" defaultValue={event?.city || ""} required />
-        <input name="state" placeholder="State" defaultValue={event?.state || ""} required />
-        <input name="postalCode" placeholder="Postal" defaultValue={event?.postalCode || ""} />
+        <div>
+          <label htmlFor={`city-${event?.id || "new"}`}>City</label>
+          <input id={`city-${event?.id || "new"}`} name="city" placeholder="Minneapolis" autoComplete="address-level2" defaultValue={event?.city || ""} required />
+        </div>
+        <div>
+          <label htmlFor={`state-${event?.id || "new"}`}>State</label>
+          <select id={`state-${event?.id || "new"}`} name="state" autoComplete="address-level1" defaultValue={event?.state || "MN"} required>
+            {states.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={`postalCode-${event?.id || "new"}`}>ZIP code</label>
+          <input id={`postalCode-${event?.id || "new"}`} name="postalCode" placeholder="55414" inputMode="numeric" pattern="\\d{5}(-\\d{4})?" title="Use a 5-digit ZIP code or ZIP+4." autoComplete="postal-code" defaultValue={event?.postalCode || ""} />
+        </div>
       </div>
+      {event && event.mapUrl ? <a className="text-sm font-bold text-[#9b7039] underline" href={event.mapUrl} target="_blank" rel="noreferrer">Verify address in map</a> : null}
+      <label htmlFor={`visibility-${event?.id || "new"}`}>Visibility</label>
       <select name="visibility" defaultValue={event?.visibility || "PUBLIC"}>
-        <option>PUBLIC</option>
-        <option>PRIVATE</option>
-        <option>INVITE_ONLY</option>
+        <option value="PUBLIC">Public</option>
+        <option value="PRIVATE">Private</option>
+        <option value="INVITE_ONLY">Invite-only</option>
       </select>
+      <label htmlFor={`mealOptions-${event?.id || "new"}`}>Meal options</label>
       <input name="mealOptions" placeholder="Meal options separated with |" defaultValue={event?.mealOptions || ""} />
+      <label htmlFor={`parkingInfo-${event?.id || "new"}`}>Parking information</label>
       <textarea name="parkingInfo" placeholder="Parking info" rows={2} defaultValue={event?.parkingInfo || ""} />
+      <label htmlFor={`transportationInfo-${event?.id || "new"}`}>Transportation information</label>
       <textarea name="transportationInfo" placeholder="Transportation info" rows={2} defaultValue={event?.transportationInfo || ""} />
+      <label htmlFor={`dressCode-${event?.id || "new"}`}>Dress code</label>
       <input name="dressCode" placeholder="Dress code" defaultValue={event?.dressCode || ""} />
-      <input name="mapUrl" placeholder="Map URL" defaultValue={event?.mapUrl || ""} />
+      <label htmlFor={`mapUrl-${event?.id || "new"}`}>Map URL</label>
+      <input id={`mapUrl-${event?.id || "new"}`} name="mapUrl" type="url" placeholder="https://maps.google.com/..." defaultValue={event?.mapUrl || ""} />
+      <label htmlFor={`sortOrder-${event?.id || "new"}`}>Sort order</label>
       <input name="sortOrder" type="number" defaultValue={event?.sortOrder ?? 0} />
       <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="rsvpRequired" type="checkbox" defaultChecked={event?.rsvpRequired ?? true} /> RSVP required</label>
       <label className="mb-0 flex items-center gap-2"><input className="h-4 w-4" name="mealSelectionRequired" type="checkbox" defaultChecked={event?.mealSelectionRequired ?? false} /> Meal required</label>
@@ -304,8 +348,8 @@ function EventsManager({ events, households }: { events: EventRecord[]; househol
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#b76768]">Edit event</p>
                   <h2 className="serif text-3xl font-bold">{event.title}</h2>
                   <p className="mt-1 text-sm text-[#6a5c55]">
-                    {event.date.toLocaleDateString()} · {event.startTime}
-                    {event.endTime ? ` - ${event.endTime}` : ""} · {event.venueName}
+                    {event.date.toLocaleDateString()} · {formatTimeForDisplay(event.startTime)}
+                    {event.endTime ? ` - ${formatTimeForDisplay(event.endTime)}` : ""} · {event.venueName}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
