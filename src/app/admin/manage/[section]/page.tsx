@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { AdminActionForm } from "@/components/admin-action-form";
 import {
   assignHouseholdToEventAction,
   deleteEntityAction,
@@ -282,17 +283,17 @@ function EventsManager({ events, households }: { events: EventRecord[]; househol
   return (
     <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
       <div className="space-y-6">
-        <form action={saveEventAction} className="card space-y-4 p-5">
+        <AdminActionForm action={saveEventAction} resetOnSuccess className="card space-y-4 p-5" successMessage="Event saved.">
           <h2 className="serif text-3xl font-bold">Add event</h2>
           <EventFields />
           <button className="btn btn-primary w-full">Save event</button>
-        </form>
-        <form action={assignHouseholdToEventAction} className="card space-y-4 p-5">
+        </AdminActionForm>
+        <AdminActionForm action={assignHouseholdToEventAction} resetOnSuccess className="card space-y-4 p-5" successMessage="Household invited.">
           <h2 className="serif text-3xl font-bold">Assign household</h2>
           <select name="eventId" required><option value="">Select event</option>{events.map((event) => <option key={event.id} value={event.id}>{event.title}</option>)}</select>
           <select name="householdId" required><option value="">Select household</option>{households.map((household) => <option key={household.id} value={household.id}>{household.name}</option>)}</select>
           <button className="btn btn-secondary w-full">Invite household to event</button>
-        </form>
+        </AdminActionForm>
       </div>
       <div className="grid gap-4">
         {events.map((event) => (
@@ -313,12 +314,12 @@ function EventsManager({ events, households }: { events: EventRecord[]; househol
                 </div>
               </div>
             </summary>
-            <form action={saveEventAction} className="mt-5 space-y-4 border-t border-[#eaded7] pt-5">
+            <AdminActionForm action={saveEventAction} className="mt-5 space-y-4 border-t border-[#eaded7] pt-5" successMessage="Event updated.">
               <EventFields event={event} />
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button className="btn btn-primary flex-1">Update event</button>
               </div>
-            </form>
+            </AdminActionForm>
             <div className="mt-3 flex justify-end">
               <DeleteButton id={event.id} type="event" />
             </div>

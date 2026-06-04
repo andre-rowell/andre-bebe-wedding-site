@@ -177,8 +177,10 @@ export async function saveEventAction(formData: FormData) {
   if (!data.title || !data.slug || !data.type || !data.venueName) return;
   if (id) await prisma.event.update({ where: { id }, data });
   else await prisma.event.create({ data });
+  revalidatePath("/");
   revalidatePath("/admin/manage/events");
   revalidatePath("/events");
+  revalidatePath("/day-of");
 }
 
 export async function assignHouseholdToEventAction(formData: FormData) {

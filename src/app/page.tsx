@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CalendarDays, CalendarHeart, Gift, Heart, MapPin, Plane, Sparkles, Wine } from "lucide-react";
+import { Countdown } from "@/components/countdown";
 import { GuestPage } from "@/components/site-shell";
-import { daysUntil } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
 async function settingsMap() {
@@ -9,9 +9,42 @@ async function settingsMap() {
   return Object.fromEntries(settings.map((setting) => [setting.key, setting.value]));
 }
 
+function chicagoDateParts(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = (type: string) => parts.find((part) => part.type === type)?.value || "";
+  return { year: value("year"), month: value("month"), day: value("day") };
+}
+
+function time24Hour(time: string) {
+  const match = time.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+  if (!match) return "17:00";
+  let hour = Number(match[1]);
+  const minute = match[2] || "00";
+  const meridiem = match[3]?.toUpperCase();
+  if (meridiem === "PM" && hour < 12) hour += 12;
+  if (meridiem === "AM" && hour === 12) hour = 0;
+  return `${String(hour).padStart(2, "0")}:${minute}`;
+}
+
+function ceremonyTargetIso(date: Date, startTime: string) {
+  const { year, month, day } = chicagoDateParts(date);
+  return `${year}-${month}-${day}T${time24Hour(startTime)}:00-05:00`;
+}
+
 export default async function Home() {
-  const settings = await settingsMap();
-  const days = daysUntil(settings.weddingDate || "2027-05-30");
+  const [settings, ceremony] = await Promise.all([
+    settingsMap(),
+    prisma.event.findFirst({ where: { slug: "ceremony", isActive: true } }),
+  ]);
+  const ceremonyDate = ceremony?.date || new Date(`${settings.weddingDate || "2027-05-30"}T22:00:00.000Z`);
+  const ceremonyStartTime = ceremony?.startTime || "5:00 PM";
+  const targetIso = ceremonyTargetIso(ceremonyDate, ceremonyStartTime);
+  const displayDate = ceremonyDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" });
   return (
     <GuestPage>
       <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#15110f] text-white">
@@ -33,7 +66,7 @@ export default async function Home() {
           <div className="mt-6 grid max-w-3xl gap-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#fff4ef] sm:grid-cols-2">
             <p className="flex items-center gap-2">
               <CalendarHeart size={20} />
-              May 30, 2027
+              {displayDate} · {ceremonyStartTime}
             </p>
             <p className="flex items-center gap-2">
               <MapPin size={20} />
@@ -49,19 +82,7 @@ export default async function Home() {
               View Events
             </Link>
           </div>
-          <div className="mt-12 grid max-w-xl grid-cols-4 gap-2">
-            {[
-              [days, "days"],
-              ["00", "hrs"],
-              ["00", "mins"],
-              ["00", "secs"],
-            ].map(([value, label]) => (
-              <div key={label} className="border border-white/30 bg-[#15110f]/22 p-4 text-center backdrop-blur-sm">
-                <p className="serif text-4xl font-semibold">{value}</p>
-                <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#f4e4dc]">{label}</p>
-              </div>
-            ))}
-          </div>
+          <Countdown targetIso={targetIso} />
         </div>
       </section>
       <section className="border-b border-[#e7dbce] py-12 text-center">
