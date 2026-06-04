@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  OWNER
+  PLANNER
+  FAMILY_ADMIN
+  READ_ONLY
+}
+
+enum InvitationStatus {
+  NOT_SENT
+  SENT
+  OPENED
+  RSVP_COMPLETE
+}
+
+enum EventVisibility {
+  PUBLIC
+  PRIVATE
+  INVITE_ONLY
+}
+
+enum RSVPAttending {
+  YES
+  NO
+  UNANSWERED
+}
+
+model AdminUser {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         AdminRole  @default(OWNER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+}
+
+model Household {
+  id                  String             @id @default(cuid())
+  name                String
+  mailingAddressLine1 String?
+  mailingAddressLine2 String?
+  city                String?
+  state               String?
+  postalCode          String?
+  country             String?            @default("United States")
+  primaryEmail        String?
+  primaryPhone        String?
+  inviteCode          String             @unique
+  inviteLinkToken     String             @unique
+  invitationStatus    InvitationStatus   @default(NOT_SENT)
+  notes               String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  guests              Guest[]
+  eventInvitations    EventInvitation[]
+  rsvps               RSVP[]
+  guestbookEntries    GuestbookEntry[]
+}
+
+model Guest {
+  id                String             @id @default(cuid())
+  householdId       String
+  household         Household          @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  firstName         String
+  lastName          String
+  email             String?
+  phone             String?
+  isAdult           Boolean            @default(true)
+  isChild           Boolean            @default(false)
+  plusOneAllowed    Boolean            @default(false)
+  plusOneName       String?
+  relationshipGroup String?
+  tags              String?
+  notes             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  eventInvitations  EventInvitation[]
+  rsvps             RSVP[]
+}
+
+model Event {
+  id                    String             @id @default(cuid())
+  title                 String
+  slug                  String             @unique
+  type                  String
+  description           String
+  date                  DateTime
+  startTime             String
+  endTime               String?
+  venueName             String
+  addressLine1          String
+  addressLine2          String?
+  city                  String
+  state                 String
+  postalCode            String?
+  mapUrl                String?
+  dressCode             String?
+  parkingInfo           String?
+  transportationInfo    String?
+  visibility            EventVisibility    @default(PUBLIC)
+  rsvpRequired          Boolean            @default(true)
+  mealSelectionRequired Boolean            @default(false)
+  mealOptions           String?
+  sortOrder             Int                @default(0)
+  isActive              Boolean            @default(true)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  eventInvitations      EventInvitation[]
+  rsvps                 RSVP[]
+}
+
+model EventInvitation {
+  id             String    @id @default(cuid())
+  eventId        String
+  event          Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  guestId        String?
+  guest          Guest?    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  householdId    String
+  household      Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  invited        Boolean   @default(true)
+  plusOneInvited Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([eventId, guestId])
+}
+
+model RSVP {
+  id                  String         @id @default(cuid())
+  eventId             String
+  event               Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  guestId             String
+  guest               Guest          @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  householdId         String
+  household           Household      @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  attending           RSVPAttending  @default(UNANSWERED)
+  mealChoice          String?
+  dietaryRestrictions String?
+  accessibilityNeeds  String?
+  songRequest         String?
+  travelNotes         String?
+  submittedAt         DateTime?
+  updatedAt           DateTime       @updatedAt
+
+  @@unique([eventId, guestId])
+}
+
+model RegistryLink {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  url         String
+  buttonText  String   @default("Open registry")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FAQItem {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TravelSection {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String
+  url       String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  title     String
+  caption   String?
+  imageUrl  String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GuestbookEntry {
+  id          String     @id @default(cuid())
+  householdId String?
+  household   Household? @relation(fields: [householdId], references: [id], onDelete: SetNull)
+  name        String
+  message     String
+  isApproved  Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+}
+
+model AuditLog {
+  id          String     @id @default(cuid())
+  adminUserId String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    String?
+  createdAt   DateTime   @default(now())
+}
