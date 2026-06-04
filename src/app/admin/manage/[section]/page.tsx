@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { AdminActionForm } from "@/components/admin-action-form";
+import { GuestInlineTable } from "@/components/guest-inline-table";
 import {
   assignHouseholdToEventAction,
   deleteEntityAction,
@@ -35,10 +36,6 @@ type HouseholdWithGuests = Awaited<ReturnType<typeof prisma.household.findMany>>
 };
 
 type EventRecord = Awaited<ReturnType<typeof prisma.event.findMany>>[number];
-type GuestRow = Awaited<ReturnType<typeof prisma.guest.findMany>>[number] & {
-  household: { name: string };
-  eventInvitations: Array<{ event: { title: string } }>;
-};
 
 function DeleteButton({ id, type }: { id: string; type: string }) {
   return (
@@ -114,7 +111,27 @@ async function GuestsManager({ query, households }: { query: string; households:
         <GuestImportPanel />
       </div>
       <div className="grid gap-4">
-        <GuestGrid guests={guests} households={households} />
+        <GuestInlineTable
+          action={saveGuestAction}
+          guests={guests.map((guest) => ({
+            id: guest.id,
+            householdId: guest.householdId,
+            householdName: guest.household.name,
+            firstName: guest.firstName,
+            lastName: guest.lastName,
+            email: guest.email,
+            phone: guest.phone,
+            guestSide: guest.guestSide,
+            relationshipGroup: guest.relationshipGroup,
+            tags: guest.tags,
+            isAdult: guest.isAdult,
+            isChild: guest.isChild,
+            plusOneAllowed: guest.plusOneAllowed,
+            plusOneName: guest.plusOneName,
+            notes: guest.notes,
+          }))}
+          households={households.map((household) => ({ id: household.id, name: household.name }))}
+        />
         {guests.map((guest) => (
           <details key={guest.id} className="card p-5">
             <summary className="cursor-pointer list-none">
@@ -150,73 +167,13 @@ function GuestImportPanel() {
         <p className="mt-1 text-sm leading-6 text-[#6a5c55]">
           Upload a CSV or paste rows. Supported headers include householdName, firstName, lastName, email, phone, side, relationshipGroup, tags, plusOneAllowed, isChild, inviteCode, inviteToken, address, city, state, zip.
         </p>
+        <a className="mt-3 inline-flex text-sm font-bold text-[#9b7039] underline" href="/api/templates/guests-csv">Download sample CSV template</a>
       </div>
       <input name="csvFile" type="file" accept=".csv,text/csv" />
       <label htmlFor="csvText">Or paste CSV</label>
       <textarea id="csvText" name="csvText" rows={6} placeholder={"householdName,firstName,lastName,email,side,relationshipGroup,tags\nThe Smith Household,Jordan,Smith,jordan@example.com,Andre,Friends,out-of-town"} />
       <button className="btn btn-secondary w-full">Import CSV</button>
     </AdminActionForm>
-  );
-}
-
-function GuestGrid({ guests, households }: { guests: GuestRow[]; households: HouseholdWithGuests[] }) {
-  return (
-    <section className="card overflow-hidden">
-      <div className="border-b border-[#eaded7] p-5">
-        <h2 className="serif text-3xl font-bold">Inline guest grid</h2>
-        <p className="mt-1 text-sm text-[#6a5c55]">Edit directly in the grid, then save the row.</p>
-      </div>
-      <div className="overflow-x-auto">
-        <div className="min-w-[1120px]">
-          <div className="grid grid-cols-[1.1fr_1.1fr_1.25fr_0.9fr_1fr_1fr_0.8fr_0.8fr] gap-2 border-b border-[#eaded7] bg-[#fbf7f0] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-[#6a5c55]">
-            <span>Name</span>
-            <span>Household</span>
-            <span>Contact</span>
-            <span>Side</span>
-            <span>Group</span>
-            <span>Tags</span>
-            <span>Flags</span>
-            <span>Save</span>
-          </div>
-          {guests.map((guest) => (
-            <AdminActionForm key={guest.id} action={saveGuestAction} className="grid grid-cols-[1.1fr_1.1fr_1.25fr_0.9fr_1fr_1fr_0.8fr_0.8fr] gap-2 border-b border-[#eaded7] px-4 py-3" successMessage="Saved.">
-              <input type="hidden" name="id" value={guest.id} />
-              <div className="grid gap-2">
-                <input aria-label="First name" name="firstName" defaultValue={guest.firstName} required />
-                <input aria-label="Last name" name="lastName" defaultValue={guest.lastName} required />
-              </div>
-              <select aria-label="Household" name="householdId" defaultValue={guest.householdId} required>
-                {households.map((household) => <option key={household.id} value={household.id}>{household.name}</option>)}
-              </select>
-              <div className="grid gap-2">
-                <input aria-label="Email" name="email" type="email" defaultValue={guest.email || ""} placeholder="Email" />
-                <input aria-label="Phone" name="phone" type="tel" defaultValue={guest.phone || ""} placeholder="Phone" />
-              </div>
-              <select aria-label="Side" name="guestSide" defaultValue={guest.guestSide}>
-                <option value="ANDRE">Andre</option>
-                <option value="BEBE">Bebe</option>
-                <option value="BOTH">Both</option>
-              </select>
-              <select aria-label="Relationship group" name="relationshipGroup" defaultValue={guest.relationshipGroup || ""}>
-                <option value="">Select group</option>
-                {["Family", "Friends", "Wedding Party", "Work", "Out-of-town"].map((group) => <option key={group}>{group}</option>)}
-              </select>
-              <input aria-label="Tags" name="tags" defaultValue={guest.tags || ""} placeholder="tags" />
-              <div className="grid gap-1 text-xs">
-                <label className="mb-0 flex items-center gap-1"><input className="h-4 w-4" name="isAdult" type="checkbox" defaultChecked={guest.isAdult} /> Adult</label>
-                <label className="mb-0 flex items-center gap-1"><input className="h-4 w-4" name="isChild" type="checkbox" defaultChecked={guest.isChild} /> Child</label>
-                <label className="mb-0 flex items-center gap-1"><input className="h-4 w-4" name="plusOneAllowed" type="checkbox" defaultChecked={guest.plusOneAllowed} /> +1</label>
-              </div>
-              <div className="grid gap-2">
-                <input type="hidden" name="plusOneName" value={guest.plusOneName || ""} />
-                <input type="hidden" name="notes" value={guest.notes || ""} />
-                <button className="btn btn-secondary">Save</button>
-              </div>
-            </AdminActionForm>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
