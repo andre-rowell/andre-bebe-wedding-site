@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, CheckCircle2, ChevronDown, LockKeyhole, Search, UsersRound, X } from "lucide-react";
+import { CalendarDays, ChevronDown, LockKeyhole, Search, UsersRound, X } from "lucide-react";
 import { submitRsvpAction } from "@/lib/actions";
 import { formatTimeForDisplay } from "@/lib/event-time";
 import { formatDate } from "@/lib/format";
@@ -36,6 +36,16 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
   const invitedEventCount = household
     ? new Set(household.eventInvitations.filter((invite) => invite.invited && invite.event.isActive).map((invite) => invite.eventId)).size
     : 0;
+  const eventColumns = household
+    ? [...new Map(household.eventInvitations.filter((invite) => invite.event.isActive).map((invite) => [invite.eventId, invite.event])).values()].sort(
+        (a, b) => a.sortOrder - b.sortOrder,
+      )
+    : [];
+  const inviteByGuestEvent = new Map(
+    household?.eventInvitations.filter((invite) => invite.guestId && invite.event.isActive).map((invite) => [`${invite.guestId}:${invite.eventId}`, invite]) || [],
+  );
+  const matrixMinWidth = `${Math.max(42, 13 + eventColumns.length * 10)}rem`;
+  const hasMealEvents = eventColumns.some((event) => event.mealSelectionRequired);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#15110f] text-[#211915]">
@@ -51,16 +61,16 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
         <X size={20} aria-hidden="true" />
       </Link>
 
-      <section className="relative z-10 flex min-h-screen items-center justify-center px-3 py-4 sm:px-6 sm:py-8" aria-labelledby="rsvp-title">
+      <section className="relative z-10 flex min-h-screen items-center justify-center px-2 py-2 sm:px-4 sm:py-4" aria-labelledby="rsvp-title">
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="rsvp-title"
-          className="animate-fade flex max-h-[calc(100vh-2rem)] w-full max-w-6xl flex-col overflow-hidden border border-[#d8c8b7] bg-[#fffaf4] shadow-[0_30px_110px_rgba(0,0,0,0.42)] sm:max-h-[calc(100vh-4rem)]"
+          className="animate-fade flex max-h-[calc(100vh-1rem)] w-full max-w-[92rem] flex-col overflow-hidden border border-[#d8c8b7] bg-[#fffaf4] shadow-[0_30px_110px_rgba(0,0,0,0.42)] sm:max-h-[calc(100vh-2rem)]"
         >
           <header className="shrink-0 border-b border-[#ded2c4] bg-[#fffaf4]/96 backdrop-blur">
             <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_18rem]">
-              <div className="p-5 sm:p-7">
+              <div className="p-4 sm:p-5">
                 <div className="flex items-start gap-4">
                   <span className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center border border-[#d8c8b7] bg-[#fbf2e7]">
                     <LockKeyhole size={18} aria-hidden="true" />
@@ -108,7 +118,7 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                 ) : null}
               </div>
 
-              <aside className="hidden border-l border-[#ded2c4] bg-[#fbf2e7] p-6 lg:block">
+              <aside className="hidden border-l border-[#ded2c4] bg-[#fbf2e7] p-5 lg:block">
                 {household ? (
                   <div className="grid h-full content-center gap-4">
                     <p className="fine-print text-[#9a6932]">{household.inviteCode}</p>
@@ -146,8 +156,8 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                 <div className="mb-5 grid gap-4 border-y border-[#ded2c4] bg-[#fffaf4]/70 py-4 sm:grid-cols-[1fr_auto] sm:items-center">
                   <div>
                     <p className="eyebrow">Your invitees</p>
-                    <h2 className="serif mt-1 text-2xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-3xl">Respond by person</h2>
-                    <p className="mt-2 text-sm leading-6 text-[#5f5149]">Each line below is tied to a guest on your household invitation.</p>
+                    <h2 className="serif mt-1 text-2xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-3xl">Group RSVP</h2>
+                    <p className="mt-2 text-sm leading-6 text-[#5f5149]">Guests are rows, events are columns, and unavailable cells are controlled by your invitation.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-center lg:hidden">
                     <div className="border border-[#ded2c4] px-4 py-3">
@@ -163,136 +173,171 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
 
                 <form action={submitRsvpAction}>
                   <input type="hidden" name="householdId" value={household.id} />
-                  <div className="grid gap-5">
-                    {household.guests.map((guest, guestIndex) => {
-                      const invitations = household.eventInvitations
-                        .filter((invite) => invite.guestId === guest.id && invite.invited && invite.event.isActive)
-                        .sort((a, b) => a.event.sortOrder - b.event.sortOrder);
+                  <div className="overflow-hidden border border-[#d7c6b5] bg-[#fffdf9] shadow-[0_12px_38px_rgba(58,43,34,0.045)]">
+                    <div className="grid gap-3 border-b border-[#ded2c4] bg-[#fffaf4] px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                      <div>
+                        <p className="eyebrow">RSVP matrix</p>
+                        <h3 className="serif mt-1 text-2xl font-semibold leading-none">Family responses</h3>
+                      </div>
+                      <div className="flex flex-wrap gap-2 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[#7b6d64]">
+                        <span className="border border-[#cdbfad] bg-[#fffdf9] px-3 py-2">Yes / No</span>
+                        <span className="border border-[#d8cfc3] bg-[#ece5dc] px-3 py-2">Unavailable</span>
+                      </div>
+                    </div>
 
-                      return (
-                        <section key={guest.id} className="overflow-hidden border border-[#d7c6b5] bg-[#fffdf9] shadow-[0_12px_38px_rgba(58,43,34,0.045)]">
-                          <div className="grid gap-3 border-b border-[#ded2c4] bg-[#fffaf4] p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
-                            <div className="min-w-0">
-                              <p className="fine-print">
-                                Invitee {guestIndex + 1} / {guest.isChild ? "Child" : "Adult"}{guest.plusOneAllowed ? " / plus-one eligible" : ""}
-                              </p>
-                              <h3 className="serif mt-1 text-2xl font-semibold leading-none sm:text-3xl">{guest.firstName} {guest.lastName}</h3>
-                            </div>
-                            <CheckCircle2 className="hidden text-[#9a6932] sm:block" aria-hidden="true" />
-                          </div>
-
-                          {guest.plusOneAllowed ? (
-                            <div className="border-b border-[#ded2c4] bg-[#fbf2e7] p-4 sm:p-5">
-                              <label htmlFor={`plusOneName:${guest.id}`}>Plus-one name</label>
-                              <input id={`plusOneName:${guest.id}`} name={`plusOneName:${guest.id}`} defaultValue={guest.plusOneName || ""} placeholder="Guest name" />
-                              <p className="mt-2 text-xs leading-5 text-[#6b5c51]">Only one plus-one is available because it is included on this invitation.</p>
-                            </div>
-                          ) : null}
-
-                          <div className="divide-y divide-[#e6dbce]">
-                            {invitations.length ? null : <p className="text-sm text-[#5f5149]">No RSVP-required events are assigned to this guest yet.</p>}
-                            {invitations.map((invite) => {
-                              const event = invite.event;
-                              const existing = rsvpByGuestEvent.get(`${guest.id}:${event.id}`);
-                              const mealOptions = (event.mealOptions || "").split("|").filter(Boolean);
-                              const location = event.venueName.includes("TBD") || event.city === "TBD" ? "Location to be announced" : `${event.venueName}, ${event.city}, ${event.state}`;
-                              const eventWeekday = event.date.toLocaleDateString("en-US", { weekday: "short", timeZone: "America/Chicago" });
-                              const eventDay = event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" });
-                              const eventMonth = event.date.toLocaleDateString("en-US", { month: "short", timeZone: "America/Chicago" });
-                              const detailsOpen = Boolean(
-                                event.mealSelectionRequired ||
-                                  existing?.mealChoice ||
-                                  existing?.dietaryRestrictions ||
-                                  existing?.accessibilityNeeds ||
-                                  existing?.songRequest ||
-                                  existing?.travelNotes,
-                              );
-
-                              return (
-                                <article key={invite.id} className="bg-[#fffdf9] px-4 py-4 sm:px-5">
-                                  <div className="grid gap-4 lg:grid-cols-[4.75rem_minmax(0,1fr)_minmax(14rem,auto)] lg:items-start">
-                                    <div className="grid w-full max-w-24 grid-cols-[auto_1fr] items-center gap-3 border-l border-[#c7a983] pl-3 text-left lg:block lg:border-l-0 lg:border-t lg:pl-0 lg:pt-3 lg:text-center">
-                                      <p className="fine-print text-[#9a6932] lg:mb-1">{eventWeekday}</p>
-                                      <div>
-                                        <p className="serif text-3xl font-semibold leading-none text-[#211915] sm:text-4xl">{eventDay}</p>
-                                        <p className="fine-print mt-1">{eventMonth}</p>
-                                      </div>
+                    {eventColumns.length ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full border-collapse text-left" style={{ minWidth: matrixMinWidth }}>
+                          <caption className="sr-only">Household RSVP matrix by guest and event</caption>
+                          <thead>
+                            <tr className="border-b border-[#ded2c4] bg-[#faf6ef] align-top">
+                              <th scope="col" className="sticky left-0 z-20 w-52 border-r border-[#ded2c4] bg-[#faf6ef] px-4 py-3">
+                                <span className="fine-print">Guest</span>
+                              </th>
+                              {eventColumns.map((event) => (
+                                <th key={event.id} scope="col" className="min-w-40 border-r border-[#eadfd2] px-3 py-3 last:border-r-0">
+                                  <p className="line-clamp-2 text-sm font-bold uppercase tracking-[0.1em] text-[#211915]">{event.title}</p>
+                                  <p className="mt-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[#9a6932]">
+                                    {event.date.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "America/Chicago" })} / {formatTimeForDisplay(event.startTime)}
+                                  </p>
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {household.guests.map((guest, guestIndex) => (
+                              <tr key={guest.id} className="border-b border-[#eadfd2] align-top last:border-b-0">
+                                <th scope="row" className="sticky left-0 z-10 w-52 border-r border-[#ded2c4] bg-[#fffdf9] px-4 py-3">
+                                  <p className="fine-print">
+                                    Invitee {guestIndex + 1} / {guest.isChild ? "Child" : "Adult"}
+                                  </p>
+                                  <p className="serif mt-1 text-2xl font-semibold leading-none">{guest.firstName} {guest.lastName}</p>
+                                  {guest.plusOneAllowed ? (
+                                    <div className="mt-3">
+                                      <label className="text-[0.62rem]" htmlFor={`plusOneName:${guest.id}`}>Plus-one name</label>
+                                      <input id={`plusOneName:${guest.id}`} name={`plusOneName:${guest.id}`} defaultValue={guest.plusOneName || ""} placeholder="Guest name" />
                                     </div>
+                                  ) : null}
+                                </th>
+                                {eventColumns.map((event) => {
+                                  const invite = inviteByGuestEvent.get(`${guest.id}:${event.id}`);
+                                  const existing = rsvpByGuestEvent.get(`${guest.id}:${event.id}`);
 
-                                    <div className="min-w-0 lg:pt-1">
-                                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                        <p className="eyebrow">{formatTimeForDisplay(event.startTime)}</p>
-                                        <span className="hidden h-px w-8 bg-[#d3b993] sm:inline-block" aria-hidden="true" />
+                                  if (!invite?.invited) {
+                                    return (
+                                      <td key={event.id} className="border-r border-[#ded2c4] bg-[#ece5dc] px-3 py-3 text-center last:border-r-0">
+                                        <span className="inline-flex min-h-12 w-full items-center justify-center border border-[#d8cfc3] bg-[#e4ddd4] px-3 text-[0.66rem] font-bold uppercase tracking-[0.12em] text-[#87786e]">
+                                          Unavailable
+                                        </span>
+                                      </td>
+                                    );
+                                  }
+
+                                  return (
+                                    <td key={event.id} className="border-r border-[#eadfd2] bg-[#fffdf9] px-3 py-3 last:border-r-0">
+                                      <fieldset aria-label={`${guest.firstName} ${event.title} attendance`}>
+                                        <legend className="sr-only">Attendance</legend>
+                                        <div className="grid grid-cols-2 border border-[#cdbfad] bg-[#fffaf4] p-1">
+                                          {["YES", "NO"].map((choice) => (
+                                            <label key={choice} className="mb-0 cursor-pointer">
+                                              <input
+                                                className="peer sr-only"
+                                                type="radio"
+                                                name={`attending:${guest.id}:${event.id}`}
+                                                value={choice}
+                                                defaultChecked={(existing?.attending || "UNANSWERED") === choice}
+                                                required
+                                              />
+                                              <span className="flex min-h-10 items-center justify-center px-3 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-[#493c35] peer-checked:bg-[#211915] peer-checked:text-white">
+                                                {choice === "YES" ? "Yes" : "No"}
+                                              </span>
+                                            </label>
+                                          ))}
+                                        </div>
+                                      </fieldset>
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="px-4 py-5 text-sm leading-6 text-[#5f5149]">No RSVP-required events are assigned to this household yet.</p>
+                    )}
+                  </div>
+
+                  <details className="celebration-detail mt-5 border border-[#d7c6b5] bg-[#fffdf9]" open={hasMealEvents}>
+                    <summary className="flex list-none items-center justify-between gap-4 px-4 py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#7f542b]">
+                      Meal choices, dietary notes, access needs & songs
+                      <ChevronDown className="detail-icon shrink-0" size={16} aria-hidden="true" />
+                    </summary>
+                    <div className="border-t border-[#eadfd2] p-4">
+                      <p className="mb-4 max-w-3xl text-sm leading-6 text-[#5f5149]">
+                        Add meal choices and notes for invited guests. These details are saved with each guest&apos;s event response.
+                      </p>
+                      <div className="grid gap-4 lg:grid-cols-2">
+                        {household.guests.map((guest) => {
+                          const invitedEvents = eventColumns.filter((event) => inviteByGuestEvent.get(`${guest.id}:${event.id}`)?.invited);
+                          if (!invitedEvents.length) return null;
+
+                          return (
+                            <section key={guest.id} className="border border-[#eadfd2] bg-[#fffaf4]">
+                              <div className="border-b border-[#eadfd2] px-4 py-3">
+                                <p className="fine-print">{guest.isChild ? "Child" : "Adult"}</p>
+                                <h4 className="serif mt-1 text-2xl font-semibold leading-none">{guest.firstName} {guest.lastName}</h4>
+                              </div>
+                              <div className="divide-y divide-[#eadfd2]">
+                                {invitedEvents.map((event) => {
+                                  const existing = rsvpByGuestEvent.get(`${guest.id}:${event.id}`);
+                                  const mealOptions = (event.mealOptions || "").split("|").filter(Boolean);
+                                  return (
+                                    <div key={event.id} className="p-4">
+                                      <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div>
+                                          <p className="eyebrow">{formatTimeForDisplay(event.startTime)}</p>
+                                          <h5 className="serif mt-1 text-xl font-semibold uppercase leading-none tracking-[0.06em]">{event.title}</h5>
+                                        </div>
                                         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7b6d64]">{formatDate(event.date)}</p>
                                       </div>
-                                      <h4 className="serif mt-2 text-2xl font-semibold uppercase leading-none tracking-[0.07em] sm:text-[1.85rem]">{event.title}</h4>
-                                      <p className="mt-2 text-sm leading-6 text-[#5f5149]">{location}</p>
-                                    </div>
-
-                                    <fieldset className="lg:pt-1" aria-label={`${guest.firstName} ${event.title} attendance`}>
-                                      <legend className="sr-only">Attendance</legend>
-                                      <div className="grid grid-cols-2 border border-[#cdbfad] bg-[#fffaf4] p-1">
-                                        {["YES", "NO"].map((choice) => (
-                                          <label key={choice} className="mb-0 cursor-pointer">
-                                            <input
-                                              className="peer sr-only"
-                                              type="radio"
-                                              name={`attending:${guest.id}:${event.id}`}
-                                              value={choice}
-                                              defaultChecked={(existing?.attending || "UNANSWERED") === choice}
-                                              required
-                                            />
-                                            <span className="flex min-h-10 items-center justify-center px-3 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-[#493c35] peer-checked:bg-[#211915] peer-checked:text-white">
-                                              {choice === "YES" ? "Yes" : "No"}
-                                            </span>
-                                          </label>
-                                        ))}
-                                      </div>
-                                      <p className="mt-2 text-center text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#8a7b70]">Will attend?</p>
-                                    </fieldset>
-                                  </div>
-
-                                  <details className="celebration-detail mt-4 border-t border-[#eadfd2] pt-3" open={detailsOpen}>
-                                    <summary className="flex list-none items-center justify-between gap-4 text-xs font-bold uppercase tracking-[0.16em] text-[#7f542b]">
-                                      {event.mealSelectionRequired ? "Meal, dietary, access & song notes" : "Dietary, access & song notes"}
-                                      <ChevronDown className="detail-icon shrink-0" size={16} aria-hidden="true" />
-                                    </summary>
-                                    <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                                      {event.mealSelectionRequired ? (
+                                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                                        {event.mealSelectionRequired ? (
+                                          <div>
+                                            <label htmlFor={`meal:${guest.id}:${event.id}`}>Meal choice</label>
+                                            <select id={`meal:${guest.id}:${event.id}`} name={`meal:${guest.id}:${event.id}`} defaultValue={existing?.mealChoice || ""}>
+                                              <option value="">Select a meal if attending</option>
+                                              {mealOptions.map((meal) => <option key={meal}>{meal}</option>)}
+                                            </select>
+                                          </div>
+                                        ) : null}
                                         <div>
-                                          <label htmlFor={`meal:${guest.id}:${event.id}`}>Meal choice</label>
-                                          <select id={`meal:${guest.id}:${event.id}`} name={`meal:${guest.id}:${event.id}`} defaultValue={existing?.mealChoice || ""}>
-                                            <option value="">Select a meal if attending</option>
-                                            {mealOptions.map((meal) => <option key={meal}>{meal}</option>)}
-                                          </select>
+                                          <label htmlFor={`dietary:${guest.id}:${event.id}`}>Dietary restrictions</label>
+                                          <input id={`dietary:${guest.id}:${event.id}`} name={`dietary:${guest.id}:${event.id}`} defaultValue={existing?.dietaryRestrictions || ""} placeholder="None, vegetarian, allergies..." />
                                         </div>
-                                      ) : null}
-                                      <div>
-                                        <label htmlFor={`dietary:${guest.id}:${event.id}`}>Dietary restrictions</label>
-                                        <input id={`dietary:${guest.id}:${event.id}`} name={`dietary:${guest.id}:${event.id}`} defaultValue={existing?.dietaryRestrictions || ""} placeholder="None, vegetarian, allergies..." />
+                                        <div>
+                                          <label htmlFor={`accessibility:${guest.id}:${event.id}`}>Accessibility needs</label>
+                                          <input id={`accessibility:${guest.id}:${event.id}`} name={`accessibility:${guest.id}:${event.id}`} defaultValue={existing?.accessibilityNeeds || ""} placeholder="Optional" />
+                                        </div>
+                                        <div>
+                                          <label htmlFor={`song:${guest.id}:${event.id}`}>Song request</label>
+                                          <input id={`song:${guest.id}:${event.id}`} name={`song:${guest.id}:${event.id}`} defaultValue={existing?.songRequest || ""} placeholder="Optional" />
+                                        </div>
                                       </div>
-                                      <div>
-                                        <label htmlFor={`accessibility:${guest.id}:${event.id}`}>Accessibility needs</label>
-                                        <input id={`accessibility:${guest.id}:${event.id}`} name={`accessibility:${guest.id}:${event.id}`} defaultValue={existing?.accessibilityNeeds || ""} placeholder="Optional" />
-                                      </div>
-                                      <div>
-                                        <label htmlFor={`song:${guest.id}:${event.id}`}>Song request</label>
-                                        <input id={`song:${guest.id}:${event.id}`} name={`song:${guest.id}:${event.id}`} defaultValue={existing?.songRequest || ""} placeholder="Optional" />
+                                      <div className="mt-3">
+                                        <label htmlFor={`travel:${guest.id}:${event.id}`}>Travel or shuttle notes</label>
+                                        <input id={`travel:${guest.id}:${event.id}`} name={`travel:${guest.id}:${event.id}`} defaultValue={existing?.travelNotes || ""} placeholder="Optional" />
                                       </div>
                                     </div>
-                                    <div className="mt-4">
-                                      <label htmlFor={`travel:${guest.id}:${event.id}`}>Travel or shuttle notes</label>
-                                      <input id={`travel:${guest.id}:${event.id}`} name={`travel:${guest.id}:${event.id}`} defaultValue={existing?.travelNotes || ""} placeholder="Optional" />
-                                    </div>
-                                  </details>
-                                </article>
-                              );
-                            })}
-                          </div>
-                        </section>
-                      );
-                    })}
-                  </div>
+                                  );
+                                })}
+                              </div>
+                            </section>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </details>
 
                   <div className="sticky bottom-0 z-10 -mx-4 mt-6 grid gap-3 border-t border-[#d6c8b8] bg-[#fffaf4]/96 px-4 py-3 text-[#211915] shadow-[0_-18px_42px_rgba(58,43,34,0.12)] backdrop-blur sm:-mx-6 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div>
