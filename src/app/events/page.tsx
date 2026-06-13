@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CalendarPlus, MapPin } from "lucide-react";
 import { GuestPage, PageHero } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
-import { formatTimeForDisplay } from "@/lib/event-time";
+import { formatEventTimeRange, hasKnownTime } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
 
 function eventImage(slug: string, index: number) {
@@ -34,7 +34,7 @@ export default async function EventsPage({ searchParams }: { searchParams?: Prom
           <div className="ruled-list">
           {events.map((event, index) => (
             <article key={event.id} className="grid min-w-0 gap-5 py-8 md:grid-cols-[5.5rem_minmax(10rem,14rem)_minmax(0,1fr)] md:items-start">
-              <div className="text-left md:text-center">
+              <div className="date-lockup-center text-left md:text-center">
                 <p className="fine-print text-[#9b7039]">{event.date.toLocaleDateString("en-US", { weekday: "short", timeZone: "America/Chicago" })}</p>
                 <p className="serif mt-1 text-5xl font-semibold leading-none">{event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" })}</p>
                 <p className="fine-print mt-1">{event.date.toLocaleDateString("en-US", { month: "short", timeZone: "America/Chicago" })}</p>
@@ -43,7 +43,7 @@ export default async function EventsPage({ searchParams }: { searchParams?: Prom
                 <img src={eventImage(event.slug, index)} alt="" loading="lazy" decoding="async" className="object-cover" />
               </div>
               <div className="min-w-0">
-                <p className="eyebrow">{formatTimeForDisplay(event.startTime)}{event.endTime ? ` - ${formatTimeForDisplay(event.endTime)}` : ""}</p>
+                <p className="eyebrow">{formatEventTimeRange(event.startTime, event.endTime)}</p>
                 <h2 className="serif mt-2 text-3xl font-semibold uppercase leading-[0.95] tracking-[0.08em] sm:text-4xl">{event.title}</h2>
                 <p className="mt-3 text-sm font-semibold">{event.venueName}</p>
                 <p className="text-sm leading-6 text-[#6d625b]">
@@ -57,8 +57,12 @@ export default async function EventsPage({ searchParams }: { searchParams?: Prom
                 </div>
                 <div className="mt-5 flex flex-wrap gap-3">
                   {event.mapUrl ? <a className="btn btn-secondary" href={event.mapUrl} target="_blank" rel="noreferrer"><MapPin size={15} /> Map</a> : null}
-                  <a className="btn btn-primary" href={googleCalendarUrl(event)} target="_blank" rel="noreferrer"><CalendarPlus size={15} /> Google calendar</a>
-                  <a className="btn btn-secondary" href={`/api/calendar/${event.id}`}>Apple calendar</a>
+                  {hasKnownTime(event.startTime) ? (
+                    <>
+                      <a className="btn btn-primary" href={googleCalendarUrl(event)} target="_blank" rel="noreferrer"><CalendarPlus size={15} /> Google calendar</a>
+                      <a className="btn btn-secondary" href={`/api/calendar/${event.id}`}>Apple calendar</a>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </article>

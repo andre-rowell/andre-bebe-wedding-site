@@ -3,7 +3,7 @@ import { CalendarPlus, ChevronRight, ExternalLink, MapPin } from "lucide-react";
 import { Countdown } from "@/components/countdown";
 import { GuestPage } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
-import { formatTimeForDisplay, timeInputValue } from "@/lib/event-time";
+import { formatEventTimeRange, formatTimeForDisplay, hasKnownTime, timeInputValue } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
 
 async function settingsMap() {
@@ -146,10 +146,13 @@ export default async function Home() {
             <div className="min-w-0">
               <div className="ruled-list">
                 {storyTimeline.map(([year, title, copy], index) => (
-                  <article key={`${year}-${title}`} className="animate-in grid gap-4 py-7 sm:grid-cols-[7rem_1fr]" style={{ animationDelay: `${index * 80}ms` }}>
-                    <p className="serif text-4xl font-semibold leading-none text-[#a6753d] sm:text-5xl">{year}</p>
+                  <article key={`${year}-${title}`} className="animate-in grid gap-5 py-7 sm:grid-cols-[8.5rem_1fr]" style={{ animationDelay: `${index * 80}ms` }}>
+                    <div className="date-lockup">
+                      <p className="fine-print text-[#9a6932]">Key date</p>
+                      <p className="serif mt-1 text-4xl font-semibold leading-none text-[#a6753d] sm:text-5xl">{year}</p>
+                    </div>
                     <div className="min-w-0">
-                      <h3 className="serif text-3xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-4xl">{title}</h3>
+                      <h3 className="serif text-2xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-3xl">{title}</h3>
                       <p className="mt-3 max-w-md text-[0.98rem] leading-7 text-[#5f5149]">{copy}</p>
                     </div>
                   </article>
@@ -193,13 +196,17 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="celebration" className="scroll-mt-24 py-16 sm:py-24">
+      <section id="celebration" className="dark-editorial scroll-mt-24 py-16 sm:py-24">
         <div className="container">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start">
+          <div className="grid gap-12 lg:grid-cols-[minmax(18rem,0.68fr)_minmax(0,1.32fr)] lg:items-start">
             <div className="min-w-0 lg:sticky lg:top-28">
               <p className="eyebrow">Our celebration</p>
-              <h2 className="editorial-title-sm mt-4 text-balance">A weekend in Minneapolis</h2>
-              <p className="mt-7 max-w-xl text-[1.02rem] leading-8 text-[#5f5149]">
+              <h2 className="editorial-title-sm mt-4 max-w-[29rem] text-balance">
+                A weekend
+                <br />
+                in Minneapolis
+              </h2>
+              <p className="mt-7 max-w-xl text-[1.02rem] leading-8 text-[#e8d9c8]">
                 Ceremony, cocktails, dinner, dancing, and a little extra time together around the wedding weekend. Private invitation details stay protected in each household link.
               </p>
               <div className="mt-8 grid gap-3 sm:max-w-lg sm:grid-cols-2 lg:grid-cols-1">
@@ -211,9 +218,9 @@ export default async function Home() {
             <div className="ruled-list min-w-0">
               {events.map((event, index) => (
                 <article key={event.id} className="grid min-w-0 gap-5 py-8 md:grid-cols-[5.5rem_minmax(10rem,13rem)_minmax(0,1fr)] md:items-start">
-                  <div className="text-left md:text-center">
-                    <p className="fine-print text-[#9a6932]">{shortDate(event.date).split(",")[0]}</p>
-                    <p className="serif mt-1 text-5xl font-semibold leading-none">{event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" })}</p>
+                  <div className="date-lockup-center text-left md:text-center">
+                    <p className="fine-print">{shortDate(event.date).split(",")[0]}</p>
+                    <p className="serif mt-1 text-5xl font-semibold leading-none text-[#fffaf4]">{event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" })}</p>
                     <p className="fine-print mt-1">{event.date.toLocaleDateString("en-US", { month: "short", timeZone: "America/Chicago" })}</p>
                   </div>
                   <div className="image-frame h-52 md:h-48">
@@ -222,17 +229,16 @@ export default async function Home() {
                   <div className="min-w-0">
                     <p className="eyebrow">{event.type}</p>
                     <h3 className="serif mt-2 text-3xl font-semibold uppercase leading-[0.95] tracking-[0.08em] sm:text-4xl">{event.title}</h3>
-                    <p className="mt-4 text-sm font-bold uppercase tracking-[0.12em] text-[#3a302a]">
-                      {formatTimeForDisplay(event.startTime)}
-                      {event.endTime ? ` - ${formatTimeForDisplay(event.endTime)}` : ""}
-                    </p>
-                    <p className="mt-3 max-w-md text-[0.96rem] leading-7 text-[#5f5149]">{event.description}</p>
-                    <p className="mt-3 max-w-sm text-sm font-semibold leading-6 text-[#3f342e]">{eventLocation(event)}</p>
+                    <p className="mt-4 text-sm font-bold uppercase tracking-[0.12em] text-[#f0dfcc]">{formatEventTimeRange(event.startTime, event.endTime)}</p>
+                    <p className="mt-3 max-w-md text-[0.96rem] leading-7 text-[#e8d9c8]">{event.description}</p>
+                    <p className="mt-3 max-w-sm text-sm font-semibold leading-6 text-[#fff4e6]">{eventLocation(event)}</p>
                     <div className="mt-5 flex flex-wrap gap-3">
-                      <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary">
-                        <CalendarPlus size={15} aria-hidden="true" />
-                        Add to calendar
-                      </a>
+                      {hasKnownTime(event.startTime) ? (
+                        <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary">
+                          <CalendarPlus size={15} aria-hidden="true" />
+                          Add to calendar
+                        </a>
+                      ) : null}
                       {event.mapUrl ? (
                         <a href={event.mapUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
                           <MapPin size={15} aria-hidden="true" />
@@ -255,7 +261,7 @@ export default async function Home() {
             ].map(([title, copy]) => (
               <article key={title} className="ruled-card">
                 <p className="eyebrow">{title}</p>
-                <p className="mt-4 text-[0.96rem] leading-7 text-[#5f5149]">{copy}</p>
+                <p className="mt-4 text-[0.96rem] leading-7 text-[#e8d9c8]">{copy}</p>
               </article>
             ))}
           </div>
@@ -301,7 +307,7 @@ export default async function Home() {
         <div className="container relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
             <p className="eyebrow text-[#d6ae76]">RSVP</p>
-            <h2 className="serif text-balance mt-3 text-5xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-7xl">Let us know if you can make it</h2>
+            <h2 className="editorial-title-sm mt-3 max-w-[36rem] text-balance text-white">Let us know if you can make it</h2>
           </div>
           <div>
             <p className="text-lg leading-8 text-[#eadfd4]">
@@ -314,21 +320,21 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="registry" className="scroll-mt-24 py-16 sm:py-24">
+      <section id="registry" className="dark-editorial scroll-mt-24 py-16 sm:py-24">
         <div className="container">
           <div className="mx-auto max-w-4xl text-center">
             <p className="ornament justify-center text-sm">◆</p>
             <p className="eyebrow mt-5">Registry</p>
             <h2 className="editorial-title mt-4 text-balance">Your presence is our favorite gift</h2>
-            <p className="mx-auto mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#5f5149]">
+            <p className="mx-auto mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#e8d9c8]">
               If you would like to contribute further, we have included a few registry and fund options below.
             </p>
           </div>
           <div className="mx-auto mt-11 grid max-w-4xl gap-5 md:grid-cols-2">
             {registries.map((registry) => (
-              <article key={registry.id} className="paper-panel p-7 text-center">
+              <article key={registry.id} className="border border-white/15 bg-white/[0.06] p-7 text-center shadow-[0_18px_54px_rgba(0,0,0,0.22)]">
                 <h3 className="serif text-3xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-4xl">{registry.title}</h3>
-                <p className="mx-auto mt-5 max-w-sm text-[0.96rem] leading-7 text-[#5f5149]">{registry.description}</p>
+                <p className="mx-auto mt-5 max-w-sm text-[0.96rem] leading-7 text-[#e8d9c8]">{registry.description}</p>
                 <a href={registry.url} target="_blank" rel="noreferrer" className="btn btn-primary mt-6">
                   {registry.buttonText}
                 </a>
@@ -343,7 +349,7 @@ export default async function Home() {
             ].map(([title, copy]) => (
               <article key={title} className="ruled-card">
                 <h3 className="serif text-3xl font-semibold">{title}</h3>
-                <p className="mt-3 text-[0.96rem] leading-7 text-[#5f5149]">{copy}</p>
+                <p className="mt-3 text-[0.96rem] leading-7 text-[#e8d9c8]">{copy}</p>
               </article>
             ))}
           </div>

@@ -240,6 +240,58 @@ summary {
     linear-gradient(180deg, #fffaf4 0%, #f6ecdf 100%);
 }
 
+.dark-editorial {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(166, 117, 61, 0.15), transparent 28rem),
+    radial-gradient(circle at 84% 12%, rgba(157, 95, 88, 0.1), transparent 24rem),
+    linear-gradient(180deg, #17120f 0%, #1d1612 50%, #130f0d 100%);
+  color: #fffaf4;
+}
+
+.dark-editorial .eyebrow {
+  color: #d6ae76;
+}
+
+.dark-editorial .fine-print {
+  color: #d9c7b4;
+}
+
+.dark-editorial .ruled-list {
+  border-top-color: rgba(214, 174, 118, 0.34);
+  border-bottom-color: rgba(214, 174, 118, 0.34);
+}
+
+.dark-editorial .ruled-list > * + * {
+  border-top-color: rgba(214, 174, 118, 0.2);
+}
+
+.dark-editorial .ruled-card,
+.dark-editorial .date-lockup,
+.dark-editorial .date-lockup-center {
+  border-color: rgba(214, 174, 118, 0.36);
+}
+
+.dark-editorial .btn-primary {
+  border-color: #fffaf4;
+  background: #fffaf4;
+  color: #211915;
+}
+
+.dark-editorial .btn-primary:hover {
+  background: #ffffff;
+}
+
+.dark-editorial .btn-secondary {
+  border-color: rgba(255, 250, 244, 0.44);
+  background: transparent;
+  color: #fffaf4;
+}
+
+.dark-editorial .btn-secondary:hover {
+  border-color: #fffaf4;
+  background: rgba(255, 250, 244, 0.08);
+}
+
 .dark-panel {
   background: #15110f;
   color: #fffaf4;
@@ -293,19 +345,23 @@ summary {
 
 .editorial-title {
   font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-size: clamp(2.8rem, 5.4vw, 5.2rem);
   font-weight: 600;
-  letter-spacing: 0.07em;
-  line-height: 0.88;
+  letter-spacing: 0.052em;
+  line-height: 0.92;
+  max-width: 100%;
+  overflow-wrap: normal;
   text-transform: uppercase;
 }
 
 .editorial-title-sm {
   font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(2.75rem, 5.8vw, 5.25rem);
+  font-size: clamp(2.35rem, 4.2vw, 3.85rem);
   font-weight: 600;
-  letter-spacing: 0.07em;
-  line-height: 0.9;
+  letter-spacing: 0.052em;
+  line-height: 0.94;
+  max-width: 100%;
+  overflow-wrap: normal;
   text-transform: uppercase;
 }
 
@@ -321,6 +377,24 @@ summary {
 .ruled-card {
   border-top: 1px solid rgba(166, 117, 61, 0.38);
   padding-top: 1.45rem;
+}
+
+.date-lockup {
+  border-left: 1px solid rgba(166, 117, 61, 0.42);
+  padding-left: 1rem;
+}
+
+.date-lockup-center {
+  border-left: 1px solid rgba(166, 117, 61, 0.42);
+  padding-left: 1rem;
+}
+
+@media (min-width: 768px) {
+  .date-lockup-center {
+    border-left: 0;
+    padding-left: 0;
+    text-align: center;
+  }
 }
 
 .no-scrollbar {

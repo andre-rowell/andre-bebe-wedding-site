@@ -23,6 +23,17 @@ export function formatTimeForDisplay(time?: string | null) {
   return `${hour}:${minute} ${meridiem}`;
 }
 
+export function hasKnownTime(time?: string | null) {
+  return Boolean(timeInputValue(time));
+}
+
+export function formatEventTimeRange(startTime?: string | null, endTime?: string | null) {
+  if (!hasKnownTime(startTime)) return "TBD";
+  const startLabel = formatTimeForDisplay(startTime);
+  if (!hasKnownTime(endTime)) return startLabel;
+  return `${startLabel} - ${formatTimeForDisplay(endTime)}`;
+}
+
 export function chicagoDateInputValue(date: Date) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Chicago",
