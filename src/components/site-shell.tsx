@@ -4,16 +4,13 @@ import { CalendarHeart, ChevronDown, Menu } from "lucide-react";
 const primaryNav = [
   ["Our Story", "/#story"],
   ["Our Celebration", "/#celebration"],
-  ["Travel & Stay", "/#travel"],
   ["Registry", "/#registry"],
 ];
 
 const secondaryNav = [
-  ["Events", "/events"],
   ["Photos", "/photos"],
   ["Guestbook", "/guestbook"],
   ["Contact", "/contact"],
-  ["Day-of", "/day-of"],
 ];
 
 export function SiteHeader() {

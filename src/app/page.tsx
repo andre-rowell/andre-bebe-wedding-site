@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarPlus, ChevronDown, ChevronRight, ExternalLink, MapPin } from "lucide-react";
+import { CalendarPlus, ChevronDown, ChevronRight, MapPin } from "lucide-react";
 import { Countdown } from "@/components/countdown";
 import { GuestPage } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
@@ -54,10 +54,9 @@ function arrivalTimeForDisplay(startTime: string) {
 }
 
 export default async function Home() {
-  const [settings, events, travelSections] = await Promise.all([
+  const [settings, events] = await Promise.all([
     settingsMap(),
     prisma.event.findMany({ where: { isActive: true, visibility: "PUBLIC" }, orderBy: [{ sortOrder: "asc" }, { date: "asc" }] }),
-    prisma.travelSection.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, take: 8 }),
   ]);
 
   const ceremony = events.find((event) => event.slug === "ceremony") || events[0];
@@ -276,7 +275,7 @@ export default async function Home() {
                 <p className="mt-3 max-w-2xl text-sm leading-7 text-[#d9b6ae]">Expand each event for the date, time, location, attire, parking, kids, plus-ones, and RSVP notes.</p>
                 <div className="mt-7 divide-y divide-[#f0c8bd]/16 border-y border-[#f0c8bd]/16">
                   {eventDetails.map(({ event, date, time, details }) => (
-                    <details key={event.id} className="celebration-detail group" open={event.id === ceremony?.id}>
+                    <details key={event.id} className="celebration-detail group">
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[#f0c8bd]">
                         <span>
                           <span className="block text-base font-semibold">{event.title}</span>
@@ -321,39 +320,6 @@ export default async function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="travel" className="editorial-band scroll-mt-24 py-12 sm:py-24">
-        <div className="container">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end">
-            <div className="min-w-0">
-              <p className="eyebrow">Travel & Stay</p>
-              <h2 className="editorial-title-sm mt-4 text-balance">Make a weekend of it</h2>
-              <p className="mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#5f5149]">
-                A few notes to make travel, lodging, parking, and time in Minneapolis feel easy. Admin updates to the travel page will flow into this section.
-              </p>
-            </div>
-            <div className="image-frame h-56 min-w-0 sm:h-72">
-              <img src="/photos/andre-bebe-car.jpg" alt="Andre and Bebe with a classic car" loading="lazy" decoding="async" className="object-center" />
-            </div>
-          </div>
-          <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {travelSections.slice(0, 4).map((section) => (
-              <article key={section.id} className="ruled-card">
-                <p className="eyebrow">{section.category}</p>
-                <h3 className="serif mt-4 text-3xl font-semibold uppercase leading-none tracking-[0.08em]">{section.title}</h3>
-                <p className="mt-4 text-[0.96rem] leading-7 text-[#5f5149]">{section.content}</p>
-                {section.url ? (
-                  <a href={section.url} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#7f542b]">
-                    Open link
-                    <ExternalLink size={14} aria-hidden="true" />
-                  </a>
-                ) : null}
-              </article>
-            ))}
-          </div>
-          <Link href="/travel" className="btn btn-secondary mt-8">Full travel guide</Link>
         </div>
       </section>
 
