@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { CalendarPlus, ChevronDown, ChevronRight, ExternalLink, MapPin } from "lucide-react";
+import { CalendarPlus, ChevronDown, ChevronRight, MapPin } from "lucide-react";
 import { Countdown } from "@/components/countdown";
+import { MinneapolisGuide } from "@/components/minneapolis-guide";
 import { GuestPage } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
 import { formatEventTimeRange, formatTimeForDisplay, hasKnownTime, timeInputValue } from "@/lib/event-time";
@@ -121,81 +122,6 @@ export default async function Home() {
       ["RSVP", event.rsvpRequired ? "Please RSVP for this event through your household invitation." : "No RSVP is required for this event."],
     ],
   }));
-  const minneapolisGuide = [
-    {
-      title: "Where to eat",
-      kicker: "Dinner, drinks, and weekend plans",
-      items: [
-        {
-          name: "Spoon and Stable",
-          area: "North Loop",
-          copy: "A polished Minneapolis dinner spot for a reservation-worthy meal before or after the wedding weekend.",
-          href: "https://www.spoonandstable.com/",
-        },
-        {
-          name: "Bar La Grassa",
-          area: "North Loop",
-          copy: "Pasta, wine, and a lively room that works well for a date night or small group dinner.",
-          href: "https://www.barlagrassa.com/",
-        },
-        {
-          name: "Indigena by Owamni",
-          area: "Guthrie Theater",
-          copy: "A thoughtful Indigenous dining experience planned inside the Guthrie, worth checking as the weekend gets closer.",
-          href: "https://owamni.com/",
-        },
-      ],
-    },
-    {
-      title: "Where to stay",
-      kicker: "Hotels with easy city access",
-      items: [
-        {
-          name: "Hewing Hotel",
-          area: "North Loop",
-          copy: "A boutique stay with warm rooms, a rooftop scene, and easy access to downtown Minneapolis.",
-          href: "https://hewinghotel.com/",
-        },
-        {
-          name: "Rand Tower Hotel",
-          area: "Downtown",
-          copy: "An Art Deco downtown option for guests who want a central base for the weekend.",
-          href: "https://www.randtowerhotel.com/",
-        },
-        {
-          name: "Four Seasons Minneapolis",
-          area: "Downtown riverfront",
-          copy: "A refined downtown stay close to restaurants, river views, and weekend exploring.",
-          href: "https://www.fourseasons.com/minneapolis/",
-        },
-      ],
-    },
-    {
-      title: "What to do",
-      kicker: "A few easy Minneapolis moments",
-      items: [
-        {
-          name: "Minneapolis Sculpture Garden",
-          area: "Near Walker Art Center",
-          copy: "A classic Minneapolis stop for art, photos, and an easy walk when the weather is good.",
-          href: "https://www.walkerart.org/minneapolis-sculpture-garden/",
-        },
-        {
-          name: "Mill City Museum",
-          area: "Riverfront",
-          copy: "A riverfront museum that tells the story of Minneapolis through the old flour mill district.",
-          href: "https://www.mnhs.org/millcity",
-        },
-        {
-          name: "Guthrie Theater",
-          area: "Downtown East",
-          copy: "Stop by for architecture, skyline views, or a show if you are making a longer weekend of it.",
-          href: "https://www.guthrietheater.org/",
-        },
-      ],
-    },
-  ];
-
   return (
     <GuestPage>
       <section className="relative overflow-hidden bg-[#15110f] text-[#fffaf4]">
@@ -416,48 +342,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section aria-label="Minneapolis guide" className="dark-editorial border-t border-[#2d211b] py-12 sm:py-20">
-        <div className="container">
-          <div className="grid gap-7 border-y border-[#d6ae76]/25 py-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
-            <div>
-              <p className="eyebrow text-[#d6ae76]">Travel notes</p>
-              <h2 className="serif mt-3 max-w-xl text-4xl font-medium leading-[0.98] text-[#f0c8bd] sm:text-6xl">Meet us in Minneapolis</h2>
-            </div>
-            <p className="max-w-3xl text-[1.02rem] leading-8 text-[#e4cfc7] lg:justify-self-end">
-              If you are making a weekend of it, here are a few places to eat, stay, and explore around the city. We will keep the formal Travel page tucked away until hotel blocks and shuttle details are final.
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            {minneapolisGuide.map((group) => (
-              <article key={group.title} className="section-frame border-[#d6ae76]/24 bg-[#211915]/76 text-[#fffaf4] shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
-                <div className="border-b border-[#d6ae76]/20 p-5 sm:p-6">
-                  <p className="fine-print text-[#d6ae76]">{group.kicker}</p>
-                  <h3 className="serif mt-3 text-3xl font-semibold leading-none text-[#fffaf4] sm:text-4xl">{group.title}</h3>
-                </div>
-                <div className="divide-y divide-[#d6ae76]/18">
-                  {group.items.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group block p-5 text-[#f1dfd8] hover:bg-[#fffaf4]/8 sm:p-6"
-                    >
-                      <span className="flex items-start justify-between gap-4">
-                        <span className="serif text-[1.65rem] font-semibold leading-none text-[#fffaf4] sm:text-3xl">{item.name}</span>
-                        <ExternalLink className="mt-1 shrink-0 text-[#d6ae76] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" size={17} aria-hidden="true" />
-                      </span>
-                      <span className="fine-print mt-3 block text-[#d6ae76]">{item.area}</span>
-                      <span className="mt-3 block text-[0.95rem] leading-7 text-[#e2c9c1]">{item.copy}</span>
-                    </a>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <MinneapolisGuide />
 
       <section id="registry" className="editorial-band scroll-mt-24 py-12 sm:py-16">
         <div className="container">

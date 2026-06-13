@@ -455,6 +455,40 @@ section[id] {
   transform: rotate(180deg);
 }
 
+.minneapolis-guide-section {
+  overflow: hidden;
+  border-top: 1px solid rgba(166, 117, 61, 0.2);
+  border-bottom: 1px solid rgba(166, 117, 61, 0.18);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(166, 117, 61, 0.1), transparent 24rem),
+    linear-gradient(180deg, #fbf8f3 0%, #f4ece2 100%);
+}
+
+.travel-guide-panel {
+  min-height: 16rem;
+  animation: guide-panel-in 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.travel-guide-photo {
+  height: clamp(16rem, 25vw, 22rem);
+  animation: guide-panel-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.travel-guide-photo img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: 50% 46%;
+}
+
+.travel-guide-panel.is-exiting,
+.travel-guide-photo.is-exiting {
+  filter: blur(4px);
+  opacity: 0;
+  transform: translateY(0.45rem);
+  transition: opacity 160ms ease, filter 160ms ease, transform 160ms ease;
+}
+
 .date-lockup {
   border-left: 1px solid rgba(166, 117, 61, 0.42);
   padding-left: 1rem;
@@ -577,6 +611,19 @@ section[id] {
     transform: translateY(1.4rem);
   }
   to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes guide-panel-in {
+  from {
+    filter: blur(4px);
+    opacity: 0;
+    transform: translateY(0.7rem);
+  }
+  to {
+    filter: blur(0);
     opacity: 1;
     transform: translateY(0);
   }
@@ -748,7 +795,9 @@ section[id] {
   .guest-flow .section-frame,
   .guest-flow .ruled-card,
   .guest-flow .winding-moment,
-  .guest-flow .celebration-detail {
+  .guest-flow .celebration-detail,
+  .travel-guide-panel,
+  .travel-guide-photo {
     animation: none !important;
     clip-path: none !important;
     filter: none !important;
