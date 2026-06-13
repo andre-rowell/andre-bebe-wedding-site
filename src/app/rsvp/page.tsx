@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, CheckCircle2, LockKeyhole, Search, UsersRound, X } from "lucide-react";
+import { CalendarDays, CheckCircle2, ChevronDown, LockKeyhole, Search, UsersRound, X } from "lucide-react";
 import { submitRsvpAction } from "@/lib/actions";
 import { formatTimeForDisplay } from "@/lib/event-time";
 import { formatDate } from "@/lib/format";
@@ -143,10 +143,10 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
           <div className="min-h-0 flex-1 overflow-y-auto bg-[#faf6ef]">
             {household ? (
               <section id="responses" className="scroll-mt-4 p-4 sm:p-6">
-                <div className="mb-5 grid gap-4 border border-[#ded2c4] bg-[#fffdf9] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
+                <div className="mb-5 grid gap-4 border-y border-[#ded2c4] bg-[#fffaf4]/70 py-4 sm:grid-cols-[1fr_auto] sm:items-center">
                   <div>
                     <p className="eyebrow">Your invitees</p>
-                    <h2 className="serif mt-1 text-3xl font-semibold uppercase leading-none tracking-[0.08em]">Respond by person</h2>
+                    <h2 className="serif mt-1 text-2xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-3xl">Respond by person</h2>
                     <p className="mt-2 text-sm leading-6 text-[#5f5149]">Each line below is tied to a guest on your household invitation.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-center lg:hidden">
@@ -170,13 +170,13 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                         .sort((a, b) => a.event.sortOrder - b.event.sortOrder);
 
                       return (
-                        <section key={guest.id} className="overflow-hidden border border-[#d7c6b5] bg-[#fffdf9] shadow-[0_12px_38px_rgba(58,43,34,0.055)]">
-                          <div className="grid gap-4 border-b border-[#ded2c4] bg-[#fffaf4] p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:p-5">
+                        <section key={guest.id} className="overflow-hidden border border-[#d7c6b5] bg-[#fffdf9] shadow-[0_12px_38px_rgba(58,43,34,0.045)]">
+                          <div className="grid gap-3 border-b border-[#ded2c4] bg-[#fffaf4] p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
                             <div className="min-w-0">
                               <p className="fine-print">
                                 Invitee {guestIndex + 1} / {guest.isChild ? "Child" : "Adult"}{guest.plusOneAllowed ? " / plus-one eligible" : ""}
                               </p>
-                              <h3 className="serif mt-1 text-3xl font-semibold leading-none sm:text-4xl">{guest.firstName} {guest.lastName}</h3>
+                              <h3 className="serif mt-1 text-2xl font-semibold leading-none sm:text-3xl">{guest.firstName} {guest.lastName}</h3>
                             </div>
                             <CheckCircle2 className="hidden text-[#9a6932] sm:block" aria-hidden="true" />
                           </div>
@@ -189,25 +189,49 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                             </div>
                           ) : null}
 
-                          <div className="grid gap-4 p-4 sm:p-5">
+                          <div className="divide-y divide-[#e6dbce]">
                             {invitations.length ? null : <p className="text-sm text-[#5f5149]">No RSVP-required events are assigned to this guest yet.</p>}
                             {invitations.map((invite) => {
                               const event = invite.event;
                               const existing = rsvpByGuestEvent.get(`${guest.id}:${event.id}`);
                               const mealOptions = (event.mealOptions || "").split("|").filter(Boolean);
                               const location = event.venueName.includes("TBD") || event.city === "TBD" ? "Location to be announced" : `${event.venueName}, ${event.city}, ${event.state}`;
+                              const eventWeekday = event.date.toLocaleDateString("en-US", { weekday: "short", timeZone: "America/Chicago" });
+                              const eventDay = event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" });
+                              const eventMonth = event.date.toLocaleDateString("en-US", { month: "short", timeZone: "America/Chicago" });
+                              const detailsOpen = Boolean(
+                                event.mealSelectionRequired ||
+                                  existing?.mealChoice ||
+                                  existing?.dietaryRestrictions ||
+                                  existing?.accessibilityNeeds ||
+                                  existing?.songRequest ||
+                                  existing?.travelNotes,
+                              );
 
                               return (
-                                <article key={invite.id} className="border border-[#e2d5c5] bg-[#faf6ef] p-4 sm:p-5">
-                                  <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(15rem,auto)] lg:items-start">
-                                    <div className="min-w-0">
-                                      <p className="eyebrow">{formatDate(event.date)} / {formatTimeForDisplay(event.startTime)}</p>
-                                      <h4 className="serif mt-2 text-2xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-3xl">{event.title}</h4>
+                                <article key={invite.id} className="bg-[#fffdf9] px-4 py-4 sm:px-5">
+                                  <div className="grid gap-4 lg:grid-cols-[4.75rem_minmax(0,1fr)_minmax(14rem,auto)] lg:items-start">
+                                    <div className="grid w-full max-w-24 grid-cols-[auto_1fr] items-center gap-3 border-l border-[#c7a983] pl-3 text-left lg:block lg:border-l-0 lg:border-t lg:pl-0 lg:pt-3 lg:text-center">
+                                      <p className="fine-print text-[#9a6932] lg:mb-1">{eventWeekday}</p>
+                                      <div>
+                                        <p className="serif text-3xl font-semibold leading-none text-[#211915] sm:text-4xl">{eventDay}</p>
+                                        <p className="fine-print mt-1">{eventMonth}</p>
+                                      </div>
+                                    </div>
+
+                                    <div className="min-w-0 lg:pt-1">
+                                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                        <p className="eyebrow">{formatTimeForDisplay(event.startTime)}</p>
+                                        <span className="hidden h-px w-8 bg-[#d3b993] sm:inline-block" aria-hidden="true" />
+                                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7b6d64]">{formatDate(event.date)}</p>
+                                      </div>
+                                      <h4 className="serif mt-2 text-2xl font-semibold uppercase leading-none tracking-[0.07em] sm:text-[1.85rem]">{event.title}</h4>
                                       <p className="mt-2 text-sm leading-6 text-[#5f5149]">{location}</p>
                                     </div>
-                                    <fieldset aria-label={`${guest.firstName} ${event.title} attendance`}>
+
+                                    <fieldset className="lg:pt-1" aria-label={`${guest.firstName} ${event.title} attendance`}>
                                       <legend className="sr-only">Attendance</legend>
-                                      <div className="grid grid-cols-2 gap-2">
+                                      <div className="grid grid-cols-2 border border-[#cdbfad] bg-[#fffaf4] p-1">
                                         {["YES", "NO"].map((choice) => (
                                           <label key={choice} className="mb-0 cursor-pointer">
                                             <input
@@ -218,37 +242,35 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                                               defaultChecked={(existing?.attending || "UNANSWERED") === choice}
                                               required
                                             />
-                                            <span className="flex min-h-11 items-center justify-center border border-[#cdbfad] bg-white px-4 text-xs font-bold uppercase tracking-[0.14em] text-[#493c35] peer-checked:border-[#211915] peer-checked:bg-[#211915] peer-checked:text-white">
-                                              {choice === "YES" ? "Accepts" : "Declines"}
+                                            <span className="flex min-h-10 items-center justify-center px-3 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-[#493c35] peer-checked:bg-[#211915] peer-checked:text-white">
+                                              {choice === "YES" ? "Yes" : "No"}
                                             </span>
                                           </label>
                                         ))}
                                       </div>
+                                      <p className="mt-2 text-center text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#8a7b70]">Will attend?</p>
                                     </fieldset>
                                   </div>
 
-                                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                                    {event.mealSelectionRequired ? (
-                                      <div>
-                                        <label htmlFor={`meal:${guest.id}:${event.id}`}>Meal choice</label>
-                                        <select id={`meal:${guest.id}:${event.id}`} name={`meal:${guest.id}:${event.id}`} defaultValue={existing?.mealChoice || ""}>
-                                          <option value="">Select a meal if attending</option>
-                                          {mealOptions.map((meal) => <option key={meal}>{meal}</option>)}
-                                        </select>
-                                      </div>
-                                    ) : null}
-                                    <div>
-                                      <label htmlFor={`dietary:${guest.id}:${event.id}`}>Dietary restrictions</label>
-                                      <input id={`dietary:${guest.id}:${event.id}`} name={`dietary:${guest.id}:${event.id}`} defaultValue={existing?.dietaryRestrictions || ""} placeholder="None, vegetarian, allergies..." />
-                                    </div>
-                                  </div>
-
-                                  <details className="celebration-detail mt-4 border-t border-[#e2d5c5] pt-4">
+                                  <details className="celebration-detail mt-4 border-t border-[#eadfd2] pt-3" open={detailsOpen}>
                                     <summary className="flex list-none items-center justify-between gap-4 text-xs font-bold uppercase tracking-[0.16em] text-[#7f542b]">
-                                      Accessibility, song, and shuttle notes
-                                      <span className="detail-icon text-lg leading-none" aria-hidden="true">+</span>
+                                      {event.mealSelectionRequired ? "Meal, dietary, access & song notes" : "Dietary, access & song notes"}
+                                      <ChevronDown className="detail-icon shrink-0" size={16} aria-hidden="true" />
                                     </summary>
-                                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                                    <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                                      {event.mealSelectionRequired ? (
+                                        <div>
+                                          <label htmlFor={`meal:${guest.id}:${event.id}`}>Meal choice</label>
+                                          <select id={`meal:${guest.id}:${event.id}`} name={`meal:${guest.id}:${event.id}`} defaultValue={existing?.mealChoice || ""}>
+                                            <option value="">Select a meal if attending</option>
+                                            {mealOptions.map((meal) => <option key={meal}>{meal}</option>)}
+                                          </select>
+                                        </div>
+                                      ) : null}
+                                      <div>
+                                        <label htmlFor={`dietary:${guest.id}:${event.id}`}>Dietary restrictions</label>
+                                        <input id={`dietary:${guest.id}:${event.id}`} name={`dietary:${guest.id}:${event.id}`} defaultValue={existing?.dietaryRestrictions || ""} placeholder="None, vegetarian, allergies..." />
+                                      </div>
                                       <div>
                                         <label htmlFor={`accessibility:${guest.id}:${event.id}`}>Accessibility needs</label>
                                         <input id={`accessibility:${guest.id}:${event.id}`} name={`accessibility:${guest.id}:${event.id}`} defaultValue={existing?.accessibilityNeeds || ""} placeholder="Optional" />
@@ -257,10 +279,10 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                                         <label htmlFor={`song:${guest.id}:${event.id}`}>Song request</label>
                                         <input id={`song:${guest.id}:${event.id}`} name={`song:${guest.id}:${event.id}`} defaultValue={existing?.songRequest || ""} placeholder="Optional" />
                                       </div>
-                                      <div>
-                                        <label htmlFor={`travel:${guest.id}:${event.id}`}>Travel or shuttle notes</label>
-                                        <input id={`travel:${guest.id}:${event.id}`} name={`travel:${guest.id}:${event.id}`} defaultValue={existing?.travelNotes || ""} placeholder="Optional" />
-                                      </div>
+                                    </div>
+                                    <div className="mt-4">
+                                      <label htmlFor={`travel:${guest.id}:${event.id}`}>Travel or shuttle notes</label>
+                                      <input id={`travel:${guest.id}:${event.id}`} name={`travel:${guest.id}:${event.id}`} defaultValue={existing?.travelNotes || ""} placeholder="Optional" />
                                     </div>
                                   </details>
                                 </article>
@@ -272,12 +294,12 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                     })}
                   </div>
 
-                  <div className="sticky bottom-0 mt-6 grid gap-4 border border-[#211915] bg-[#211915] p-4 text-[#fffaf4] shadow-[0_-18px_48px_rgba(58,43,34,0.16)] lg:grid-cols-[1fr_auto] lg:items-center">
+                  <div className="sticky bottom-0 z-10 -mx-4 mt-6 grid gap-3 border-t border-[#d6c8b8] bg-[#fffaf4]/96 px-4 py-3 text-[#211915] shadow-[0_-18px_42px_rgba(58,43,34,0.12)] backdrop-blur sm:-mx-6 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div>
-                      <h3 className="serif text-3xl font-semibold">Review & submit</h3>
-                      <p className="mt-1 text-sm leading-6 text-[#eadfd4]">Submitting updates this household&apos;s existing RSVP records.</p>
+                      <h3 className="serif text-2xl font-semibold">Ready to send?</h3>
+                      <p className="mt-1 text-sm leading-6 text-[#5f5149]">You can come back and update these responses before the RSVP deadline.</p>
                     </div>
-                    <button className="btn bg-[#fffaf4] text-[#211915] hover:bg-white">Submit RSVP</button>
+                    <button className="btn btn-primary">Submit RSVP</button>
                   </div>
                 </form>
 
