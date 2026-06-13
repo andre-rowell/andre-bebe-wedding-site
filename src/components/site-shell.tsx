@@ -52,9 +52,8 @@ export function SiteHeader() {
         </div>
 
         <details className="relative lg:hidden">
-          <summary className="btn btn-quiet list-none px-3" aria-label="Open guest navigation">
+          <summary className="btn btn-quiet h-10 w-10 list-none p-0" aria-label="Open guest navigation">
             <Menu size={18} aria-hidden="true" />
-            Menu
           </summary>
           <div className="absolute right-0 mt-3 grid w-[min(20rem,calc(100vw-1.5rem))] gap-1 border border-[#ded2c4] bg-[#fffaf4] p-3 text-[#221914] shadow-2xl">
             {[...primaryNav, ["RSVP", "/rsvp"], ...secondaryNav].map(([label, href]) => (
@@ -98,7 +97,7 @@ export function GuestPage({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <main>{children}</main>
+      <main className="guest-flow">{children}</main>
       <SiteFooter />
     </>
   );
