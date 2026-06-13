@@ -8,18 +8,18 @@ export default async function ContactPage() {
   return (
     <GuestPage>
       <PageHero eyebrow="Contact" title="Need help?" copy="Please check the FAQ first. If you still need anything, send a note and we will point you in the right direction." />
-      <section className="py-10">
+      <section className="py-8 sm:py-10">
         <div className="container grid gap-6 lg:grid-cols-2">
           <div className="section-frame overflow-hidden">
-            <img src="/photos/andre-bebe-car-embrace.jpg" alt="Andre and Bebe in a classic car" loading="lazy" decoding="async" className="h-80 w-full object-cover" />
-            <div className="p-6">
+            <img src="/photos/andre-bebe-car-embrace.jpg" alt="Andre and Bebe in a classic car" loading="lazy" decoding="async" className="h-64 w-full object-cover sm:h-80" />
+            <div className="p-5 sm:p-6">
             <Mail className="text-[#b76768]" />
-            <h2 className="serif mt-4 text-4xl font-semibold">Wedding questions</h2>
+            <h2 className="serif mt-4 text-3xl font-semibold sm:text-4xl">Wedding questions</h2>
             <p className="mt-3 leading-7 text-[#6a5c55]">For RSVP, hotel, shuttle, or weekend questions, email Andre and Bebe&apos;s wedding contact.</p>
-            <a className="btn btn-primary mt-5" href={`mailto:${email}`}>{email}</a>
+            <a className="btn btn-primary mt-5 max-w-full whitespace-normal break-all text-center leading-4" href={`mailto:${email}`}>{email}</a>
             </div>
           </div>
-          <form className="section-frame space-y-4 p-6" action={`mailto:${email}`} method="post" encType="text/plain">
+          <form className="section-frame space-y-4 p-5 sm:p-6" action={`mailto:${email}`} method="post" encType="text/plain">
             <div>
               <label htmlFor="name">Name</label>
               <input id="name" name="name" required />

@@ -36,11 +36,11 @@ export function Countdown({ targetIso }: CountdownProps) {
   ];
 
   return (
-    <div className="mt-12 grid max-w-xl grid-cols-4 gap-2" aria-label="Countdown to the ceremony">
+    <div className="mt-8 grid max-w-xl grid-cols-4 gap-1.5 sm:mt-12 sm:gap-2" aria-label="Countdown to the ceremony">
       {values.map(([value, label]) => (
-        <div key={label} className="border border-white/30 bg-[#15110f]/22 p-4 text-center backdrop-blur-sm">
-          <p className="serif text-4xl font-semibold tabular-nums" suppressHydrationWarning>{value}</p>
-          <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#f4e4dc]">{label}</p>
+        <div key={label} className="border border-white/30 bg-[#15110f]/22 p-2.5 text-center backdrop-blur-sm sm:p-4">
+          <p className="serif text-2xl font-semibold tabular-nums sm:text-4xl" suppressHydrationWarning>{value}</p>
+          <p className="text-[0.56rem] font-bold uppercase tracking-[0.12em] text-[#f4e4dc] sm:text-[0.62rem] sm:tracking-[0.18em]">{label}</p>
         </div>
       ))}
     </div>

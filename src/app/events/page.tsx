@@ -29,22 +29,22 @@ export default async function EventsPage({ searchParams }: { searchParams?: Prom
   return (
     <GuestPage>
       <PageHero eyebrow="Wedding weekend" title="Events" copy="We can't wait to celebrate with you. Private and invite-only events appear when you arrive through your household invitation." />
-      <section className="py-10">
+      <section className="py-8 sm:py-10">
         <div className="container max-w-6xl">
           <div className="ruled-list">
           {events.map((event, index) => (
-            <article key={event.id} className="grid min-w-0 gap-5 py-8 md:grid-cols-[5.5rem_minmax(10rem,14rem)_minmax(0,1fr)] md:items-start">
+            <article key={event.id} className="grid min-w-0 gap-4 py-6 sm:gap-5 sm:py-8 md:grid-cols-[5.5rem_minmax(10rem,14rem)_minmax(0,1fr)] md:items-start">
               <div className="date-lockup-center text-left md:text-center">
                 <p className="fine-print text-[#9b7039]">{event.date.toLocaleDateString("en-US", { weekday: "short", timeZone: "America/Chicago" })}</p>
-                <p className="serif mt-1 text-5xl font-semibold leading-none">{event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" })}</p>
+                <p className="serif mt-1 text-4xl font-semibold leading-none sm:text-5xl">{event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" })}</p>
                 <p className="fine-print mt-1">{event.date.toLocaleDateString("en-US", { month: "short", timeZone: "America/Chicago" })}</p>
               </div>
-              <div className="image-frame h-52 md:h-48">
+              <div className="image-frame h-44 sm:h-52 md:h-48">
                 <img src={eventImage(event.slug, index)} alt="" loading="lazy" decoding="async" className="object-cover" />
               </div>
               <div className="min-w-0">
                 <p className="eyebrow">{formatEventTimeRange(event.startTime, event.endTime)}</p>
-                <h2 className="serif mt-2 text-3xl font-semibold uppercase leading-[0.95] tracking-[0.08em] sm:text-4xl">{event.title}</h2>
+                <h2 className="serif mt-2 text-2xl font-semibold uppercase leading-[0.98] tracking-[0.06em] sm:text-4xl sm:tracking-[0.08em]">{event.title}</h2>
                 <p className="mt-3 text-sm font-semibold">{event.venueName}</p>
                 <p className="text-sm leading-6 text-[#6d625b]">
                   {event.venueName.includes("TBD") || event.city === "TBD" ? "Location to be announced" : `${event.addressLine1}, ${event.city}, ${event.state}`}
@@ -55,7 +55,7 @@ export default async function EventsPage({ searchParams }: { searchParams?: Prom
                   {event.parkingInfo ? <p><strong>Parking:</strong> {event.parkingInfo}</p> : null}
                   {event.transportationInfo ? <p><strong>Transportation:</strong> {event.transportationInfo}</p> : null}
                 </div>
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
                   {event.mapUrl ? <a className="btn btn-secondary" href={event.mapUrl} target="_blank" rel="noreferrer"><MapPin size={15} /> Map</a> : null}
                   {hasKnownTime(event.startTime) ? (
                     <>
@@ -70,7 +70,7 @@ export default async function EventsPage({ searchParams }: { searchParams?: Prom
           </div>
           {!household ? (
             <div className="mt-10 border-y border-[#cbb89f] py-8 text-center">
-              <h2 className="serif text-3xl font-semibold uppercase tracking-[0.08em]">Looking for a private event?</h2>
+              <h2 className="serif text-2xl font-semibold uppercase tracking-[0.06em] sm:text-3xl sm:tracking-[0.08em]">Looking for a private event?</h2>
               <p className="mt-2 text-sm text-[#6d625b]">Use your invitation on the RSVP page to see exactly which events your household is invited to.</p>
               <Link href="/rsvp" className="btn btn-primary mt-5">Find my invitation</Link>
             </div>

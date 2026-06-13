@@ -120,27 +120,26 @@ export default async function Home() {
       ["Kids", event.childrenPolicy || "Children are welcome when they are listed on your household invitation."],
       ["Plus-ones", event.plusOnePolicy || "Please only bring named guests and approved plus-ones shown on your invitation."],
       ["RSVP", event.rsvpRequired ? "Please RSVP for this event through your household invitation." : "No RSVP is required for this event."],
-      ...(event.mealSelectionRequired ? [["Meal selections", "Meal selections will be collected during RSVP."]] : []),
     ],
   }));
 
   return (
     <GuestPage>
       <section className="relative overflow-hidden bg-[#15110f] text-[#fffaf4]">
-        <div className="wide-container grid min-h-[calc(100vh-4.25rem)] gap-10 py-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-12">
+        <div className="wide-container grid min-h-[calc(100dvh-3.75rem)] gap-7 py-5 sm:min-h-[calc(100vh-4.25rem)] sm:gap-10 sm:py-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-12">
           <div className="animate-in relative z-10 order-2 pb-8 lg:order-1 lg:pb-0">
             <p className="eyebrow text-[#d6ae76]">Are getting married</p>
-            <h1 className="serif mt-5 max-w-2xl text-6xl font-semibold uppercase leading-[0.86] tracking-[0.08em] text-white sm:text-8xl lg:text-[8.8rem]">
+            <h1 className="serif mt-4 max-w-2xl text-[3.35rem] font-semibold uppercase leading-[0.86] tracking-[0.055em] text-white sm:mt-5 sm:text-8xl sm:tracking-[0.08em] lg:text-[8.8rem]">
               Andre
               <span className="script block text-[#d4a86a]">&</span>
               Bebe
             </h1>
-            <div className="mt-7 grid max-w-2xl gap-4 border-y border-white/18 py-5 text-[0.72rem] font-bold uppercase tracking-[0.2em] text-[#ead9c6] sm:grid-cols-3">
+            <div className="mt-6 grid max-w-2xl gap-3 border-y border-white/18 py-4 text-[0.64rem] font-bold uppercase tracking-[0.14em] text-[#ead9c6] sm:mt-7 sm:grid-cols-3 sm:gap-4 sm:py-5 sm:text-[0.72rem] sm:tracking-[0.2em]">
               <p>{displayDate}</p>
               <p>{formatTimeForDisplay(ceremonyStartTime)}</p>
               <p>Minneapolis, MN</p>
             </div>
-            <p className="mt-7 max-w-xl text-base leading-8 text-[#eadfd4] sm:text-lg">
+            <p className="mt-5 max-w-xl text-[0.98rem] leading-7 text-[#eadfd4] sm:mt-7 sm:text-lg sm:leading-8">
               {settings.homepageIntro || "We cannot wait to gather the people we love most for a weekend of joy, music, food, and the beginning of our marriage."}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -154,13 +153,13 @@ export default async function Home() {
             <Countdown targetIso={targetIso} />
           </div>
 
-          <div className="relative order-1 min-h-[34rem] lg:order-2 lg:min-h-[45rem]">
-            <div className="image-frame hero-photo absolute inset-x-0 top-0 mx-auto h-[78%] w-[82%] max-w-[42rem] lg:right-0 lg:left-auto">
+          <div className="relative order-1 min-h-[25rem] sm:min-h-[34rem] lg:order-2 lg:min-h-[45rem]">
+            <div className="image-frame hero-photo absolute inset-x-0 top-0 mx-auto h-[80%] w-[92%] max-w-[42rem] sm:w-[82%] lg:right-0 lg:left-auto">
               <img src="/photos/andre-bebe-portrait.jpg" alt="Andre and Bebe in formal engagement attire" fetchPriority="high" className="object-[58%_36%]" />
             </div>
-            <div className="float-paper paper-panel absolute bottom-0 left-0 z-10 w-[min(21rem,78vw)] p-5 text-[#211915] sm:p-6 lg:left-5">
+            <div className="float-paper paper-panel absolute bottom-0 left-1 z-10 w-[min(19rem,86vw)] p-4 text-[#211915] sm:left-0 sm:w-[min(21rem,78vw)] sm:p-6 lg:left-5">
               <p className="fine-print text-[#9a6932]">{displayWeekday}</p>
-              <p className="serif mt-1 text-5xl font-semibold uppercase leading-none">May 30</p>
+              <p className="serif mt-1 text-4xl font-semibold uppercase leading-none sm:text-5xl">May 30</p>
               <p className="mt-3 text-sm leading-6 text-[#5d5048]">Urban Daisy / Minneapolis, Minnesota</p>
             </div>
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_30%,rgba(214,174,118,0.16),transparent_24rem)]" />
@@ -168,7 +167,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="story" className="editorial-band scroll-mt-24 py-16 sm:py-24">
+      <section id="story" className="editorial-band scroll-mt-24 py-12 sm:py-24">
         <div className="container">
           <div className="grid gap-7 lg:grid-cols-[0.42fr_0.58fr] lg:items-end">
             <div>
@@ -180,7 +179,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="winding-timeline mt-14">
+          <div className="winding-timeline mt-10 sm:mt-14">
             <div className="winding-rail" aria-hidden="true" />
             <div className="winding-grid">
               {storyTimeline.map((moment, index) => (
@@ -212,29 +211,29 @@ export default async function Home() {
         </div>
       </section>
 
-      <section aria-label="Engagement photos" className="bg-[#15110f] py-4">
-        <div className="wide-container grid gap-4 md:grid-cols-4">
+      <section aria-label="Engagement photos" className="bg-[#15110f] py-3 sm:py-4">
+        <div className="wide-container grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {[
             ["/photos/bebe-veil-car-bw.jpg", "Bebe with a veil beside the classic car", "md:col-span-1"],
             ["/photos/andre-bebe-car-laugh.jpg", "Andre and Bebe laughing in the car", "md:col-span-1"],
             ["/photos/bebe-foreground.jpg", "Bebe with Andre behind her", "md:col-span-1"],
             ["/photos/andre-bebe-car-embrace.jpg", "Andre and Bebe embracing in the car", "md:col-span-1"],
           ].map(([src, alt, className]) => (
-            <figure key={src} className={`image-frame h-72 ${className}`}>
+            <figure key={src} className={`image-frame h-40 sm:h-72 ${className}`}>
               <img src={src} alt={alt} loading="lazy" decoding="async" />
             </figure>
           ))}
         </div>
       </section>
 
-      <section id="celebration" className="dark-editorial scroll-mt-24 overflow-hidden py-16 sm:py-20">
+      <section id="celebration" className="dark-editorial scroll-mt-24 overflow-hidden py-12 sm:py-20">
         <div className="container">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.72fr)] lg:items-start">
             <div className="min-w-0">
               <div className="grid gap-7 lg:grid-cols-[minmax(0,0.88fr)_minmax(17rem,0.72fr)] lg:items-end">
                 <div>
                   <p className="eyebrow text-[#d6ae76]">Our celebration</p>
-                  <h2 className="serif mt-4 max-w-2xl text-5xl font-medium leading-[0.95] text-[#f0c8bd] sm:text-6xl lg:text-7xl">The wedding weekend</h2>
+                  <h2 className="serif mt-4 max-w-2xl text-4xl font-medium leading-[0.98] text-[#f0c8bd] sm:text-6xl lg:text-7xl">The wedding weekend</h2>
                 </div>
                 <p className="max-w-xl text-[1.04rem] leading-8 text-[#e1c1ba]">
                   We are getting married at Urban Daisy in Minneapolis. It is the perfect blend of warm, modern, and intimate, and we cannot wait to celebrate with great food, music, and your company.
@@ -249,13 +248,13 @@ export default async function Home() {
                   </div>
                   <p className="text-xl font-semibold text-[#f4c7bd] sm:text-2xl">{displayDate}</p>
                 </div>
-                <div className="mt-8 grid max-w-2xl gap-6 border-l border-[#6e4c47] pl-6 sm:grid-cols-2">
+                <div className="mt-7 grid max-w-2xl gap-5 border-l border-[#6e4c47] pl-5 sm:mt-8 sm:grid-cols-2 sm:gap-6 sm:pl-6">
                   <div>
-                    <p className="serif text-5xl leading-none text-[#f0c8bd]">{guestArrivalTime}</p>
+                    <p className="serif text-4xl leading-none text-[#f0c8bd] sm:text-5xl">{guestArrivalTime}</p>
                     <p className="mt-3 text-[#e1c1ba]">Guests arrive</p>
                   </div>
                   <div>
-                    <p className="serif text-5xl leading-none text-[#f0c8bd]">{formatTimeForDisplay(ceremonyStartTime).toLowerCase()}</p>
+                    <p className="serif text-4xl leading-none text-[#f0c8bd] sm:text-5xl">{formatTimeForDisplay(ceremonyStartTime).toLowerCase()}</p>
                     <p className="mt-3 text-[#e1c1ba]">Ceremony begins</p>
                   </div>
                 </div>
@@ -316,8 +315,8 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="relative min-h-[34rem] lg:min-h-[48rem]">
-              <div className="image-frame h-[30rem] rounded-[1.1rem] border-[#f0c8bd]/16 shadow-[0_30px_90px_rgba(0,0,0,0.34)] lg:sticky lg:top-28 lg:h-[42rem]">
+            <div className="relative min-h-0 lg:min-h-[48rem]">
+              <div className="image-frame h-[24rem] rounded-[0.8rem] border-[#f0c8bd]/16 shadow-[0_30px_90px_rgba(0,0,0,0.34)] sm:h-[30rem] lg:sticky lg:top-28 lg:h-[42rem] lg:rounded-[1.1rem]">
                 <img src={ceremony ? eventImage(ceremony.slug, 0) : "/photos/bebe-veil-car-bw.jpg"} alt="Andre and Bebe wedding celebration portrait" loading="lazy" decoding="async" className="object-[50%_42%]" />
               </div>
             </div>
@@ -325,7 +324,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="travel" className="editorial-band scroll-mt-24 py-16 sm:py-24">
+      <section id="travel" className="editorial-band scroll-mt-24 py-12 sm:py-24">
         <div className="container">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end">
             <div className="min-w-0">
@@ -335,7 +334,7 @@ export default async function Home() {
                 A few notes to make travel, lodging, parking, and time in Minneapolis feel easy. Admin updates to the travel page will flow into this section.
               </p>
             </div>
-            <div className="image-frame h-72 min-w-0">
+            <div className="image-frame h-56 min-w-0 sm:h-72">
               <img src="/photos/andre-bebe-car.jpg" alt="Andre and Bebe with a classic car" loading="lazy" decoding="async" className="object-center" />
             </div>
           </div>
@@ -358,7 +357,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[#15110f] py-16 text-[#fffaf4] sm:py-24">
+      <section className="relative overflow-hidden bg-[#15110f] py-12 text-[#fffaf4] sm:py-24">
         <img src="/photos/andre-bebe-close.jpg" alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-28" />
         <div className="absolute inset-0 bg-[#15110f]/72" />
         <div className="container relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
@@ -368,7 +367,7 @@ export default async function Home() {
           </div>
           <div>
             <p className="text-lg leading-8 text-[#eadfd4]">
-              Please RSVP and make meal selections by {rsvpDeadline}. Your invite code unlocks your household, your invited events, and each guest&apos;s response.
+              Please RSVP by {rsvpDeadline}. Your invite code unlocks your household, your invited events, and each guest&apos;s response.
             </p>
             <Link href="/rsvp" className="btn mt-7 bg-[#fffaf4] text-[#211915] hover:bg-white">
               Open RSVP

@@ -28,10 +28,12 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     linear-gradient(90deg, rgba(166, 117, 61, 0.07) 1px, transparent 1px),
     linear-gradient(180deg, #fffaf4 0%, #f5ecdf 52%, #fbf7f1 100%);
@@ -345,23 +347,23 @@ summary {
 
 .editorial-title {
   font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(2.8rem, 5.4vw, 5.2rem);
+  font-size: clamp(2.45rem, 11vw, 5.2rem);
   font-weight: 600;
-  letter-spacing: 0.052em;
-  line-height: 0.92;
+  letter-spacing: 0.038em;
+  line-height: 0.94;
   max-width: 100%;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
 }
 
 .editorial-title-sm {
   font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(2.35rem, 4.2vw, 3.85rem);
+  font-size: clamp(2.15rem, 9vw, 3.85rem);
   font-weight: 600;
-  letter-spacing: 0.052em;
-  line-height: 0.94;
+  letter-spacing: 0.038em;
+  line-height: 0.96;
   max-width: 100%;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
 }
 
@@ -553,6 +555,66 @@ summary {
 
 .float-paper {
   animation: float-paper 6s ease-in-out infinite;
+}
+
+@media (max-width: 640px) {
+  body {
+    background-size: 3.75rem 100%, 100% 100%;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 2.8rem;
+    padding: 0.78rem 0.82rem;
+    font-size: 1rem;
+  }
+
+  label {
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+  }
+
+  .container,
+  .wide-container {
+    width: min(100% - 1rem, 100%);
+  }
+
+  .btn {
+    min-height: 2.9rem;
+    padding-inline: 1rem;
+  }
+
+  .eyebrow {
+    font-size: 0.66rem;
+    letter-spacing: 0.17em;
+  }
+
+  .fine-print {
+    font-size: 0.62rem;
+    letter-spacing: 0.13em;
+  }
+
+  .card,
+  .section-frame,
+  .paper-panel {
+    box-shadow: 0 10px 30px rgba(58, 43, 34, 0.055);
+  }
+
+  .winding-timeline {
+    margin-inline: -0.5rem;
+    padding: 3.1rem 0.5rem 0.3rem;
+  }
+
+  .winding-rail {
+    width: max(100%, 45rem);
+  }
+
+  .winding-grid {
+    min-width: 45rem;
+    grid-template-columns: repeat(4, minmax(9.5rem, 1fr));
+    gap: 1.5rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

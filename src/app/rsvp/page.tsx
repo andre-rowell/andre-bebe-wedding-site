@@ -43,42 +43,43 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
   const inviteByGuestEvent = new Map(
     household?.eventInvitations.filter((invite) => invite.guestId && invite.event.isActive).map((invite) => [`${invite.guestId}:${invite.eventId}`, invite]) || [],
   );
+  const plusOneGuests = household?.guests.filter((guest) => guest.plusOneAllowed) || [];
   const matrixMinWidth = `${Math.max(42, 13 + eventColumns.length * 10)}rem`;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#15110f] text-[#211915]">
-      <img src="/photos/andre-bebe-close.jpg" alt="" fetchPriority="high" className="hero-photo fixed inset-0 h-full w-full object-cover opacity-34" />
+    <main className="relative min-h-[100dvh] overflow-hidden bg-[#15110f] text-[#211915]">
+      <img src="/photos/andre-bebe-close.jpg" alt="" fetchPriority="high" className="hero-photo fixed inset-0 h-full w-full object-cover opacity-25 sm:opacity-34" />
       <div className="fixed inset-0 bg-[#15110f]/76" />
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_18%_14%,rgba(214,174,118,0.22),transparent_25rem),radial-gradient(circle_at_82%_20%,rgba(157,95,88,0.16),transparent_24rem)]" />
 
       <Link
         href="/"
         aria-label="Close RSVP and return to the wedding site"
-        className="fixed right-3 top-3 z-30 inline-flex h-12 w-12 items-center justify-center border border-white/18 bg-[#fffaf4] text-[#211915] shadow-2xl hover:bg-white sm:right-6 sm:top-6"
+        className="fixed right-2 top-2 z-30 inline-flex h-11 w-11 items-center justify-center border border-white/18 bg-[#fffaf4] text-[#211915] shadow-2xl hover:bg-white sm:right-6 sm:top-6 sm:h-12 sm:w-12"
       >
         <X size={20} aria-hidden="true" />
       </Link>
 
-      <section className="relative z-10 flex min-h-screen items-center justify-center px-2 py-2 sm:px-4 sm:py-4" aria-labelledby="rsvp-title">
+      <section className="relative z-10 flex min-h-[100dvh] items-stretch justify-center px-0 py-0 sm:min-h-screen sm:items-center sm:px-4 sm:py-4" aria-labelledby="rsvp-title">
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="rsvp-title"
-          className="animate-fade flex max-h-[calc(100vh-1rem)] w-full max-w-[92rem] flex-col overflow-hidden border border-[#d8c8b7] bg-[#fffaf4] shadow-[0_30px_110px_rgba(0,0,0,0.42)] sm:max-h-[calc(100vh-2rem)]"
+          className="animate-fade flex h-[100dvh] max-h-[100dvh] w-full max-w-[92rem] flex-col overflow-hidden border-0 bg-[#fffaf4] shadow-[0_30px_110px_rgba(0,0,0,0.42)] sm:h-auto sm:max-h-[calc(100vh-2rem)] sm:border sm:border-[#d8c8b7]"
         >
           <header className="shrink-0 border-b border-[#ded2c4] bg-[#fffaf4]/96 backdrop-blur">
             <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_18rem]">
-              <div className="p-4 sm:p-5">
-                <div className="flex items-start gap-4">
-                  <span className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center border border-[#d8c8b7] bg-[#fbf2e7]">
+              <div className="p-3 pr-14 sm:p-5 sm:pr-5">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <span className="mt-1 hidden h-11 w-11 shrink-0 items-center justify-center border border-[#d8c8b7] bg-[#fbf2e7] sm:flex">
                     <LockKeyhole size={18} aria-hidden="true" />
                   </span>
                   <div className="min-w-0">
                     <p className="eyebrow">{household ? "Invitation found" : "RSVP"}</p>
-                    <h1 id="rsvp-title" className="serif mt-2 text-3xl font-semibold uppercase leading-none tracking-[0.08em] text-[#211915] sm:text-4xl">
+                    <h1 id="rsvp-title" className="serif mt-1 text-2xl font-semibold uppercase leading-none tracking-[0.06em] text-[#211915] sm:mt-2 sm:text-4xl sm:tracking-[0.08em]">
                       {household ? household.name : "Find your invitation"}
                     </h1>
-                    <p className="mt-3 max-w-3xl text-sm leading-6 text-[#5f5149] sm:text-[0.98rem] sm:leading-7">
+                    <p className="mt-2 max-w-3xl text-sm leading-6 text-[#5f5149] sm:mt-3 sm:text-[0.98rem] sm:leading-7">
                       {household
                         ? "Confirm each invitee below. Private events only appear when they are assigned to this household."
                         : "Enter your invitation code, household name, guest name, or email to open your private RSVP."}
@@ -86,7 +87,7 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                   </div>
                 </div>
 
-                <form className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]" action="/rsvp#responses" method="get">
+                <form className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-[minmax(0,1fr)_auto]" action="/rsvp#responses" method="get">
                   <div>
                     <label htmlFor="q">Invitation lookup</label>
                     <input
@@ -98,7 +99,7 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                       autoFocus={!household}
                     />
                   </div>
-                  <button className="btn btn-primary self-end">
+                  <button className="btn btn-primary w-full self-end sm:w-auto">
                     <Search size={16} aria-hidden="true" />
                     {household ? "Switch invitation" : "Open invitation"}
                   </button>
@@ -150,12 +151,12 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
 
           <div className="min-h-0 flex-1 overflow-y-auto bg-[#faf6ef]">
             {household ? (
-              <section id="responses" className="scroll-mt-4 p-4 sm:p-6">
-                <div className="mb-5 grid gap-4 border-y border-[#ded2c4] bg-[#fffaf4]/70 py-4 sm:grid-cols-[1fr_auto] sm:items-center">
+              <section id="responses" className="scroll-mt-4 p-3 sm:p-6">
+                <div className="mb-4 grid gap-3 border-y border-[#ded2c4] bg-[#fffaf4]/70 py-3 sm:mb-5 sm:grid-cols-[1fr_auto] sm:items-center sm:py-4">
                   <div>
                     <p className="eyebrow">Your invitees</p>
-                    <h2 className="serif mt-1 text-2xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-3xl">Group RSVP</h2>
-                    <p className="mt-2 text-sm leading-6 text-[#5f5149]">Guests are rows, events are columns, and unavailable cells are controlled by your invitation.</p>
+                    <h2 className="serif mt-1 text-[1.65rem] font-semibold uppercase leading-none tracking-[0.06em] sm:text-3xl sm:tracking-[0.08em]">Group RSVP</h2>
+                    <p className="mt-2 text-sm leading-6 text-[#5f5149]">Each available choice is controlled by your household invitation. Events not assigned to an invitee are marked unavailable.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-center lg:hidden">
                     <div className="border border-[#ded2c4] px-4 py-3">
@@ -171,8 +172,21 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
 
                 <form action={submitRsvpAction}>
                   <input type="hidden" name="householdId" value={household.id} />
+                  {plusOneGuests.length ? (
+                    <div className="mb-4 border border-[#d7c6b5] bg-[#fffdf9] p-3 sm:mb-5 sm:p-4">
+                      <p className="eyebrow">Approved plus-ones</p>
+                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                        {plusOneGuests.map((guest) => (
+                          <div key={guest.id}>
+                            <label htmlFor={`plusOneName:${guest.id}`}>{guest.firstName}&apos;s plus-one name</label>
+                            <input id={`plusOneName:${guest.id}`} name={`plusOneName:${guest.id}`} defaultValue={guest.plusOneName || ""} placeholder="Guest name" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                   <div className="overflow-hidden border border-[#d7c6b5] bg-[#fffdf9] shadow-[0_12px_38px_rgba(58,43,34,0.045)]">
-                    <div className="grid gap-3 border-b border-[#ded2c4] bg-[#fffaf4] px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                    <div className="grid gap-3 border-b border-[#ded2c4] bg-[#fffaf4] px-3 py-3 sm:grid-cols-[1fr_auto] sm:items-center sm:px-4">
                       <div>
                         <p className="eyebrow">RSVP matrix</p>
                         <h3 className="serif mt-1 text-2xl font-semibold leading-none">Family responses</h3>
@@ -184,7 +198,72 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                     </div>
 
                     {eventColumns.length ? (
-                      <div className="overflow-x-auto">
+                      <>
+                      <div className="grid gap-3 p-3 md:hidden">
+                        {household.guests.map((guest, guestIndex) => (
+                          <section key={guest.id} className="border border-[#ded2c4] bg-[#fffaf4]">
+                            <div className="border-b border-[#ded2c4] bg-[#fffdf9] px-3 py-3">
+                              <p className="fine-print">
+                                Invitee {guestIndex + 1} / {guest.isChild ? "Child" : "Adult"}
+                              </p>
+                              <h4 className="serif mt-1 text-2xl font-semibold leading-none">{guest.firstName} {guest.lastName}</h4>
+                              {guest.plusOneAllowed ? <p className="mt-2 text-xs font-semibold text-[#6d625b]">Plus-one eligible</p> : null}
+                            </div>
+                            <div className="divide-y divide-[#ded2c4]">
+                              {eventColumns.map((event) => {
+                                const invite = inviteByGuestEvent.get(`${guest.id}:${event.id}`);
+                                const existing = rsvpByGuestEvent.get(`${guest.id}:${event.id}`);
+                                const eventLabel = `${event.date.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "America/Chicago" })} / ${formatTimeForDisplay(event.startTime)}`;
+
+                                if (!invite?.invited) {
+                                  return (
+                                    <div key={event.id} className="grid gap-3 bg-[#ece5dc] px-3 py-3">
+                                      <div>
+                                        <p className="text-sm font-bold uppercase tracking-[0.08em] text-[#5e524b]">{event.title}</p>
+                                        <p className="mt-1 text-[0.66rem] font-bold uppercase tracking-[0.12em] text-[#87786e]">{eventLabel}</p>
+                                      </div>
+                                      <p className="border border-[#d8cfc3] bg-[#e4ddd4] px-3 py-2 text-center text-[0.66rem] font-bold uppercase tracking-[0.12em] text-[#87786e]">
+                                        Not invited
+                                      </p>
+                                    </div>
+                                  );
+                                }
+
+                                return (
+                                  <div key={event.id} className="grid gap-3 px-3 py-3">
+                                    <div>
+                                      <p className="text-sm font-bold uppercase tracking-[0.08em] text-[#211915]">{event.title}</p>
+                                      <p className="mt-1 text-[0.66rem] font-bold uppercase tracking-[0.12em] text-[#9a6932]">{eventLabel}</p>
+                                    </div>
+                                    <fieldset aria-label={`${guest.firstName} ${event.title} attendance`}>
+                                      <legend className="sr-only">Attendance</legend>
+                                      <div className="grid grid-cols-2 border border-[#cdbfad] bg-[#fffaf4] p-1">
+                                        {["YES", "NO"].map((choice) => (
+                                          <label key={choice} className="mb-0 cursor-pointer">
+                                            <input
+                                              className="peer sr-only"
+                                              type="radio"
+                                              name={`attending:${guest.id}:${event.id}`}
+                                              value={choice}
+                                              defaultChecked={(existing?.attending || "UNANSWERED") === choice}
+                                              required
+                                            />
+                                            <span className="flex min-h-11 items-center justify-center px-3 text-[0.7rem] font-bold uppercase tracking-[0.14em] text-[#493c35] peer-checked:bg-[#211915] peer-checked:text-white">
+                                              {choice === "YES" ? "Yes" : "No"}
+                                            </span>
+                                          </label>
+                                        ))}
+                                      </div>
+                                    </fieldset>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </section>
+                        ))}
+                      </div>
+
+                      <div className="hidden overflow-x-auto md:block">
                         <table className="w-full border-collapse text-left" style={{ minWidth: matrixMinWidth }}>
                           <caption className="sr-only">Household RSVP matrix by guest and event</caption>
                           <thead>
@@ -210,12 +289,7 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                                     Invitee {guestIndex + 1} / {guest.isChild ? "Child" : "Adult"}
                                   </p>
                                   <p className="serif mt-1 text-2xl font-semibold leading-none">{guest.firstName} {guest.lastName}</p>
-                                  {guest.plusOneAllowed ? (
-                                    <div className="mt-3">
-                                      <label className="text-[0.62rem]" htmlFor={`plusOneName:${guest.id}`}>Plus-one name</label>
-                                      <input id={`plusOneName:${guest.id}`} name={`plusOneName:${guest.id}`} defaultValue={guest.plusOneName || ""} placeholder="Guest name" />
-                                    </div>
-                                  ) : null}
+                                  {guest.plusOneAllowed ? <p className="mt-2 text-xs font-semibold text-[#6d625b]">Plus-one eligible</p> : null}
                                 </th>
                                 {eventColumns.map((event) => {
                                   const invite = inviteByGuestEvent.get(`${guest.id}:${event.id}`);
@@ -261,35 +335,36 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                           </tbody>
                         </table>
                       </div>
+                      </>
                     ) : (
                       <p className="px-4 py-5 text-sm leading-6 text-[#5f5149]">No RSVP-required events are assigned to this household yet.</p>
                     )}
                   </div>
 
-                  <div className="sticky bottom-0 z-10 -mx-4 mt-6 grid gap-3 border-t border-[#d6c8b8] bg-[#fffaf4]/96 px-4 py-3 text-[#211915] shadow-[0_-18px_42px_rgba(58,43,34,0.12)] backdrop-blur sm:-mx-6 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center">
+                  <div className="sticky bottom-0 z-10 -mx-3 mt-5 grid gap-3 border-t border-[#d6c8b8] bg-[#fffaf4]/96 px-3 py-3 text-[#211915] shadow-[0_-18px_42px_rgba(58,43,34,0.12)] backdrop-blur sm:-mx-6 sm:mt-6 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div>
                       <h3 className="serif text-2xl font-semibold">Ready to send?</h3>
                       <p className="mt-1 text-sm leading-6 text-[#5f5149]">You can come back and update these responses before the RSVP deadline.</p>
                     </div>
-                    <button className="btn btn-primary">Submit RSVP</button>
+                    <button className="btn btn-primary w-full sm:w-auto">Submit RSVP</button>
                   </div>
                 </form>
 
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
                   <Link className="btn btn-secondary" href={`/events?code=${encodeURIComponent(household.inviteCode)}`}>View invited events</Link>
                   <Link className="btn btn-secondary" href={`/invite/${household.inviteLinkToken}`}>Private invitation hub</Link>
                 </div>
               </section>
             ) : (
-              <section className="grid gap-6 p-5 sm:p-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-stretch">
-                <div className="image-frame min-h-72">
+              <section className="grid gap-5 p-3 sm:gap-6 sm:p-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-stretch">
+                <div className="image-frame min-h-56 sm:min-h-72">
                   <img src="/photos/andre-bebe-portrait.jpg" alt="Andre and Bebe engagement portrait" className="object-[58%_36%]" />
                 </div>
                 <div className="grid content-center gap-6">
                   <div>
                     <p className="eyebrow">Private RSVP</p>
-                    <h2 className="serif mt-3 text-4xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-5xl">Your invitation opens here</h2>
-                    <p className="mt-4 max-w-2xl text-[1rem] leading-8 text-[#5f5149]">
+                    <h2 className="serif mt-3 text-3xl font-semibold uppercase leading-none tracking-[0.06em] sm:text-5xl sm:tracking-[0.08em]">Your invitation opens here</h2>
+                    <p className="mt-4 max-w-2xl text-[0.98rem] leading-7 text-[#5f5149] sm:leading-8">
                       We will show exactly who is invited from your household, plus the events assigned to each guest. You can close this window anytime and return to the main wedding site.
                     </p>
                   </div>

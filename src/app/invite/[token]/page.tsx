@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarPlus, Car, MapPin, MessageSquareHeart, Utensils } from "lucide-react";
+import { CalendarPlus, Car, ClipboardList, MapPin, MessageSquareHeart } from "lucide-react";
 import { GuestPage } from "@/components/site-shell";
 import { googleCalendarUrl } from "@/lib/calendar";
 import { rsvpConfirmationTemplate } from "@/lib/email-templates";
@@ -28,13 +28,13 @@ export default async function InviteLandingPage({ params, searchParams }: { para
 
   return (
     <GuestPage>
-      <section className="relative overflow-hidden bg-[#15110f] py-16 text-white sm:py-24">
+      <section className="relative overflow-hidden bg-[#15110f] py-12 text-white sm:py-24">
         <img src="/photos/andre-bebe-car.jpg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-42" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#15110f]/92 via-[#15110f]/68 to-[#15110f]/28" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#15110f]/94 via-[#15110f]/76 to-[#15110f]/46" />
         <div className="container animate-in relative max-w-5xl">
-          <p className="text-[0.72rem] font-bold uppercase tracking-[0.28em] text-[#d6af78]">Private invitation</p>
-          <h1 className="serif mt-3 max-w-3xl text-6xl font-semibold leading-none sm:text-8xl">Welcome, {household.name}</h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-[#f1e4d6]">Your household invitation hub for RSVP, invited events, calendar links, travel details, and wedding weekend updates.</p>
+          <p className="text-[0.66rem] font-bold uppercase tracking-[0.2em] text-[#d6af78] sm:text-[0.72rem] sm:tracking-[0.28em]">Private invitation</p>
+          <h1 className="serif mt-3 max-w-3xl text-4xl font-semibold leading-none sm:text-8xl">Welcome, {household.name}</h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-[#f1e4d6] sm:text-lg sm:leading-8">Your household invitation hub for RSVP, invited events, calendar links, travel details, and wedding weekend updates.</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href={`/rsvp?code=${encodeURIComponent(household.inviteCode)}`} className="btn bg-[#fffaf4] text-[#211915] hover:bg-white">RSVP or update</Link>
             <Link href={`/events?code=${encodeURIComponent(household.inviteCode)}`} className="btn border border-white/40 text-white">View invited events</Link>
@@ -43,9 +43,9 @@ export default async function InviteLandingPage({ params, searchParams }: { para
         </div>
       </section>
 
-      <section className="py-10">
+      <section className="py-8 sm:py-10">
         <div className="container grid gap-5 lg:grid-cols-[0.7fr_1.3fr]">
-          <aside className="section-frame p-6">
+          <aside className="section-frame p-5 sm:p-6">
             <h2 className="serif text-3xl font-semibold">Your party</h2>
             <div className="mt-4 grid gap-3">
               {household.guests.map((guest) => (
@@ -73,13 +73,13 @@ export default async function InviteLandingPage({ params, searchParams }: { para
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">{event.type}</p>
-                    <h2 className="serif mt-1 text-3xl font-semibold uppercase tracking-[0.08em]">{event.title}</h2>
+                    <h2 className="serif mt-1 text-2xl font-semibold uppercase tracking-[0.06em] sm:text-3xl sm:tracking-[0.08em]">{event.title}</h2>
                     <p className="mt-2 text-sm font-semibold">{formatDate(event.date)} · {formatTimeForDisplay(event.startTime)}</p>
                     <p className="text-sm text-[#6d625b]">
                       {event.venueName} · {event.venueName.includes("TBD") || event.city === "TBD" ? "Location to be announced" : event.addressLine1}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid gap-2 sm:flex sm:flex-wrap">
                     <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary"><CalendarPlus size={16} /> Google</a>
                     <a href={`/api/calendar/${event.id}`} className="btn btn-secondary"><CalendarPlus size={16} /> Apple</a>
                   </div>
@@ -87,7 +87,7 @@ export default async function InviteLandingPage({ params, searchParams }: { para
                 <div className="mt-4 grid gap-3 text-sm text-[#5c4e48] sm:grid-cols-3">
                   <p><MapPin className="mb-2 text-[#9b7039]" size={18} />{event.mapUrl ? <a className="font-bold underline" href={event.mapUrl} target="_blank" rel="noreferrer">Open map</a> : "Map coming soon"}</p>
                   <p><Car className="mb-2 text-[#9b7039]" size={18} />{event.parkingInfo || "Parking details coming soon."}</p>
-                  <p><Utensils className="mb-2 text-[#9b7039]" size={18} />{event.mealSelectionRequired ? "Meal selection required in RSVP." : "No meal selection required."}</p>
+                  <p><ClipboardList className="mb-2 text-[#9b7039]" size={18} />{event.rsvpRequired ? "Please RSVP through your invite." : "No RSVP required."}</p>
                 </div>
               </article>
             ))}
@@ -99,7 +99,7 @@ export default async function InviteLandingPage({ params, searchParams }: { para
                   <p className="mt-2 text-sm text-[#6d625b]">This is generated from the RSVP data currently on file.</p>
                 </div>
               </div>
-              <div className="dark-panel mt-4 p-4 text-sm leading-7 text-[#f4e8dc]">
+              <div className="dark-panel mt-4 max-w-full overflow-x-auto p-4 text-sm leading-7 text-[#f4e8dc]">
                 <p className="font-bold">{confirmation.subject}</p>
                 <pre className="mt-3 whitespace-pre-wrap font-sans">{confirmation.body}</pre>
               </div>

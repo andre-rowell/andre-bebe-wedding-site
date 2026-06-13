@@ -15,12 +15,12 @@ export default async function DayOfPage() {
   return (
     <GuestPage>
       <PageHero eyebrow="Day-of mode" title="Wedding day details" copy="The fastest place for schedule, maps, parking, shuttle notes, and day-of contact information." />
-      <section className="py-10">
+      <section className="py-8 sm:py-10">
         <div className="container grid gap-5 lg:grid-cols-[0.75fr_1.25fr]">
           <aside className="section-frame dark-panel overflow-hidden">
-            <img src="/photos/andre-bebe-portrait.jpg" alt="" loading="lazy" decoding="async" className="h-80 w-full object-cover opacity-80" />
-            <div className="p-6">
-              <p className="script text-4xl">Today&apos;s essentials</p>
+            <img src="/photos/andre-bebe-portrait.jpg" alt="" loading="lazy" decoding="async" className="h-64 w-full object-cover opacity-80 sm:h-80" />
+            <div className="p-5 sm:p-6">
+              <p className="script text-3xl leading-tight sm:text-4xl">Today&apos;s essentials</p>
               <div className="mt-5 grid gap-3 text-sm text-[#f4e8dc]">
                 <p className="flex gap-3"><Clock className="text-[#d6af78]" size={18} /> Please arrive by 4:40 PM.</p>
                 <p className="flex gap-3"><Phone className="text-[#d6af78]" size={18} /> Emergency contact: {setting.dayOfContact || setting.contactEmail || "andrerowell@outlook.com"}</p>
@@ -32,7 +32,7 @@ export default async function DayOfPage() {
             {events.map((event) => (
               <article key={event.id} className="section-frame p-5">
                 <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">{formatDate(event.date)} · {formatTimeForDisplay(event.startTime)}</p>
-                <h2 className="serif mt-1 text-3xl font-semibold uppercase tracking-[0.08em]">{event.title}</h2>
+                <h2 className="serif mt-1 text-2xl font-semibold uppercase tracking-[0.06em] sm:text-3xl sm:tracking-[0.08em]">{event.title}</h2>
                 <p className="mt-2 text-sm text-[#6d625b]">
                   {event.venueName} · {event.venueName.includes("TBD") || event.city === "TBD" ? "Location to be announced" : `${event.addressLine1}, ${event.city}, ${event.state}`}
                 </p>
@@ -41,7 +41,7 @@ export default async function DayOfPage() {
                   <p><Route className="mb-2 text-[#9b7039]" />{event.transportationInfo || "Transportation details coming soon."}</p>
                   <p><MapPin className="mb-2 text-[#9b7039]" />{event.mapUrl ? <a className="font-bold underline" href={event.mapUrl} target="_blank" rel="noreferrer">Open map</a> : "Map coming soon."}</p>
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-4 grid gap-2 sm:flex sm:flex-wrap">
                   <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary">Google calendar</a>
                   <a href={`/api/calendar/${event.id}`} className="btn btn-secondary">Apple calendar</a>
                 </div>

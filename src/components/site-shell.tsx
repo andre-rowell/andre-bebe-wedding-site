@@ -19,8 +19,8 @@ const secondaryNav = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-[#ded2c4]/70 bg-[#faf6ef]/92 text-[#221914] shadow-[0_10px_34px_rgba(40,31,26,0.06)] backdrop-blur-xl">
-      <div className="wide-container flex min-h-[4.25rem] items-center justify-between gap-4">
-        <Link href="/" className="serif group flex items-center gap-3 text-2xl font-semibold tracking-[0.28em]" aria-label="Andre and Bebe home">
+      <div className="wide-container flex min-h-[3.75rem] items-center justify-between gap-3 sm:min-h-[4.25rem] sm:gap-4">
+        <Link href="/" className="serif group flex shrink-0 items-center gap-2 text-xl font-semibold tracking-[0.22em] sm:gap-3 sm:text-2xl sm:tracking-[0.28em]" aria-label="Andre and Bebe home">
           <span>A</span>
           <span className="h-7 w-px bg-[#b68a53] transition-transform group-hover:scale-y-125" />
           <span>B</span>
@@ -55,7 +55,7 @@ export function SiteHeader() {
         </div>
 
         <details className="relative lg:hidden">
-          <summary className="btn btn-quiet list-none" aria-label="Open guest navigation">
+          <summary className="btn btn-quiet list-none px-3" aria-label="Open guest navigation">
             <Menu size={18} aria-hidden="true" />
             Menu
           </summary>
@@ -77,15 +77,15 @@ export function SiteFooter() {
     <footer className="relative overflow-hidden border-t border-[#302722] bg-[#15110f] text-[#fffaf4]">
       <img src="/photos/bebe-veil-car-bw.jpg" alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-20" />
       <div className="absolute inset-0 bg-[#15110f]/78" />
-      <div className="container relative grid gap-8 py-12 text-center sm:py-16">
-        <p className="script text-4xl text-[#f3e2cf] sm:text-5xl">We can&apos;t wait to celebrate with you.</p>
-        <div className="mx-auto grid max-w-3xl gap-5 text-[0.68rem] font-bold uppercase tracking-[0.22em] text-[#d9c7b4] sm:grid-cols-3">
+      <div className="container relative grid gap-7 py-10 text-center sm:gap-8 sm:py-16">
+        <p className="script text-3xl leading-tight text-[#f3e2cf] sm:text-5xl">We can&apos;t wait to celebrate with you.</p>
+        <div className="mx-auto grid max-w-3xl gap-3 text-[0.64rem] font-bold uppercase tracking-[0.17em] text-[#d9c7b4] sm:grid-cols-3 sm:gap-5 sm:text-[0.68rem] sm:tracking-[0.22em]">
           <p>May 30, 2027</p>
           <p>Urban Daisy</p>
           <p>Minneapolis, MN</p>
         </div>
-        <p className="serif text-3xl tracking-[0.34em]">A | B</p>
-        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#d9c7b4]" aria-label="Footer navigation">
+        <p className="serif text-2xl tracking-[0.28em] sm:text-3xl sm:tracking-[0.34em]">A | B</p>
+        <nav className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-[#d9c7b4] sm:gap-x-6 sm:text-[0.66rem] sm:tracking-[0.18em]" aria-label="Footer navigation">
           {[...primaryNav, ["RSVP", "/rsvp"]].map(([label, href]) => (
             <Link key={`${label}-${href}`} href={href} className="hover:text-white">
               {label}
@@ -109,12 +109,12 @@ export function GuestPage({ children }: { children: React.ReactNode }) {
 
 export function PageHero({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
   return (
-    <section className="editorial-band border-b border-[#ded2c4] py-16 sm:py-24">
+    <section className="editorial-band border-b border-[#ded2c4] py-12 sm:py-24">
       <div className="container animate-in max-w-5xl text-center">
         <p className="ornament justify-center text-sm">◆</p>
         <p className="eyebrow mt-5">{eyebrow}</p>
         <h1 className="editorial-title mt-4 text-balance text-[#211915]">{title}</h1>
-        <p className="mx-auto mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#5f5149]">{copy}</p>
+        <p className="mx-auto mt-5 max-w-2xl text-[0.98rem] leading-7 text-[#5f5149] sm:mt-7 sm:text-[1.02rem] sm:leading-8">{copy}</p>
       </div>
     </section>
   );

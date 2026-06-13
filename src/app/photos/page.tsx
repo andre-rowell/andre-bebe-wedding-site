@@ -17,13 +17,13 @@ export default async function PhotosPage() {
   return (
     <GuestPage>
       <PageHero eyebrow="Photos" title="A few favorite frames" copy="Engagement-season images and placeholders for the gallery we will keep growing." />
-      <section className="py-10">
+      <section className="py-8 sm:py-10">
         <div className="container mb-5 grid gap-4 md:grid-cols-3">
-          <div className="section-frame p-6 md:col-span-2">
-            <h2 className="serif text-4xl font-semibold uppercase tracking-[0.08em]">Gallery</h2>
+          <div className="section-frame p-5 sm:p-6 md:col-span-2">
+            <h2 className="serif text-3xl font-semibold uppercase tracking-[0.06em] sm:text-4xl sm:tracking-[0.08em]">Gallery</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#6d625b]">Engagement favorites now, wedding weekend highlights later. The after-wedding page can point guests to a shared album as soon as it is ready.</p>
           </div>
-          <div className="section-frame p-6">
+          <div className="section-frame p-5 sm:p-6">
             <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#9b7039]">Share memories</p>
             <div className="mt-4 flex flex-col gap-2">
               <Link href="/guestbook" className="btn btn-primary">Sign guestbook</Link>
@@ -34,9 +34,9 @@ export default async function PhotosPage() {
         <div className="container grid gap-4 md:grid-cols-3">
           {photos.map((photo) => (
             <figure key={photo.imageUrl} className={`section-frame overflow-hidden ${photo.className}`}>
-              <img src={photo.imageUrl} alt={photo.title} loading="lazy" decoding="async" className="h-96 w-full object-cover" />
+              <img src={photo.imageUrl} alt={photo.title} loading="lazy" decoding="async" className="h-72 w-full object-cover sm:h-96" />
               <figcaption className="p-4">
-                <p className="serif text-2xl font-semibold uppercase tracking-[0.08em]">{photo.title}</p>
+                <p className="serif text-xl font-semibold uppercase tracking-[0.06em] sm:text-2xl sm:tracking-[0.08em]">{photo.title}</p>
                 {photo.caption ? <p className="mt-1 text-sm leading-6 text-[#6a5c55]">{photo.caption}</p> : null}
               </figcaption>
             </figure>
