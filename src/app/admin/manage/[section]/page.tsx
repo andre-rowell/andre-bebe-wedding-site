@@ -458,6 +458,10 @@ function EventFields({ event }: { event?: EventRecord }) {
       <textarea name="transportationInfo" placeholder="Transportation info" rows={2} defaultValue={event?.transportationInfo || ""} />
       <label htmlFor={`dressCode-${event?.id || "new"}`}>Dress code</label>
       <input name="dressCode" placeholder="Dress code" defaultValue={event?.dressCode || ""} />
+      <label htmlFor={`childrenPolicy-${event?.id || "new"}`}>Kids policy</label>
+      <textarea id={`childrenPolicy-${event?.id || "new"}`} name="childrenPolicy" placeholder="Children are welcome when listed on the invitation." rows={2} defaultValue={event?.childrenPolicy || ""} />
+      <label htmlFor={`plusOnePolicy-${event?.id || "new"}`}>Plus-one policy</label>
+      <textarea id={`plusOnePolicy-${event?.id || "new"}`} name="plusOnePolicy" placeholder="Please only bring approved plus-ones shown on the invitation." rows={2} defaultValue={event?.plusOnePolicy || ""} />
       <label htmlFor={`mapUrl-${event?.id || "new"}`}>Map URL</label>
       <input id={`mapUrl-${event?.id || "new"}`} name="mapUrl" type="url" placeholder="https://maps.google.com/..." defaultValue={event?.mapUrl || ""} />
       <label htmlFor={`sortOrder-${event?.id || "new"}`}>Sort order</label>

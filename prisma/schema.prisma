@@ -114,6 +114,8 @@ model Event {
   dressCode             String?
   parkingInfo           String?
   transportationInfo    String?
+  childrenPolicy        String?
+  plusOnePolicy         String?
   visibility            EventVisibility    @default(PUBLIC)
   rsvpRequired          Boolean            @default(true)
   mealSelectionRequired Boolean            @default(false)

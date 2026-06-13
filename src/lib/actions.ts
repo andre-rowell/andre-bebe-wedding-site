@@ -361,6 +361,8 @@ export async function saveEventAction(formData: FormData) {
     dressCode: String(formData.get("dressCode") || "").trim() || null,
     parkingInfo: String(formData.get("parkingInfo") || "").trim() || null,
     transportationInfo: String(formData.get("transportationInfo") || "").trim() || null,
+    childrenPolicy: String(formData.get("childrenPolicy") || "").trim() || null,
+    plusOnePolicy: String(formData.get("plusOnePolicy") || "").trim() || null,
     visibility: String(formData.get("visibility") || "PUBLIC") as "PUBLIC" | "PRIVATE" | "INVITE_ONLY",
     rsvpRequired: formData.get("rsvpRequired") === "on",
     mealSelectionRequired: formData.get("mealSelectionRequired") === "on",

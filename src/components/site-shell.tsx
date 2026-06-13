@@ -11,7 +11,6 @@ const primaryNav = [
 const secondaryNav = [
   ["Events", "/events"],
   ["Photos", "/photos"],
-  ["FAQ", "/faq"],
   ["Guestbook", "/guestbook"],
   ["Contact", "/contact"],
   ["Day-of", "/day-of"],
@@ -87,7 +86,7 @@ export function SiteFooter() {
         </div>
         <p className="serif text-3xl tracking-[0.34em]">A | B</p>
         <nav className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#d9c7b4]" aria-label="Footer navigation">
-          {[...primaryNav, ["RSVP", "/rsvp"], ["FAQ", "/faq"]].map(([label, href]) => (
+          {[...primaryNav, ["RSVP", "/rsvp"]].map(([label, href]) => (
             <Link key={`${label}-${href}`} href={href} className="hover:text-white">
               {label}
             </Link>

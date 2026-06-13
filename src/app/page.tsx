@@ -54,12 +54,10 @@ function arrivalTimeForDisplay(startTime: string) {
 }
 
 export default async function Home() {
-  const [settings, events, registries, travelSections, faqs] = await Promise.all([
+  const [settings, events, travelSections] = await Promise.all([
     settingsMap(),
     prisma.event.findMany({ where: { isActive: true, visibility: "PUBLIC" }, orderBy: [{ sortOrder: "asc" }, { date: "asc" }] }),
-    prisma.registryLink.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, take: 3 }),
     prisma.travelSection.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, take: 8 }),
-    prisma.fAQItem.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, take: 4 }),
   ]);
 
   const ceremony = events.find((event) => event.slug === "ceremony") || events[0];
@@ -82,7 +80,6 @@ export default async function Home() {
     ? new Date(`${settings.rsvpDeadline}T12:00:00-05:00`).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
     : "April 30, 2027";
 
-  const otherEvents = events.filter((event) => event.id !== ceremony?.id);
   const storyTimeline = [
     {
       year: "2017",
@@ -109,48 +106,23 @@ export default async function Home() {
       image: "/photos/bebe-foreground.jpg",
     },
   ];
-  const detailRows = [
-    ...otherEvents.map((event) => ({
-      key: event.id,
-      eyebrow: event.type,
-      title: event.title,
-      meta: `${event.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "America/Chicago" })} · ${formatEventTimeRange(event.startTime, event.endTime)}`,
-      body: event.description,
-      footer: eventLocation(event),
-    })),
-    {
-      key: "attire",
-      eyebrow: "Guest note",
-      title: "Weather & attire",
-      meta: "Elegant, comfortable, dance-floor ready",
-      body: ceremony?.dressCode || "Elegant cocktail attire is perfect. We recommend comfortable shoes for dancing.",
-      footer: "Final weather notes will be shared closer to the date.",
-    },
-    {
-      key: "parking",
-      eyebrow: "Guest note",
-      title: "Location & parking",
-      meta: "Urban Daisy / Minneapolis",
-      body: ceremony?.parkingInfo || "Parking details will be shared before wedding weekend.",
-      footer: ceremony ? eventLocation(ceremony) : "Urban Daisy / Minneapolis, MN",
-    },
-    {
-      key: "transportation",
-      eyebrow: "Guest note",
-      title: "Transportation",
-      meta: "Shuttle and ride-share notes",
-      body: ceremony?.transportationInfo || "Shuttle details will be posted as they are confirmed.",
-      footer: "Please check back before wedding weekend.",
-    },
-    ...faqs.slice(0, 3).map((faq) => ({
-      key: faq.id,
-      eyebrow: faq.category,
-      title: faq.question,
-      meta: "FAQ",
-      body: faq.answer,
-      footer: "More answers are available on the FAQ page.",
-    })),
-  ];
+  const eventDetails = events.map((event) => ({
+    event,
+    date: event.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" }),
+    time: formatEventTimeRange(event.startTime, event.endTime),
+    details: [
+      ["Date", event.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" })],
+      ["Time", formatEventTimeRange(event.startTime, event.endTime)],
+      ["Location", eventLocation(event)],
+      ["Attire", event.dressCode || "Details to come."],
+      ["Parking", event.parkingInfo || "Parking details to come."],
+      ["Transportation", event.transportationInfo || "Transportation details to come."],
+      ["Kids", event.childrenPolicy || "Children are welcome when they are listed on your household invitation."],
+      ["Plus-ones", event.plusOnePolicy || "Please only bring named guests and approved plus-ones shown on your invitation."],
+      ["RSVP", event.rsvpRequired ? "Please RSVP for this event through your household invitation." : "No RSVP is required for this event."],
+      ...(event.mealSelectionRequired ? [["Meal selections", "Meal selections will be collected during RSVP."]] : []),
+    ],
+  }));
 
   return (
     <GuestPage>
@@ -255,19 +227,28 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="celebration" className="dark-editorial scroll-mt-24 overflow-hidden py-16 sm:py-24">
+      <section id="celebration" className="dark-editorial scroll-mt-24 overflow-hidden py-16 sm:py-20">
         <div className="container">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(22rem,0.88fr)] lg:items-start">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.72fr)] lg:items-start">
             <div className="min-w-0">
-              <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(18rem,0.75fr)]">
-                <h2 className="serif text-5xl font-medium leading-none text-[#f0c8bd] sm:text-7xl lg:text-[6.6rem]">Our Celebration</h2>
+              <div className="grid gap-7 lg:grid-cols-[minmax(0,0.88fr)_minmax(17rem,0.72fr)] lg:items-end">
+                <div>
+                  <p className="eyebrow text-[#d6ae76]">Our celebration</p>
+                  <h2 className="serif mt-4 max-w-2xl text-5xl font-medium leading-[0.95] text-[#f0c8bd] sm:text-6xl lg:text-7xl">The wedding weekend</h2>
+                </div>
                 <p className="max-w-xl text-[1.04rem] leading-8 text-[#e1c1ba]">
                   We are getting married at Urban Daisy in Minneapolis. It is the perfect blend of warm, modern, and intimate, and we cannot wait to celebrate with great food, music, and your company.
                 </p>
               </div>
 
-              <article className="mt-16">
-                <p className="text-2xl font-semibold text-[#f4c7bd] sm:text-3xl">{displayDate}</p>
+              <article className="mt-11 border-y border-[#f0c8bd]/20 py-8">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="eyebrow text-[#d6ae76]">Main event</p>
+                    <h3 className="serif mt-2 text-4xl text-[#fffaf4] sm:text-5xl">Ceremony</h3>
+                  </div>
+                  <p className="text-xl font-semibold text-[#f4c7bd] sm:text-2xl">{displayDate}</p>
+                </div>
                 <div className="mt-8 grid max-w-2xl gap-6 border-l border-[#6e4c47] pl-6 sm:grid-cols-2">
                   <div>
                     <p className="serif text-5xl leading-none text-[#f0c8bd]">{guestArrivalTime}</p>
@@ -278,7 +259,7 @@ export default async function Home() {
                     <p className="mt-3 text-[#e1c1ba]">Ceremony begins</p>
                   </div>
                 </div>
-                <div className="mt-9 flex max-w-3xl flex-wrap items-center gap-x-8 gap-y-3 border border-[#f0c8bd]/55 px-5 py-4 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-[#f0c8bd]">
+                <div className="mt-8 flex max-w-3xl flex-wrap items-center gap-x-8 gap-y-3 border border-[#f0c8bd]/35 px-5 py-4 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-[#f0c8bd]">
                   <span>{ceremony?.venueName || "Urban Daisy"}</span>
                   <span className="hidden text-[#8f6d64] sm:inline">/</span>
                   <span>{ceremony?.addressLine1 || "1621 E Hennepin Ave"}</span>
@@ -291,19 +272,43 @@ export default async function Home() {
                 </div>
               </article>
 
-              <div className="mt-14 max-w-3xl">
+              <div className="mt-11 max-w-3xl">
                 <h3 className="text-2xl font-semibold text-[#f0c8bd]">The finer details</h3>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-[#d9b6ae]">Expand each event for the date, time, location, attire, parking, kids, plus-ones, and RSVP notes.</p>
                 <div className="mt-7 divide-y divide-[#f0c8bd]/16 border-y border-[#f0c8bd]/16">
-                  {detailRows.map((detail) => (
-                    <details key={detail.key} className="celebration-detail group">
+                  {eventDetails.map(({ event, date, time, details }) => (
+                    <details key={event.id} className="celebration-detail group" open={event.id === ceremony?.id}>
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[#f0c8bd]">
-                        <span className="text-base font-semibold">{detail.title}</span>
+                        <span>
+                          <span className="block text-base font-semibold">{event.title}</span>
+                          <span className="mt-1 block text-xs font-bold uppercase tracking-[0.16em] text-[#bfa097]">{date} · {time}</span>
+                        </span>
                         <ChevronDown className="detail-icon shrink-0" size={17} aria-hidden="true" />
                       </summary>
                       <div className="pb-5">
-                        <p className="fine-print text-[#d6ae76]">{detail.eyebrow} · {detail.meta}</p>
-                        <p className="mt-3 max-w-2xl text-[0.98rem] leading-7 text-[#d9b6ae]">{detail.body}</p>
-                        <p className="mt-3 text-sm font-semibold text-[#f4d8cf]">{detail.footer}</p>
+                        <p className="max-w-2xl text-[0.98rem] leading-7 text-[#d9b6ae]">{event.description}</p>
+                        <dl className="mt-5 grid gap-4 sm:grid-cols-2">
+                          {details.map(([label, value]) => (
+                            <div key={`${event.id}-${label}`} className="border-t border-[#f0c8bd]/16 pt-3">
+                              <dt className="fine-print text-[#d6ae76]">{label}</dt>
+                              <dd className="mt-2 text-sm leading-6 text-[#f4d8cf]">{value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                        <div className="mt-5 flex flex-wrap gap-3">
+                          {hasKnownTime(event.startTime) ? (
+                            <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary">
+                              <CalendarPlus size={15} aria-hidden="true" />
+                              Calendar
+                            </a>
+                          ) : null}
+                          {event.mapUrl ? (
+                            <a href={event.mapUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
+                              <MapPin size={15} aria-hidden="true" />
+                              Map
+                            </a>
+                          ) : null}
+                        </div>
                       </div>
                     </details>
                   ))}
@@ -312,30 +317,8 @@ export default async function Home() {
             </div>
 
             <div className="relative min-h-[34rem] lg:min-h-[48rem]">
-              <div className="image-frame absolute inset-x-0 top-0 h-[72%] rounded-[1.1rem] border-[#f0c8bd]/16 shadow-[0_30px_90px_rgba(0,0,0,0.34)]">
+              <div className="image-frame h-[30rem] rounded-[1.1rem] border-[#f0c8bd]/16 shadow-[0_30px_90px_rgba(0,0,0,0.34)] lg:sticky lg:top-28 lg:h-[42rem]">
                 <img src={ceremony ? eventImage(ceremony.slug, 0) : "/photos/bebe-veil-car-bw.jpg"} alt="Andre and Bebe wedding celebration portrait" loading="lazy" decoding="async" className="object-[50%_42%]" />
-              </div>
-              <div className="image-frame absolute bottom-0 right-0 h-56 w-[min(22rem,72vw)] rounded-[1.1rem] border-[#f0c8bd]/16 shadow-[0_28px_70px_rgba(0,0,0,0.38)] sm:h-64">
-                <img src="/photos/andre-bebe-car-embrace.jpg" alt="Andre and Bebe in a classic car" loading="lazy" decoding="async" className="object-[52%_40%]" />
-              </div>
-              <div className="absolute bottom-14 left-0 hidden max-w-xs border border-[#f0c8bd]/22 bg-[#15110f]/82 p-5 backdrop-blur sm:block">
-                <p className="eyebrow text-[#d6ae76]">Main event</p>
-                <h3 className="serif mt-2 text-3xl text-[#fffaf4]">Ceremony</h3>
-                <p className="mt-3 text-sm leading-6 text-[#e1c1ba]">{ceremony?.description}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {ceremony && hasKnownTime(ceremony.startTime) ? (
-                    <a href={googleCalendarUrl(ceremony)} target="_blank" rel="noreferrer" className="btn btn-primary">
-                      <CalendarPlus size={15} aria-hidden="true" />
-                      Calendar
-                    </a>
-                  ) : null}
-                  {ceremony?.mapUrl ? (
-                    <a href={ceremony.mapUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                      <MapPin size={15} aria-hidden="true" />
-                      Map
-                    </a>
-                  ) : null}
-                </div>
               </div>
             </div>
           </div>
@@ -394,38 +377,17 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="registry" className="dark-editorial scroll-mt-24 py-16 sm:py-24">
+      <section id="registry" className="editorial-band scroll-mt-24 py-12 sm:py-16">
         <div className="container">
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="ornament justify-center text-sm">◆</p>
-            <p className="eyebrow mt-5">Registry</p>
-            <h2 className="editorial-title mt-4 text-balance">Your presence is our favorite gift</h2>
-            <p className="mx-auto mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#e8d9c8]">
-              If you would like to contribute further, we have included a few registry and fund options below.
-            </p>
-          </div>
-          <div className="mx-auto mt-11 grid max-w-4xl gap-5 md:grid-cols-2">
-            {registries.map((registry) => (
-              <article key={registry.id} className="border border-white/15 bg-white/[0.06] p-7 text-center shadow-[0_18px_54px_rgba(0,0,0,0.22)]">
-                <h3 className="serif text-3xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-4xl">{registry.title}</h3>
-                <p className="mx-auto mt-5 max-w-sm text-[0.96rem] leading-7 text-[#e8d9c8]">{registry.description}</p>
-                <a href={registry.url} target="_blank" rel="noreferrer" className="btn btn-primary mt-6">
-                  {registry.buttonText}
-                </a>
-              </article>
-            ))}
-          </div>
-          <div className="mt-11 grid gap-7 md:grid-cols-3">
-            {[
-              ["Honeymoon", "Time away to rest, celebrate, and start marriage slowly."],
-              ["At home", "Pieces that make hosting family and friends even sweeter."],
-              ["With gratitude", "No gift is expected. Showing up with love is enough."],
-            ].map(([title, copy]) => (
-              <article key={title} className="ruled-card">
-                <h3 className="serif text-3xl font-semibold">{title}</h3>
-                <p className="mt-3 text-[0.96rem] leading-7 text-[#e8d9c8]">{copy}</p>
-              </article>
-            ))}
+          <div className="grid gap-6 border-y border-[#cbb89f] py-8 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+            <div>
+              <p className="eyebrow">Registry</p>
+              <h2 className="serif mt-3 text-3xl font-semibold text-[#211915] sm:text-4xl">Your presence is our favorite gift.</h2>
+            </div>
+            <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+              <p className="max-w-2xl text-[1rem] leading-8 text-[#5f5149]">For loved ones who have asked, registry and fund options are collected on one simple page.</p>
+              <Link href="/registry" className="btn btn-secondary">View registry</Link>
+            </div>
           </div>
         </div>
       </section>
