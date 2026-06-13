@@ -379,6 +379,70 @@ summary {
   padding-top: 1.45rem;
 }
 
+.winding-timeline {
+  position: relative;
+  overflow-x: auto;
+  padding: 3.7rem 0 0.25rem;
+  scrollbar-width: none;
+}
+
+.winding-timeline::-webkit-scrollbar {
+  display: none;
+}
+
+.winding-rail {
+  position: absolute;
+  top: 1.2rem;
+  left: 0;
+  width: max(100%, 60rem);
+  height: 2.25rem;
+  border-top: 1px solid rgba(166, 117, 61, 0.24);
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(166, 117, 61, 0.24) 0,
+    rgba(166, 117, 61, 0.24) 1px,
+    transparent 1px,
+    transparent 0.45rem
+  );
+  background-position-y: 0.25rem;
+  background-size: auto 1.85rem;
+  opacity: 0.9;
+}
+
+.winding-grid {
+  display: grid;
+  min-width: 60rem;
+  grid-template-columns: repeat(4, minmax(12.5rem, 1fr));
+  gap: clamp(2rem, 4vw, 4rem);
+}
+
+.winding-moment {
+  position: relative;
+  min-width: 0;
+}
+
+.winding-moment::before {
+  position: absolute;
+  top: -2.45rem;
+  left: 0.25rem;
+  width: 1px;
+  height: 1.85rem;
+  background: rgba(166, 117, 61, 0.24);
+  content: "";
+}
+
+.celebration-detail > summary::-webkit-details-marker {
+  display: none;
+}
+
+.celebration-detail .detail-icon {
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.celebration-detail[open] .detail-icon {
+  transform: rotate(180deg);
+}
+
 .date-lockup {
   border-left: 1px solid rgba(166, 117, 61, 0.42);
   padding-left: 1rem;
