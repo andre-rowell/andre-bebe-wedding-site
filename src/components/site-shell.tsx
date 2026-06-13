@@ -110,12 +110,12 @@ export function GuestPage({ children }: { children: React.ReactNode }) {
 
 export function PageHero({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
   return (
-    <section className="editorial-band border-b border-[#ded2c4] py-14 sm:py-20">
-      <div className="container animate-in max-w-4xl text-center">
+    <section className="editorial-band border-b border-[#ded2c4] py-16 sm:py-24">
+      <div className="container animate-in max-w-5xl text-center">
         <p className="ornament justify-center text-sm">◆</p>
         <p className="eyebrow mt-5">{eyebrow}</p>
-        <h1 className="serif text-balance mt-3 text-5xl font-semibold uppercase leading-[0.95] tracking-[0.08em] text-[#211915] sm:text-7xl">{title}</h1>
-        <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#5f5149]">{copy}</p>
+        <h1 className="editorial-title mt-4 text-balance text-[#211915]">{title}</h1>
+        <p className="mx-auto mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#5f5149]">{copy}</p>
       </div>
     </section>
   );

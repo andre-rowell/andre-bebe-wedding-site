@@ -133,43 +133,40 @@ export default async function Home() {
 
       <section id="story" className="editorial-band scroll-mt-24 py-16 sm:py-24">
         <div className="container">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-4xl text-center">
             <p className="ornament justify-center text-sm">◆</p>
             <p className="eyebrow mt-5">Our story</p>
-            <h2 className="serif text-balance mt-3 text-5xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-7xl">The road that brought us here</h2>
-            <p className="mx-auto mt-6 max-w-2xl leading-8 text-[#5f5149]">
+            <h2 className="editorial-title mt-4 text-balance">The road that brought us here</h2>
+            <p className="mx-auto mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#5f5149]">
               {settings.storyCopy || "Our story has been built in the ordinary magic: long walks, shared playlists, late dinners, family tables, and the steady decision to choose each other every day."}
             </p>
           </div>
 
-          <div className="mt-14 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-            <div className="relative">
-              <div className="timeline-line absolute left-[1.15rem] top-0 hidden h-full w-px sm:block" />
-              <div className="grid gap-6">
+          <div className="mt-14 grid gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start">
+            <div className="min-w-0">
+              <div className="ruled-list">
                 {storyTimeline.map(([year, title, copy], index) => (
-                  <article key={`${year}-${title}`} className="paper-panel animate-in grid gap-4 p-5 sm:grid-cols-[4.5rem_1fr] sm:p-6" style={{ animationDelay: `${index * 80}ms` }}>
-                    <div>
-                      <p className="serif text-4xl font-semibold text-[#a6753d]">{year}</p>
-                    </div>
-                    <div>
-                      <h3 className="serif text-3xl font-semibold uppercase tracking-[0.08em]">{title}</h3>
-                      <p className="mt-2 text-sm leading-7 text-[#5f5149]">{copy}</p>
+                  <article key={`${year}-${title}`} className="animate-in grid gap-4 py-7 sm:grid-cols-[7rem_1fr]" style={{ animationDelay: `${index * 80}ms` }}>
+                    <p className="serif text-4xl font-semibold leading-none text-[#a6753d] sm:text-5xl">{year}</p>
+                    <div className="min-w-0">
+                      <h3 className="serif text-3xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-4xl">{title}</h3>
+                      <p className="mt-3 max-w-md text-[0.98rem] leading-7 text-[#5f5149]">{copy}</p>
                     </div>
                   </article>
                 ))}
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="image-frame h-80 sm:h-[30rem]">
+            <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+              <div className="image-frame h-80 sm:h-[31rem]">
                 <img src="/photos/andre-bebe-car.jpg" alt="Andre and Bebe with a classic car" loading="lazy" decoding="async" className="object-center" />
               </div>
               <div className="grid gap-4">
                 <div className="image-frame h-48 sm:h-60">
                   <img src="/photos/andre-bebe-close.jpg" alt="Andre and Bebe close portrait" loading="lazy" decoding="async" className="object-[52%_38%]" />
                 </div>
-                <div className="paper-panel p-6">
-                  <p className="script text-4xl text-[#6d5545]">Forever starts with all of you in the room.</p>
+                <div className="border-y border-[#cbb89f] py-7">
+                  <p className="script text-4xl leading-tight text-[#6d5545]">Forever starts with all of you in the room.</p>
                   <Link href="/story" className="btn btn-secondary mt-6">
                     Read more
                     <ChevronRight size={15} aria-hidden="true" />
@@ -198,52 +195,50 @@ export default async function Home() {
 
       <section id="celebration" className="scroll-mt-24 py-16 sm:py-24">
         <div className="container">
-          <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
-            <div className="lg:sticky lg:top-28">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start">
+            <div className="min-w-0 lg:sticky lg:top-28">
               <p className="eyebrow">Our celebration</p>
-              <h2 className="serif text-balance mt-3 text-5xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-7xl">A weekend in Minneapolis</h2>
-              <p className="mt-6 leading-8 text-[#5f5149]">
+              <h2 className="editorial-title-sm mt-4 text-balance">A weekend in Minneapolis</h2>
+              <p className="mt-7 max-w-xl text-[1.02rem] leading-8 text-[#5f5149]">
                 Ceremony, cocktails, dinner, dancing, and a little extra time together around the wedding weekend. Private invitation details stay protected in each household link.
               </p>
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <div className="mt-8 grid gap-3 sm:max-w-lg sm:grid-cols-2 lg:grid-cols-1">
                 <Link href="/rsvp" className="btn btn-primary">RSVP today</Link>
                 <Link href="/events" className="btn btn-secondary">View event page</Link>
               </div>
             </div>
 
-            <div className="grid gap-5">
+            <div className="ruled-list min-w-0">
               {events.map((event, index) => (
-                <article key={event.id} className="paper-panel overflow-hidden">
-                  <div className="grid md:grid-cols-[13rem_1fr]">
-                    <div className="grid grid-cols-[6.5rem_1fr] md:grid-cols-1">
-                      <div className="flex flex-col justify-center border-r border-[#ded2c4] p-5 text-center md:border-b md:border-r-0">
-                        <p className="fine-print text-[#9a6932]">{shortDate(event.date).split(",")[0]}</p>
-                        <p className="serif mt-1 text-5xl font-semibold">{event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" })}</p>
-                        <p className="fine-print">{event.date.toLocaleDateString("en-US", { month: "short", timeZone: "America/Chicago" })}</p>
-                      </div>
-                      <img src={eventImage(event.slug, index)} alt="" loading="lazy" decoding="async" className="h-40 w-full object-cover md:h-48" />
-                    </div>
-                    <div className="p-5 sm:p-7">
-                      <p className="eyebrow">{event.type}</p>
-                      <h3 className="serif mt-2 text-3xl font-semibold uppercase tracking-[0.08em] sm:text-4xl">{event.title}</h3>
-                      <p className="mt-3 text-sm font-bold uppercase tracking-[0.12em] text-[#3a302a]">
-                        {formatTimeForDisplay(event.startTime)}
-                        {event.endTime ? ` - ${formatTimeForDisplay(event.endTime)}` : ""}
-                      </p>
-                      <p className="mt-3 text-sm leading-7 text-[#5f5149]">{event.description}</p>
-                      <p className="mt-3 text-sm font-semibold text-[#3f342e]">{eventLocation(event)}</p>
-                      <div className="mt-5 flex flex-wrap gap-3">
-                        <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary">
-                          <CalendarPlus size={15} aria-hidden="true" />
-                          Add to calendar
+                <article key={event.id} className="grid min-w-0 gap-5 py-8 md:grid-cols-[5.5rem_minmax(10rem,13rem)_minmax(0,1fr)] md:items-start">
+                  <div className="text-left md:text-center">
+                    <p className="fine-print text-[#9a6932]">{shortDate(event.date).split(",")[0]}</p>
+                    <p className="serif mt-1 text-5xl font-semibold leading-none">{event.date.toLocaleDateString("en-US", { day: "2-digit", timeZone: "America/Chicago" })}</p>
+                    <p className="fine-print mt-1">{event.date.toLocaleDateString("en-US", { month: "short", timeZone: "America/Chicago" })}</p>
+                  </div>
+                  <div className="image-frame h-52 md:h-48">
+                    <img src={eventImage(event.slug, index)} alt="" loading="lazy" decoding="async" className="object-cover" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="eyebrow">{event.type}</p>
+                    <h3 className="serif mt-2 text-3xl font-semibold uppercase leading-[0.95] tracking-[0.08em] sm:text-4xl">{event.title}</h3>
+                    <p className="mt-4 text-sm font-bold uppercase tracking-[0.12em] text-[#3a302a]">
+                      {formatTimeForDisplay(event.startTime)}
+                      {event.endTime ? ` - ${formatTimeForDisplay(event.endTime)}` : ""}
+                    </p>
+                    <p className="mt-3 max-w-md text-[0.96rem] leading-7 text-[#5f5149]">{event.description}</p>
+                    <p className="mt-3 max-w-sm text-sm font-semibold leading-6 text-[#3f342e]">{eventLocation(event)}</p>
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary">
+                        <CalendarPlus size={15} aria-hidden="true" />
+                        Add to calendar
+                      </a>
+                      {event.mapUrl ? (
+                        <a href={event.mapUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
+                          <MapPin size={15} aria-hidden="true" />
+                          Map
                         </a>
-                        {event.mapUrl ? (
-                          <a href={event.mapUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                            <MapPin size={15} aria-hidden="true" />
-                            Map
-                          </a>
-                        ) : null}
-                      </div>
+                      ) : null}
                     </div>
                   </div>
                 </article>
@@ -251,16 +246,16 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-7 md:grid-cols-2 lg:grid-cols-4">
             {[
               ["Attire", ceremony?.dressCode || "Elegant cocktail attire"],
               ["Parking", ceremony?.parkingInfo || "Parking details will be shared before wedding weekend."],
               ["Transportation", ceremony?.transportationInfo || "Shuttle details will be posted as they are confirmed."],
               ["Good to know", faqs[0]?.answer || "Please check the FAQ before reaching out with questions."],
             ].map(([title, copy]) => (
-              <article key={title} className="paper-panel p-5">
+              <article key={title} className="ruled-card">
                 <p className="eyebrow">{title}</p>
-                <p className="mt-3 text-sm leading-7 text-[#5f5149]">{copy}</p>
+                <p className="mt-4 text-[0.96rem] leading-7 text-[#5f5149]">{copy}</p>
               </article>
             ))}
           </div>
@@ -269,26 +264,26 @@ export default async function Home() {
 
       <section id="travel" className="editorial-band scroll-mt-24 py-16 sm:py-24">
         <div className="container">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-            <div>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end">
+            <div className="min-w-0">
               <p className="eyebrow">Travel & Stay</p>
-              <h2 className="serif text-balance mt-3 text-5xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-7xl">Make a weekend of it</h2>
-              <p className="mt-6 max-w-2xl leading-8 text-[#5f5149]">
+              <h2 className="editorial-title-sm mt-4 text-balance">Make a weekend of it</h2>
+              <p className="mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#5f5149]">
                 A few notes to make travel, lodging, parking, and time in Minneapolis feel easy. Admin updates to the travel page will flow into this section.
               </p>
             </div>
-            <div className="image-frame h-72">
+            <div className="image-frame h-72 min-w-0">
               <img src="/photos/andre-bebe-car.jpg" alt="Andre and Bebe with a classic car" loading="lazy" decoding="async" className="object-center" />
             </div>
           </div>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {travelSections.slice(0, 4).map((section) => (
-              <article key={section.id} className="paper-panel p-5">
+              <article key={section.id} className="ruled-card">
                 <p className="eyebrow">{section.category}</p>
-                <h3 className="serif mt-3 text-3xl font-semibold uppercase tracking-[0.08em]">{section.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-[#5f5149]">{section.content}</p>
+                <h3 className="serif mt-4 text-3xl font-semibold uppercase leading-none tracking-[0.08em]">{section.title}</h3>
+                <p className="mt-4 text-[0.96rem] leading-7 text-[#5f5149]">{section.content}</p>
                 {section.url ? (
-                  <a href={section.url} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#7f542b]">
+                  <a href={section.url} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#7f542b]">
                     Open link
                     <ExternalLink size={14} aria-hidden="true" />
                   </a>
@@ -321,34 +316,34 @@ export default async function Home() {
 
       <section id="registry" className="scroll-mt-24 py-16 sm:py-24">
         <div className="container">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-4xl text-center">
             <p className="ornament justify-center text-sm">◆</p>
             <p className="eyebrow mt-5">Registry</p>
-            <h2 className="serif text-balance mt-3 text-5xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-7xl">Your presence is our favorite gift</h2>
-            <p className="mx-auto mt-6 max-w-2xl leading-8 text-[#5f5149]">
+            <h2 className="editorial-title mt-4 text-balance">Your presence is our favorite gift</h2>
+            <p className="mx-auto mt-7 max-w-2xl text-[1.02rem] leading-8 text-[#5f5149]">
               If you would like to contribute further, we have included a few registry and fund options below.
             </p>
           </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mx-auto mt-11 grid max-w-4xl gap-5 md:grid-cols-2">
             {registries.map((registry) => (
-              <article key={registry.id} className="paper-panel p-6 text-center">
-                <h3 className="serif text-3xl font-semibold uppercase tracking-[0.08em]">{registry.title}</h3>
-                <p className="mx-auto mt-4 max-w-sm text-sm leading-7 text-[#5f5149]">{registry.description}</p>
+              <article key={registry.id} className="paper-panel p-7 text-center">
+                <h3 className="serif text-3xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-4xl">{registry.title}</h3>
+                <p className="mx-auto mt-5 max-w-sm text-[0.96rem] leading-7 text-[#5f5149]">{registry.description}</p>
                 <a href={registry.url} target="_blank" rel="noreferrer" className="btn btn-primary mt-6">
                   {registry.buttonText}
                 </a>
               </article>
             ))}
           </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <div className="mt-11 grid gap-7 md:grid-cols-3">
             {[
               ["Honeymoon", "Time away to rest, celebrate, and start marriage slowly."],
               ["At home", "Pieces that make hosting family and friends even sweeter."],
               ["With gratitude", "No gift is expected. Showing up with love is enough."],
             ].map(([title, copy]) => (
-              <article key={title} className="border-t border-[#cbb89f] pt-5">
+              <article key={title} className="ruled-card">
                 <h3 className="serif text-3xl font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-7 text-[#5f5149]">{copy}</p>
+                <p className="mt-3 text-[0.96rem] leading-7 text-[#5f5149]">{copy}</p>
               </article>
             ))}
           </div>

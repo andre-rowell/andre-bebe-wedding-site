@@ -221,17 +221,17 @@ summary {
 .card,
 .section-frame,
 .paper-panel {
-  border: 1px solid rgba(166, 117, 61, 0.24);
-  border-radius: 0.2rem;
-  background: rgba(255, 250, 244, 0.86);
+  border: 1px solid rgba(166, 117, 61, 0.2);
+  border-radius: 0.12rem;
+  background: rgba(255, 250, 244, 0.72);
   color: #211915;
-  box-shadow: 0 18px 58px rgba(58, 43, 34, 0.08);
+  box-shadow: 0 14px 42px rgba(58, 43, 34, 0.055);
 }
 
 .card:hover,
 .section-frame:hover,
 .paper-panel:hover {
-  box-shadow: 0 24px 74px rgba(58, 43, 34, 0.12);
+  box-shadow: 0 18px 54px rgba(58, 43, 34, 0.085);
 }
 
 .editorial-band {
@@ -289,6 +289,46 @@ summary {
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+
+.editorial-title {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.editorial-title-sm {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(2.75rem, 5.8vw, 5.25rem);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.ruled-list {
+  border-top: 1px solid rgba(166, 117, 61, 0.34);
+  border-bottom: 1px solid rgba(166, 117, 61, 0.34);
+}
+
+.ruled-list > * + * {
+  border-top: 1px solid rgba(166, 117, 61, 0.22);
+}
+
+.ruled-card {
+  border-top: 1px solid rgba(166, 117, 61, 0.38);
+  padding-top: 1.45rem;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .admin-table {
