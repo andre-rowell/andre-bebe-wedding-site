@@ -84,7 +84,7 @@ export async function submitRsvpAction(formData: FormData) {
   }
 
   await prisma.household.update({ where: { id: household.id }, data: { invitationStatus: "RSVP_COMPLETE" } });
-  redirect(`/invite/${household.inviteLinkToken}?submitted=1`);
+  redirect(`/rsvp?code=${encodeURIComponent(household.inviteCode)}&submitted=1#responses`);
 }
 
 export async function submitGuestbookAction(formData: FormData) {
