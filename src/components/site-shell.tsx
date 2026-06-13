@@ -1,46 +1,68 @@
 import Link from "next/link";
-import { CalendarHeart, Menu } from "lucide-react";
+import { CalendarHeart, ChevronDown, Menu } from "lucide-react";
 
-const nav = [
+const primaryNav = [
+  ["Our Story", "/#story"],
+  ["Our Celebration", "/#celebration"],
+  ["Travel & Stay", "/#travel"],
+  ["Registry", "/#registry"],
+];
+
+const secondaryNav = [
   ["Events", "/events"],
-  ["RSVP", "/rsvp"],
-  ["Our Story", "/story"],
-  ["Travel", "/travel"],
-  ["Registry", "/registry"],
-  ["FAQ", "/faq"],
   ["Photos", "/photos"],
+  ["FAQ", "/faq"],
   ["Guestbook", "/guestbook"],
   ["Contact", "/contact"],
+  ["Day-of", "/day-of"],
 ];
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-white/10 bg-[#15110f]/88 text-white backdrop-blur-xl">
-      <div className="container flex min-h-16 items-center justify-between gap-4">
-        <Link href="/" className="serif flex items-center gap-3 text-2xl font-semibold tracking-[0.28em]">
+    <header className="sticky top-0 z-40 border-b border-[#ded2c4]/70 bg-[#faf6ef]/92 text-[#221914] shadow-[0_10px_34px_rgba(40,31,26,0.06)] backdrop-blur-xl">
+      <div className="wide-container flex min-h-[4.25rem] items-center justify-between gap-4">
+        <Link href="/" className="serif group flex items-center gap-3 text-2xl font-semibold tracking-[0.28em]" aria-label="Andre and Bebe home">
           <span>A</span>
-          <span className="h-6 w-px bg-[#b88948]" />
+          <span className="h-7 w-px bg-[#b68a53] transition-transform group-hover:scale-y-125" />
           <span>B</span>
         </Link>
-        <nav className="hidden items-center gap-6 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#f1e7dc] lg:flex">
-          {nav.map(([label, href]) => (
-            <Link key={href} href={href} className="hover:text-[#c99b5a]">
+
+        <nav className="hidden items-center gap-7 text-[0.66rem] font-bold uppercase tracking-[0.22em] text-[#443832] lg:flex" aria-label="Primary navigation">
+          {primaryNav.map(([label, href]) => (
+            <Link key={href} href={href} className="story-link">
               {label}
             </Link>
           ))}
         </nav>
-        <Link href="/rsvp" className="btn btn-primary hidden sm:inline-flex">
-          <CalendarHeart size={18} />
-          RSVP
-        </Link>
+
+        <div className="hidden items-center gap-3 lg:flex">
+          <details className="relative">
+            <summary className="btn btn-quiet list-none">
+              More
+              <ChevronDown size={15} aria-hidden="true" />
+            </summary>
+            <div className="absolute right-0 mt-3 grid w-52 gap-1 border border-[#ded2c4] bg-[#fffaf4] p-2 shadow-2xl">
+              {secondaryNav.map(([label, href]) => (
+                <Link key={href} href={href} className="px-3 py-2 text-sm font-semibold text-[#443832] hover:bg-[#f0e5d8]">
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </details>
+          <Link href="/rsvp" className="btn btn-primary">
+            <CalendarHeart size={16} aria-hidden="true" />
+            RSVP
+          </Link>
+        </div>
+
         <details className="relative lg:hidden">
-          <summary className="btn list-none border border-white/25 text-white">
-            <Menu size={18} />
+          <summary className="btn btn-quiet list-none" aria-label="Open guest navigation">
+            <Menu size={18} aria-hidden="true" />
             Menu
           </summary>
-          <div className="absolute right-0 mt-3 grid w-56 gap-2 rounded-sm border border-[#e7dbce] bg-[#fffaf5] p-3 text-[#211915] shadow-xl">
-            {nav.map(([label, href]) => (
-              <Link key={href} href={href} className="rounded-sm px-3 py-2 text-sm font-semibold hover:bg-[#f4eadf]">
+          <div className="absolute right-0 mt-3 grid w-[min(20rem,calc(100vw-1.5rem))] gap-1 border border-[#ded2c4] bg-[#fffaf4] p-3 text-[#221914] shadow-2xl">
+            {[...primaryNav, ["RSVP", "/rsvp"], ...secondaryNav].map(([label, href]) => (
+              <Link key={`${label}-${href}`} href={href} className="px-3 py-3 text-sm font-semibold uppercase tracking-[0.14em] hover:bg-[#f0e5d8]">
                 {label}
               </Link>
             ))}
@@ -53,13 +75,24 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden border-t border-[#2c241f] bg-[#15110f] py-12 text-[#fffaf7]">
-      <img src="/photos/bebe-veil-car-bw.jpg" alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-25" />
-      <div className="absolute inset-0 bg-[#15110f]/70" />
-      <div className="container relative text-center">
-        <p className="script text-4xl text-[#f2e5d7]">We can&apos;t wait to celebrate with you.</p>
-        <p className="mt-3 text-[0.7rem] font-bold uppercase tracking-[0.24em] text-[#d8c8b8]">May 30, 2027 · Minneapolis, Minnesota</p>
-        <p className="serif mt-5 text-2xl tracking-[0.32em]">A | B</p>
+    <footer className="relative overflow-hidden border-t border-[#302722] bg-[#15110f] text-[#fffaf4]">
+      <img src="/photos/bebe-veil-car-bw.jpg" alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-20" />
+      <div className="absolute inset-0 bg-[#15110f]/78" />
+      <div className="container relative grid gap-8 py-12 text-center sm:py-16">
+        <p className="script text-4xl text-[#f3e2cf] sm:text-5xl">We can&apos;t wait to celebrate with you.</p>
+        <div className="mx-auto grid max-w-3xl gap-5 text-[0.68rem] font-bold uppercase tracking-[0.22em] text-[#d9c7b4] sm:grid-cols-3">
+          <p>May 30, 2027</p>
+          <p>Urban Daisy</p>
+          <p>Minneapolis, MN</p>
+        </div>
+        <p className="serif text-3xl tracking-[0.34em]">A | B</p>
+        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#d9c7b4]" aria-label="Footer navigation">
+          {[...primaryNav, ["RSVP", "/rsvp"], ["FAQ", "/faq"]].map(([label, href]) => (
+            <Link key={`${label}-${href}`} href={href} className="hover:text-white">
+              {label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </footer>
   );
@@ -77,12 +110,12 @@ export function GuestPage({ children }: { children: React.ReactNode }) {
 
 export function PageHero({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
   return (
-    <section className="border-b border-[#e7dbce] py-14 sm:py-20">
+    <section className="editorial-band border-b border-[#ded2c4] py-14 sm:py-20">
       <div className="container animate-in max-w-4xl text-center">
         <p className="ornament justify-center text-sm">◆</p>
-        <p className="mt-4 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-[#9b7039]">{eyebrow}</p>
-        <h1 className="serif text-balance mt-2 text-5xl font-semibold uppercase leading-none tracking-[0.08em] sm:text-7xl">{title}</h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[#6d625b]">{copy}</p>
+        <p className="eyebrow mt-5">{eyebrow}</p>
+        <h1 className="serif text-balance mt-3 text-5xl font-semibold uppercase leading-[0.95] tracking-[0.08em] text-[#211915] sm:text-7xl">{title}</h1>
+        <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#5f5149]">{copy}</p>
       </div>
     </section>
   );

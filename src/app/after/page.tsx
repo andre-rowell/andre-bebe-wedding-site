@@ -21,7 +21,7 @@ export default async function AfterWeddingPage() {
           <h1 className="serif mt-5 text-6xl font-semibold uppercase tracking-[0.08em] sm:text-8xl">Thank you</h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#f3e7da]">{setting.afterWeddingMessage || "Thank you for surrounding us with so much love. We are grateful for every hug, toast, dance, prayer, and memory from our wedding weekend."}</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <a href={setting.sharedAlbumUrl || "/photos"} target={setting.sharedAlbumUrl ? "_blank" : undefined} rel="noreferrer" className="btn btn-primary"><Images size={16} /> Shared album</a>
+            <a href={setting.sharedAlbumUrl || "/photos"} target={setting.sharedAlbumUrl ? "_blank" : undefined} rel="noreferrer" className="btn bg-[#fffaf4] text-[#211915] hover:bg-white"><Images size={16} /> Shared album</a>
             <Link href="/guestbook" className="btn border border-white/40 text-white"><MessageSquareHeart size={16} /> Guestbook</Link>
           </div>
         </div>

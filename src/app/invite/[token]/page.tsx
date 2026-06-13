@@ -36,7 +36,7 @@ export default async function InviteLandingPage({ params, searchParams }: { para
           <h1 className="serif mt-3 max-w-3xl text-6xl font-semibold leading-none sm:text-8xl">Welcome, {household.name}</h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-[#f1e4d6]">Your household invitation hub for RSVP, invited events, calendar links, travel details, and wedding weekend updates.</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href={`/rsvp?code=${encodeURIComponent(household.inviteCode)}`} className="btn btn-primary">RSVP or update</Link>
+            <Link href={`/rsvp?code=${encodeURIComponent(household.inviteCode)}`} className="btn bg-[#fffaf4] text-[#211915] hover:bg-white">RSVP or update</Link>
             <Link href={`/events?code=${encodeURIComponent(household.inviteCode)}`} className="btn border border-white/40 text-white">View invited events</Link>
           </div>
           {query?.submitted ? <p className="mt-6 max-w-xl bg-white/12 p-4 text-sm font-semibold backdrop-blur">Your RSVP was saved. The confirmation copy below is ready for email or manual sending.</p> : null}
