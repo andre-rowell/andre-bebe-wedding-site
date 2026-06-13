@@ -56,15 +56,47 @@ export async function submitRsvpAction(formData: FormData) {
       if (!allowed.has(`${eventId}:${guest.id}`)) continue;
       const attending = String(formData.get(`attending:${guest.id}:${eventId}`) || "UNANSWERED");
       if (!["YES", "NO", "UNANSWERED"].includes(attending)) continue;
+      const detailFields = {
+        mealChoice: `meal:${guest.id}:${eventId}`,
+        dietaryRestrictions: `dietary:${guest.id}:${eventId}`,
+        accessibilityNeeds: `accessibility:${guest.id}:${eventId}`,
+        songRequest: `song:${guest.id}:${eventId}`,
+        travelNotes: `travel:${guest.id}:${eventId}`,
+      };
+      const detailUpdateData: {
+        mealChoice?: string | null;
+        dietaryRestrictions?: string | null;
+        accessibilityNeeds?: string | null;
+        songRequest?: string | null;
+        travelNotes?: string | null;
+      } = {};
+      const detailCreateData: {
+        mealChoice: string | null;
+        dietaryRestrictions: string | null;
+        accessibilityNeeds: string | null;
+        songRequest: string | null;
+        travelNotes: string | null;
+      } = {
+        mealChoice: null,
+        dietaryRestrictions: null,
+        accessibilityNeeds: null,
+        songRequest: null,
+        travelNotes: null,
+      };
+
+      for (const [field, inputName] of Object.entries(detailFields) as Array<[keyof typeof detailFields, string]>) {
+        if (formData.has(inputName)) {
+          const value = String(formData.get(inputName) || "").trim() || null;
+          detailUpdateData[field] = value;
+          detailCreateData[field] = value;
+        }
+      }
+
       await prisma.rSVP.upsert({
         where: { eventId_guestId: { eventId, guestId: guest.id } },
         update: {
           attending: attending as "YES" | "NO" | "UNANSWERED",
-          mealChoice: String(formData.get(`meal:${guest.id}:${eventId}`) || "").trim() || null,
-          dietaryRestrictions: String(formData.get(`dietary:${guest.id}:${eventId}`) || "").trim() || null,
-          accessibilityNeeds: String(formData.get(`accessibility:${guest.id}:${eventId}`) || "").trim() || null,
-          songRequest: String(formData.get(`song:${guest.id}:${eventId}`) || "").trim() || null,
-          travelNotes: String(formData.get(`travel:${guest.id}:${eventId}`) || "").trim() || null,
+          ...detailUpdateData,
           submittedAt: new Date(),
         },
         create: {
@@ -72,11 +104,7 @@ export async function submitRsvpAction(formData: FormData) {
           guestId: guest.id,
           householdId: household.id,
           attending: attending as "YES" | "NO" | "UNANSWERED",
-          mealChoice: String(formData.get(`meal:${guest.id}:${eventId}`) || "").trim() || null,
-          dietaryRestrictions: String(formData.get(`dietary:${guest.id}:${eventId}`) || "").trim() || null,
-          accessibilityNeeds: String(formData.get(`accessibility:${guest.id}:${eventId}`) || "").trim() || null,
-          songRequest: String(formData.get(`song:${guest.id}:${eventId}`) || "").trim() || null,
-          travelNotes: String(formData.get(`travel:${guest.id}:${eventId}`) || "").trim() || null,
+          ...detailCreateData,
           submittedAt: new Date(),
         },
       });

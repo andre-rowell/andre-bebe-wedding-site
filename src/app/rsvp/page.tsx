@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { CalendarDays, ChevronDown, LockKeyhole, Search, UsersRound, X } from "lucide-react";
+import { CalendarDays, LockKeyhole, Search, UsersRound, X } from "lucide-react";
 import { submitRsvpAction } from "@/lib/actions";
 import { formatTimeForDisplay } from "@/lib/event-time";
-import { formatDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
 export default async function RsvpPage({ searchParams }: { searchParams?: Promise<{ code?: string; q?: string; submitted?: string; error?: string }> }) {
@@ -45,7 +44,6 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
     household?.eventInvitations.filter((invite) => invite.guestId && invite.event.isActive).map((invite) => [`${invite.guestId}:${invite.eventId}`, invite]) || [],
   );
   const matrixMinWidth = `${Math.max(42, 13 + eventColumns.length * 10)}rem`;
-  const hasMealEvents = eventColumns.some((event) => event.mealSelectionRequired);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#15110f] text-[#211915]">
@@ -267,77 +265,6 @@ export default async function RsvpPage({ searchParams }: { searchParams?: Promis
                       <p className="px-4 py-5 text-sm leading-6 text-[#5f5149]">No RSVP-required events are assigned to this household yet.</p>
                     )}
                   </div>
-
-                  <details className="celebration-detail mt-5 border border-[#d7c6b5] bg-[#fffdf9]" open={hasMealEvents}>
-                    <summary className="flex list-none items-center justify-between gap-4 px-4 py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#7f542b]">
-                      Meal choices, dietary notes, access needs & songs
-                      <ChevronDown className="detail-icon shrink-0" size={16} aria-hidden="true" />
-                    </summary>
-                    <div className="border-t border-[#eadfd2] p-4">
-                      <p className="mb-4 max-w-3xl text-sm leading-6 text-[#5f5149]">
-                        Add meal choices and notes for invited guests. These details are saved with each guest&apos;s event response.
-                      </p>
-                      <div className="grid gap-4 lg:grid-cols-2">
-                        {household.guests.map((guest) => {
-                          const invitedEvents = eventColumns.filter((event) => inviteByGuestEvent.get(`${guest.id}:${event.id}`)?.invited);
-                          if (!invitedEvents.length) return null;
-
-                          return (
-                            <section key={guest.id} className="border border-[#eadfd2] bg-[#fffaf4]">
-                              <div className="border-b border-[#eadfd2] px-4 py-3">
-                                <p className="fine-print">{guest.isChild ? "Child" : "Adult"}</p>
-                                <h4 className="serif mt-1 text-2xl font-semibold leading-none">{guest.firstName} {guest.lastName}</h4>
-                              </div>
-                              <div className="divide-y divide-[#eadfd2]">
-                                {invitedEvents.map((event) => {
-                                  const existing = rsvpByGuestEvent.get(`${guest.id}:${event.id}`);
-                                  const mealOptions = (event.mealOptions || "").split("|").filter(Boolean);
-                                  return (
-                                    <div key={event.id} className="p-4">
-                                      <div className="flex flex-wrap items-center justify-between gap-3">
-                                        <div>
-                                          <p className="eyebrow">{formatTimeForDisplay(event.startTime)}</p>
-                                          <h5 className="serif mt-1 text-xl font-semibold uppercase leading-none tracking-[0.06em]">{event.title}</h5>
-                                        </div>
-                                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7b6d64]">{formatDate(event.date)}</p>
-                                      </div>
-                                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                                        {event.mealSelectionRequired ? (
-                                          <div>
-                                            <label htmlFor={`meal:${guest.id}:${event.id}`}>Meal choice</label>
-                                            <select id={`meal:${guest.id}:${event.id}`} name={`meal:${guest.id}:${event.id}`} defaultValue={existing?.mealChoice || ""}>
-                                              <option value="">Select a meal if attending</option>
-                                              {mealOptions.map((meal) => <option key={meal}>{meal}</option>)}
-                                            </select>
-                                          </div>
-                                        ) : null}
-                                        <div>
-                                          <label htmlFor={`dietary:${guest.id}:${event.id}`}>Dietary restrictions</label>
-                                          <input id={`dietary:${guest.id}:${event.id}`} name={`dietary:${guest.id}:${event.id}`} defaultValue={existing?.dietaryRestrictions || ""} placeholder="None, vegetarian, allergies..." />
-                                        </div>
-                                        <div>
-                                          <label htmlFor={`accessibility:${guest.id}:${event.id}`}>Accessibility needs</label>
-                                          <input id={`accessibility:${guest.id}:${event.id}`} name={`accessibility:${guest.id}:${event.id}`} defaultValue={existing?.accessibilityNeeds || ""} placeholder="Optional" />
-                                        </div>
-                                        <div>
-                                          <label htmlFor={`song:${guest.id}:${event.id}`}>Song request</label>
-                                          <input id={`song:${guest.id}:${event.id}`} name={`song:${guest.id}:${event.id}`} defaultValue={existing?.songRequest || ""} placeholder="Optional" />
-                                        </div>
-                                      </div>
-                                      <div className="mt-3">
-                                        <label htmlFor={`travel:${guest.id}:${event.id}`}>Travel or shuttle notes</label>
-                                        <input id={`travel:${guest.id}:${event.id}`} name={`travel:${guest.id}:${event.id}`} defaultValue={existing?.travelNotes || ""} placeholder="Optional" />
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </section>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </details>
 
                   <div className="sticky bottom-0 z-10 -mx-4 mt-6 grid gap-3 border-t border-[#d6c8b8] bg-[#fffaf4]/96 px-4 py-3 text-[#211915] shadow-[0_-18px_42px_rgba(58,43,34,0.12)] backdrop-blur sm:-mx-6 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div>
