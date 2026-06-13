@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { CalendarPlus, ChevronDown, ChevronRight, MapPin } from "lucide-react";
+import { CalendarPlus, ChevronDown, MapPin } from "lucide-react";
 import { Countdown } from "@/components/countdown";
 import { MinneapolisGuide } from "@/components/minneapolis-guide";
 import { GuestPage } from "@/components/site-shell";
+import { StoryTimeline } from "@/components/story-timeline";
 import { googleCalendarUrl } from "@/lib/calendar";
 import { formatEventTimeRange, formatTimeForDisplay, hasKnownTime, timeInputValue } from "@/lib/event-time";
 import { prisma } from "@/lib/prisma";
@@ -166,49 +167,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="story" className="editorial-band scroll-mt-24 py-12 sm:py-24">
-        <div className="container">
-          <div className="grid gap-7 lg:grid-cols-[0.42fr_0.58fr] lg:items-end">
-            <div>
-              <p className="eyebrow">Our story</p>
-              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.01em] text-[#211915] sm:text-4xl">Our winding road</h2>
-            </div>
-            <p className="max-w-3xl text-[1.02rem] leading-8 text-[#5f5149] lg:justify-self-end">
-              {settings.storyCopy || "Our story has been built in the ordinary magic: long walks, shared playlists, late dinners, family tables, and the steady decision to choose each other every day."}
-            </p>
-          </div>
-
-          <div className="winding-timeline mt-10 sm:mt-14">
-            <div className="winding-rail" aria-hidden="true" />
-            <div className="winding-grid">
-              {storyTimeline.map((moment, index) => (
-                <article key={`${moment.year}-${moment.title}`} className="winding-moment animate-in" style={{ animationDelay: `${index * 70}ms` }}>
-                  <div className="flex items-center justify-between gap-4">
-                    <p className="flex items-center gap-3 text-sm font-bold tracking-[0.16em] text-[#a6753d]">
-                      <span className="h-2 w-2 rounded-full bg-[#a6753d]" />
-                      {moment.year}
-                    </p>
-                    <div className="flex -space-x-3 opacity-80">
-                      <img src={moment.image} alt="" loading="lazy" decoding="async" className="h-10 w-10 rounded-full border border-[#fffaf4] object-cover grayscale" />
-                      <img src="/photos/andre-bebe-portrait.jpg" alt="" loading="lazy" decoding="async" className="h-10 w-10 rounded-full border border-[#fffaf4] object-cover" />
-                    </div>
-                  </div>
-                  <h3 className="mt-8 text-xl font-semibold tracking-[-0.01em] text-[#211915]">{moment.title}</h3>
-                  <p className="mt-3 text-[0.96rem] leading-7 text-[#7a6d65]">{moment.copy}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-10 border-t border-[#d6c8b8] pt-8">
-            <p className="script max-w-3xl text-3xl leading-tight text-[#6d5545] sm:text-4xl">Forever starts with all of you in the room.</p>
-            <Link href="/story" className="btn btn-secondary mt-6">
-              Read more
-              <ChevronRight size={15} aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      <StoryTimeline moments={storyTimeline} />
 
       <section aria-label="Engagement photos" className="bg-[#15110f] py-3 sm:py-4">
         <div className="wide-container grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">

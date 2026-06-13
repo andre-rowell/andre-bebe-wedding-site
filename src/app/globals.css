@@ -395,6 +395,8 @@ section[id] {
   position: relative;
   overflow-x: auto;
   padding: 3.7rem 0 0.25rem;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
   scrollbar-width: none;
 }
 
@@ -441,6 +443,26 @@ section[id] {
   height: 1.85rem;
   background: rgba(166, 117, 61, 0.24);
   content: "";
+}
+
+.timeline-arrow {
+  display: inline-flex;
+  width: 2.8rem;
+  height: 2.8rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(166, 117, 61, 0.32);
+  border-radius: 999px;
+  background: rgba(255, 250, 244, 0.66);
+  color: #8a612f;
+  box-shadow: 0 10px 28px rgba(58, 43, 34, 0.06);
+}
+
+.timeline-arrow:hover {
+  border-color: rgba(166, 117, 61, 0.58);
+  background: #fffaf4;
+  color: #211915;
+  transform: translateY(-1px);
 }
 
 .celebration-detail > summary::-webkit-details-marker {
@@ -577,16 +599,22 @@ section[id] {
   }
 }
 
-@keyframes section-reveal {
-  from {
+@keyframes section-crossfade {
+  0% {
     filter: blur(7px);
-    opacity: 0.72;
+    opacity: 0.58;
     transform: translateY(3rem);
   }
-  to {
+  18%,
+  74% {
     filter: blur(0);
     opacity: 1;
     transform: translateY(0);
+  }
+  100% {
+    filter: blur(6px);
+    opacity: 0.58;
+    transform: translateY(-2.4rem);
   }
 }
 
@@ -657,8 +685,8 @@ section[id] {
 
 @supports (animation-timeline: view()) {
   .guest-flow > section:not(:first-child) {
-    animation: section-reveal 1ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-range: entry 0% entry 42%;
+    animation: section-crossfade 1ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-range: entry 0% exit 100%;
     animation-timeline: view();
     will-change: opacity, transform, filter;
   }
