@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CalendarHeart, ChevronDown, Menu } from "lucide-react";
+import { SectionTransitions } from "@/components/section-transitions";
 
 const primaryNav = [
   ["Our Story", "/#story"],
@@ -97,7 +98,10 @@ export function GuestPage({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <main className="guest-flow">{children}</main>
+      <main className="guest-flow">
+        <SectionTransitions />
+        {children}
+      </main>
       <SiteFooter />
     </>
   );
