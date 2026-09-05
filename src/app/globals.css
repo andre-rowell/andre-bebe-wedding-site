@@ -2313,21 +2313,36 @@ section[id] {
 }
 
 .cinematic-home {
-  background: var(--editorial-paper);
-  color: var(--editorial-ink);
+  --cinematic-background: #10110e;
+  --cinematic-surface: #151711;
+  --cinematic-text: #f3f0e8;
+  --cinematic-text-soft: #b9bbaf;
+  --cinematic-text-muted: #85897c;
+  --cinematic-accent: #c9cdbd;
+  --cinematic-line: rgba(243, 240, 232, 0.16);
+  background: var(--cinematic-background);
+  color: var(--cinematic-text);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
 .guest-site .guest-flow.cinematic-home > section:not(.inner-page-hero) {
-  background-color: var(--editorial-paper);
+  background-color: var(--cinematic-background);
   background-image: none;
 }
 
 .cinematic-home h2,
 .cinematic-home h3 {
-  color: var(--editorial-ink);
+  color: var(--cinematic-text);
   font-family: var(--font-cormorant), Georgia, serif;
   font-weight: 500;
+}
+
+.cinematic-home h2 {
+  font-style: italic;
+}
+
+.cinematic-home .editorial-eyebrow {
+  color: var(--cinematic-accent);
 }
 
 .cinematic-wide {
@@ -2475,7 +2490,7 @@ section[id] {
 }
 
 .cinematic-invitation {
-  border-bottom: 1px solid var(--editorial-line);
+  border-bottom: 1px solid var(--cinematic-line);
   padding: 7.5rem 0 7rem;
   text-align: center;
 }
@@ -2490,7 +2505,7 @@ section[id] {
 .cinematic-lede {
   max-width: 40rem;
   margin: 1.75rem auto 0;
-  color: #52554a;
+  color: var(--cinematic-text-soft);
   font-size: 1.03rem;
   line-height: 1.9;
 }
@@ -2499,8 +2514,8 @@ section[id] {
   display: grid;
   grid-template-columns: 1.45fr 0.75fr 1fr;
   margin-top: 3.5rem;
-  border-top: 1px solid var(--editorial-line);
-  border-bottom: 1px solid var(--editorial-line);
+  border-top: 1px solid var(--cinematic-line);
+  border-bottom: 1px solid var(--cinematic-line);
   text-align: left;
 }
 
@@ -2510,7 +2525,7 @@ section[id] {
   align-content: center;
   min-height: 7.5rem;
   padding: 1.25rem 1.5rem;
-  border-left: 1px solid var(--editorial-line);
+  border-left: 1px solid var(--cinematic-line);
 }
 
 .invitation-ledger p:first-child {
@@ -2519,7 +2534,7 @@ section[id] {
 
 .invitation-ledger span,
 .cinematic-practical-grid span {
-  color: var(--editorial-moss);
+  color: var(--cinematic-accent);
   font-size: 0.64rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2542,7 +2557,7 @@ section[id] {
 .wedding-countdown > div {
   display: grid;
   gap: 0.42rem;
-  border-left: 1px solid var(--editorial-line);
+  border-left: 1px solid var(--cinematic-line);
 }
 
 .wedding-countdown > div:first-child {
@@ -2557,7 +2572,7 @@ section[id] {
 }
 
 .wedding-countdown span {
-  color: #66695d;
+  color: var(--cinematic-text-muted);
   font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2568,7 +2583,7 @@ section[id] {
 .cinematic-registry,
 .cinematic-faq,
 .cinematic-rsvp {
-  border-bottom: 1px solid var(--editorial-line);
+  border-bottom: 1px solid var(--cinematic-line);
   padding: 8rem 0;
 }
 
@@ -2584,7 +2599,9 @@ section[id] {
 .cinematic-still-life {
   margin: 0;
   overflow: hidden;
-  background: #d6d4cb;
+  border: 1px solid var(--cinematic-line);
+  background: var(--cinematic-surface);
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.22);
 }
 
 .cinematic-portrait img,
@@ -2623,7 +2640,7 @@ section[id] {
 .cinematic-rsvp-grid > div > p:not(.editorial-eyebrow) {
   max-width: 34rem;
   margin-top: 1.45rem;
-  color: #53564b;
+  color: var(--cinematic-text-soft);
   font-size: 1rem;
   line-height: 1.85;
 }
@@ -2635,14 +2652,14 @@ section[id] {
   margin-top: 2rem;
   border-bottom: 1px solid currentColor;
   padding-bottom: 0.4rem;
-  color: var(--editorial-ink);
+  color: var(--cinematic-text);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .editorial-text-link:hover {
-  color: var(--editorial-moss);
+  color: var(--cinematic-accent);
 }
 
 .cinematic-heading-row {
@@ -2659,13 +2676,13 @@ section[id] {
 
 .cinematic-heading-row > p {
   max-width: 32rem;
-  color: #55584d;
+  color: var(--cinematic-text-soft);
   line-height: 1.75;
 }
 
 .cinematic-schedule {
   margin-top: 4.5rem;
-  border-top: 1px solid var(--editorial-ink);
+  border-top: 1px solid rgba(243, 240, 232, 0.48);
 }
 
 .cinematic-event-row {
@@ -2674,13 +2691,13 @@ section[id] {
   gap: 1.5rem;
   align-items: start;
   padding: 2.2rem 0;
-  border-bottom: 1px solid var(--editorial-line);
+  border-bottom: 1px solid var(--cinematic-line);
 }
 
 .cinematic-event-number,
 .cinematic-event-date span,
 .cinematic-event-meta span {
-  color: #73766b;
+  color: var(--cinematic-text-muted);
   font-size: 0.63rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2707,7 +2724,7 @@ section[id] {
 .cinematic-event-main p {
   max-width: 38rem;
   margin-top: 0.65rem;
-  color: #595c51;
+  color: var(--cinematic-text-soft);
   font-size: 0.9rem;
   line-height: 1.65;
 }
@@ -2719,8 +2736,8 @@ section[id] {
 .cinematic-practical-grid {
   display: grid;
   margin-top: 5rem;
-  border-top: 1px solid var(--editorial-line);
-  border-bottom: 1px solid var(--editorial-line);
+  border-top: 1px solid var(--cinematic-line);
+  border-bottom: 1px solid var(--cinematic-line);
 }
 
 .cinematic-practical-grid > div {
@@ -2728,7 +2745,7 @@ section[id] {
   gap: 0.7rem;
   align-content: start;
   padding: 2rem;
-  border-left: 1px solid var(--editorial-line);
+  border-left: 1px solid var(--cinematic-line);
 }
 
 .cinematic-practical-grid > div:first-child {
@@ -2743,7 +2760,7 @@ section[id] {
 }
 
 .cinematic-practical-grid p {
-  color: #5a5d52;
+  color: var(--cinematic-text-soft);
   font-size: 0.84rem;
   line-height: 1.65;
 }
@@ -2758,7 +2775,7 @@ section[id] {
   gap: 2rem;
   align-items: end;
   margin-top: 5rem;
-  border-left: 0.45rem solid var(--editorial-moss);
+  border-left: 0.35rem solid var(--cinematic-accent);
   padding: 2.5rem 0 2.5rem 2.5rem;
   scroll-margin-top: 6rem;
 }
@@ -2772,12 +2789,12 @@ section[id] {
 .cinematic-travel-callout > div > p:last-child {
   max-width: 42rem;
   margin-top: 1rem;
-  color: #56594e;
+  color: var(--cinematic-text-soft);
   line-height: 1.75;
 }
 
 .travel-note {
-  color: var(--editorial-moss);
+  color: var(--cinematic-accent);
   font-family: var(--font-courier-prime), "Courier New", monospace;
   font-size: 0.68rem;
   font-weight: 700;
@@ -2860,11 +2877,11 @@ section[id] {
 }
 
 .cinematic-faq-list {
-  border-top: 1px solid var(--editorial-ink);
+  border-top: 1px solid rgba(243, 240, 232, 0.48);
 }
 
 .cinematic-faq-list details {
-  border-bottom: 1px solid var(--editorial-line);
+  border-bottom: 1px solid var(--cinematic-line);
 }
 
 .cinematic-faq-list summary {
@@ -2882,7 +2899,7 @@ section[id] {
 }
 
 .cinematic-faq-list summary span {
-  color: #777a6f;
+  color: var(--cinematic-text-muted);
   font-size: 0.62rem;
   font-weight: 700;
 }
@@ -2895,7 +2912,12 @@ section[id] {
 }
 
 .cinematic-faq-list summary svg {
+  color: var(--cinematic-accent);
   transition: transform 220ms ease;
+}
+
+.cinematic-faq-list summary:hover strong {
+  color: var(--cinematic-accent);
 }
 
 .cinematic-faq-list details[open] summary svg {
@@ -2905,7 +2927,7 @@ section[id] {
 .cinematic-faq-list details > p {
   max-width: 43rem;
   padding: 0 3rem 1.7rem;
-  color: #55584d;
+  color: var(--cinematic-text-soft);
   font-size: 0.92rem;
   line-height: 1.75;
 }
@@ -2917,6 +2939,23 @@ section[id] {
 
 .cinematic-portrait-closing img {
   object-position: 50% 50%;
+}
+
+.cinematic-home .editorial-button {
+  border-color: var(--cinematic-text);
+  background: var(--cinematic-text);
+  color: var(--cinematic-background);
+}
+
+.cinematic-home .editorial-button:hover {
+  border-color: var(--cinematic-accent);
+  background: var(--cinematic-accent);
+  color: var(--cinematic-background);
+}
+
+.cinematic-home + .editorial-footer {
+  border-top: 1px solid rgba(243, 240, 232, 0.16);
+  background: #10110e;
 }
 
 .vintage-rsvp-page .btn-primary {
@@ -3065,7 +3104,7 @@ section[id] {
 
   .invitation-ledger p {
     min-height: 0;
-    border-top: 1px solid var(--editorial-line);
+    border-top: 1px solid var(--cinematic-line);
     border-left: 0;
     text-align: center;
   }
@@ -3114,7 +3153,7 @@ section[id] {
 
   .cinematic-practical-grid > div {
     padding-inline: 0;
-    border-top: 1px solid var(--editorial-line);
+    border-top: 1px solid var(--cinematic-line);
     border-left: 0;
   }
 
