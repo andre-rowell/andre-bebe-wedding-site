@@ -2319,8 +2319,8 @@ section[id] {
   --cinematic-text-soft: #b9bbaf;
   --cinematic-text-muted: #85897c;
   --cinematic-accent: #c9cdbd;
-  --cinematic-copper: #d1865b;
-  --cinematic-copper-bright: #dfa27d;
+  --cinematic-wine: #b96879;
+  --cinematic-wine-bright: #d398a5;
   --cinematic-line: rgba(243, 240, 232, 0.16);
   background: var(--cinematic-background);
   color: var(--cinematic-text);
@@ -2355,7 +2355,7 @@ section[id] {
 }
 
 .cinematic-home .editorial-eyebrow {
-  color: var(--cinematic-copper);
+  color: var(--cinematic-wine);
 }
 
 .cinematic-wide {
@@ -2547,7 +2547,7 @@ section[id] {
 
 .invitation-ledger span,
 .cinematic-practical-grid span {
-  color: var(--cinematic-copper);
+  color: var(--cinematic-wine);
   font-size: 0.64rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2578,7 +2578,7 @@ section[id] {
 }
 
 .wedding-countdown strong {
-  color: var(--cinematic-copper-bright);
+  color: var(--cinematic-wine-bright);
   font-family: var(--font-cormorant), Georgia, serif;
   font-size: 2.4rem;
   font-weight: 500;
@@ -2666,7 +2666,7 @@ section[id] {
   margin-top: 2rem;
   border-bottom: 1px solid currentColor;
   padding-bottom: 0.4rem;
-  color: var(--cinematic-copper-bright);
+  color: var(--cinematic-wine-bright);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2719,7 +2719,7 @@ section[id] {
 
 .cinematic-event-number,
 .cinematic-event-meta strong {
-  color: var(--cinematic-copper-bright);
+  color: var(--cinematic-wine-bright);
 }
 
 .cinematic-event-date,
@@ -2794,7 +2794,7 @@ section[id] {
   gap: 2rem;
   align-items: end;
   margin-top: 5rem;
-  border-left: 0.35rem solid var(--cinematic-copper);
+  border-left: 0.35rem solid var(--cinematic-wine);
   padding: 2.5rem 0 2.5rem 2.5rem;
   scroll-margin-top: 6rem;
 }
@@ -2918,7 +2918,7 @@ section[id] {
 }
 
 .cinematic-faq-list summary span {
-  color: var(--cinematic-copper);
+  color: var(--cinematic-wine);
   font-size: 0.62rem;
   font-weight: 700;
 }
@@ -2931,7 +2931,7 @@ section[id] {
 }
 
 .cinematic-faq-list summary svg {
-  color: var(--cinematic-copper-bright);
+  color: var(--cinematic-wine-bright);
   transition: transform 220ms ease;
 }
 
@@ -2967,8 +2967,8 @@ section[id] {
 }
 
 .cinematic-home .editorial-button:hover {
-  border-color: var(--cinematic-copper-bright);
-  background: var(--cinematic-copper-bright);
+  border-color: var(--cinematic-wine-bright);
+  background: var(--cinematic-wine-bright);
   color: var(--cinematic-background);
 }
 
@@ -2978,7 +2978,7 @@ section[id] {
 }
 
 .cinematic-home + .editorial-footer .editorial-footer-names {
-  color: #d1865b;
+  color: #b96879;
 }
 
 .vintage-rsvp-page .btn-primary {
