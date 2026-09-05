@@ -92,7 +92,13 @@ export default function Home() {
               <p className="editorial-eyebrow">Save the date</p>
               <h2 id="weekend-heading">The wedding day</h2>
             </div>
-            <p>Our ceremony begins in Saint Paul, followed by dinner and dancing in Minneapolis.</p>
+            <div className="cinematic-heading-copy">
+              <p>Our ceremony begins in Saint Paul, followed by dinner and dancing in Minneapolis.</p>
+              <p className="cinematic-attire-note">
+                <span>Attire</span>
+                <strong>Elegant cocktail</strong>
+              </p>
+            </div>
           </div>
 
           <div className="cinematic-schedule">
@@ -110,41 +116,19 @@ export default function Home() {
                 <div className="cinematic-event-meta">
                   <strong>{event.time}</strong>
                   <span>{event.venue}</span>
+                  <address>{event.address}</address>
+                  <a
+                    href={event.mapUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="editorial-text-link cinematic-event-directions"
+                    aria-label={`Open directions to ${event.venue} in a new tab`}
+                  >
+                    <MapPin size={15} aria-hidden="true" /> Directions
+                  </a>
                 </div>
               </article>
             ))}
-          </div>
-
-          <div className="cinematic-practical-grid">
-            {events.map((event) => (
-              <div key={event.venue}>
-                <span>{event.title}</span>
-                <strong>{event.venue}</strong>
-                <p>{event.address}</p>
-                <a href={event.mapUrl} target="_blank" rel="noreferrer" className="editorial-text-link" aria-label={`Open directions to ${event.venue} in a new tab`}>
-                  <MapPin size={15} aria-hidden="true" /> Directions
-                </a>
-              </div>
-            ))}
-            <div>
-              <span>Attire</span>
-              <strong>Elegant cocktail</strong>
-              <p>Polished, celebratory, and comfortable enough for the dance floor.</p>
-            </div>
-            <div>
-              <span>Arrival</span>
-              <strong>Plan ahead</strong>
-              <p>Please allow time for parking and be seated before the 3:30 PM processional.</p>
-            </div>
-          </div>
-
-          <div id="travel" className="cinematic-travel-callout">
-            <div>
-              <p className="editorial-eyebrow">Coming to the Twin Cities?</p>
-              <h3>Travel, stay, and arrive with ease.</h3>
-              <p>Minneapolis-Saint Paul International Airport serves the area. Hotel, parking, and transportation recommendations will be added here as plans are finalized.</p>
-            </div>
-            <p className="travel-note">Saint Paul ceremony<br />Minneapolis reception</p>
           </div>
         </div>
       </section>
@@ -176,11 +160,11 @@ export default function Home() {
           <div className="cinematic-faq-intro">
             <p className="editorial-eyebrow">Good to know</p>
             <h2 id="faq-heading">A few answers before the day.</h2>
-            <p>We will keep this page current as travel and transportation details are finalized.</p>
+            <p>We will keep this page current as the final details are confirmed.</p>
           </div>
           <div className="cinematic-faq-list">
             {faqs.map((faq, index) => (
-              <details key={faq.question}>
+              <details key={faq.question} name="wedding-faq">
                 <summary>
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{faq.question}</strong>
