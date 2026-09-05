@@ -11,8 +11,6 @@
   --paper: #fffaf4;
   --ink: #211915;
   --charcoal: #15110f;
-  --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-cormorant: Georgia, "Times New Roman", serif;
   --font-courier-prime: "Courier Prime";
   --font-italianno: "Italianno";
 }
@@ -20,8 +18,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-bodoni), Didot, "Times New Roman", serif;
 }
 
 * {
@@ -116,11 +114,11 @@ section[id] {
 }
 
 .serif {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
 }
 
 .script {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-style: italic;
   font-weight: 500;
 }
@@ -586,7 +584,7 @@ section[id] {
 }
 
 .editorial-title {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: clamp(2.45rem, 11vw, 5.2rem);
   font-weight: 600;
   letter-spacing: 0.038em;
@@ -597,7 +595,7 @@ section[id] {
 }
 
 .editorial-title-sm {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: clamp(2.15rem, 9vw, 3.85rem);
   font-weight: 600;
   letter-spacing: 0.038em;
@@ -1037,7 +1035,7 @@ section[id] {
 }
 
 .guest-site .serif {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
 }
 
 .vintage-script,
@@ -1825,7 +1823,7 @@ section[id] {
 }
 
 .vintage-rsvp-page .serif {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
 }
 
 .vintage-rsvp-page .eyebrow,
@@ -2145,10 +2143,10 @@ section[id] {
 
 .site-wordmark {
   color: inherit;
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 1.95rem;
   font-style: italic;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .site-wordmark span {
@@ -2238,10 +2236,10 @@ section[id] {
 .editorial-page-hero .inner-page-title {
   margin-top: 0.8rem;
   color: var(--editorial-ink);
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 5rem;
   font-style: italic;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 0.92;
   text-shadow: none;
 }
@@ -2277,9 +2275,9 @@ section[id] {
 }
 
 .editorial-footer-monogram {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 3.7rem;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 0.9;
 }
 
@@ -2346,8 +2344,8 @@ section[id] {
 .cinematic-home h2,
 .cinematic-home h3 {
   color: var(--cinematic-text);
-  font-family: var(--font-cormorant), Georgia, serif;
-  font-weight: 500;
+  font-family: var(--font-bodoni), Georgia, serif;
+  font-weight: 400;
 }
 
 .cinematic-home h2 {
@@ -2422,10 +2420,10 @@ section[id] {
   gap: 0.22em;
   margin-top: 0.55rem;
   color: #fffef9;
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 8.5rem;
   font-style: italic;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 0.84;
 }
 
@@ -2554,9 +2552,9 @@ section[id] {
 }
 
 .invitation-ledger strong {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 1.35rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.15;
 }
 
@@ -2579,9 +2577,9 @@ section[id] {
 
 .wedding-countdown strong {
   color: var(--cinematic-wine-bright);
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 2.4rem;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
 }
 
@@ -2772,9 +2770,9 @@ section[id] {
 }
 
 .cinematic-practical-grid strong {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 1.65rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.08;
 }
 
@@ -2924,9 +2922,9 @@ section[id] {
 }
 
 .cinematic-faq-list summary strong {
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.2;
 }
 

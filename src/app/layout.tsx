@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
+import { Bodoni_Moda, Geist, Geist_Mono } from "next/font/google";
 import { siteDescription, siteName, siteOrigin, siteTitle } from "@/lib/site";
 import "@fontsource/courier-prime/400-italic.css";
 import "@fontsource/courier-prime/400.css";
@@ -17,10 +17,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const bodoni = Bodoni_Moda({
+  variable: "--font-bodoni",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
@@ -81,7 +83,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bodoni.variable} antialiased`}
     >
       <body>{children}</body>
     </html>
