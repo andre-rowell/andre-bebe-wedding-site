@@ -1,320 +1,201 @@
 import Link from "next/link";
-import { CalendarPlus, ChevronDown, MapPin } from "lucide-react";
-import { Countdown } from "@/components/countdown";
-import { MinneapolisGuide } from "@/components/minneapolis-guide";
+import { ChevronDown, MapPin } from "lucide-react";
+import { FilmHero } from "@/components/film-hero";
 import { GuestPage } from "@/components/site-shell";
-import { StoryTimeline } from "@/components/story-timeline";
-import { googleCalendarUrl } from "@/lib/calendar";
-import { formatEventTimeRange, formatTimeForDisplay, hasKnownTime, timeInputValue } from "@/lib/event-time";
-import { prisma } from "@/lib/prisma";
+import { WeddingCountdown } from "@/components/wedding-countdown";
 
-async function settingsMap() {
-  const settings = await prisma.siteSetting.findMany();
-  return Object.fromEntries(settings.map((setting) => [setting.key, setting.value]));
-}
+const events = [
+  {
+    title: "Ceremony",
+    weekday: "Sunday",
+    date: "May 30",
+    time: "3:30 PM",
+    venue: "Hamline Church",
+    address: "1514 Englewood Ave, St. Paul, MN 55104",
+    description: "Please arrive early so everyone can be seated before the processional.",
+    mapUrl: "https://maps.google.com/?q=Hamline+Church+1514+Englewood+Ave+St+Paul+MN+55104",
+  },
+  {
+    title: "Cocktail Hour & Reception",
+    weekday: "Sunday",
+    date: "May 30",
+    time: "5:30-11:30 PM",
+    venue: "Urban Daisy",
+    address: "1621 E Hennepin Ave, Minneapolis, MN 55414",
+    description: "Cocktails, dinner, toasts, and dancing immediately following the ceremony.",
+    mapUrl: "https://maps.google.com/?q=Urban+Daisy+1621+E+Hennepin+Ave+Minneapolis+MN+55414",
+  },
+];
 
-function chicagoDateParts(date: Date) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/Chicago",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-  const value = (type: string) => parts.find((part) => part.type === type)?.value || "";
-  return { year: value("year"), month: value("month"), day: value("day") };
-}
+const faqs = [
+  {
+    question: "What should I wear?",
+    answer: "Elegant cocktail attire is perfect. We recommend comfortable shoes for dancing.",
+  },
+  {
+    question: "Can I bring a plus-one?",
+    answer: "Please use the RSVP link to view the named guests included with your invitation.",
+  },
+  {
+    question: "Are children invited?",
+    answer: "Children under 13 are invited only when they are specifically named on the invitation.",
+  },
+  {
+    question: "Where should I park?",
+    answer: "Parking and transportation details for both venues will be shared before the wedding weekend.",
+  },
+  {
+    question: "What time should I arrive?",
+    answer: "Please arrive at Hamline Church early enough to be seated before the 3:30 PM ceremony.",
+  },
+];
 
-function ceremonyTargetIso(date: Date, startTime: string) {
-  const { year, month, day } = chicagoDateParts(date);
-  const time = timeInputValue(startTime) || "17:00";
-  return `${year}-${month}-${day}T${time}:00-05:00`;
-}
-
-function eventImage(slug: string, index: number) {
-  if (slug.includes("ceremony")) return "/photos/bebe-veil-car-bw.jpg";
-  if (slug.includes("reception")) return "/photos/andre-bebe-car-laugh.jpg";
-  if (slug.includes("cookout")) return "/photos/andre-bebe-car-embrace.jpg";
-  const images = ["/photos/andre-bebe-car.jpg", "/photos/andre-bebe-close.jpg", "/photos/bebe-foreground.jpg"];
-  return images[index % images.length];
-}
-
-function eventLocation(event: { venueName: string; addressLine1: string; city: string; state: string }) {
-  if (event.venueName.toUpperCase().includes("TBD") || event.addressLine1.toUpperCase().includes("TBD") || event.city.toUpperCase() === "TBD") {
-    return "Location to be announced";
-  }
-  return `${event.venueName} / ${event.addressLine1} / ${event.city}, ${event.state}`;
-}
-
-function arrivalTimeForDisplay(startTime: string) {
-  const value = timeInputValue(startTime);
-  if (!value) return "TBD";
-  const [hour, minute] = value.split(":").map(Number);
-  const totalMinutes = (hour * 60 + minute - 30 + 24 * 60) % (24 * 60);
-  const arrivalHour = String(Math.floor(totalMinutes / 60)).padStart(2, "0");
-  const arrivalMinute = String(totalMinutes % 60).padStart(2, "0");
-  return formatTimeForDisplay(`${arrivalHour}:${arrivalMinute}`).toLowerCase();
-}
-
-export default async function Home() {
-  const [settings, events] = await Promise.all([
-    settingsMap(),
-    prisma.event.findMany({ where: { isActive: true, visibility: "PUBLIC" }, orderBy: [{ sortOrder: "asc" }, { date: "asc" }] }),
-  ]);
-
-  const ceremony = events.find((event) => event.slug === "ceremony") || events[0];
-  const weddingDate = ceremony?.date || new Date(`${settings.weddingDate || "2027-05-30"}T22:00:00.000Z`);
-  const ceremonyStartTime = ceremony?.startTime || "5:00 PM";
-  const guestArrivalTime = arrivalTimeForDisplay(ceremonyStartTime);
-  const targetIso = ceremonyTargetIso(weddingDate, ceremonyStartTime);
-  const displayDate = weddingDate.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "America/Chicago",
-  });
-  const displayWeekday = weddingDate.toLocaleDateString("en-US", {
-    weekday: "long",
-    timeZone: "America/Chicago",
-  });
-  const rsvpDeadline = settings.rsvpDeadline
-    ? new Date(`${settings.rsvpDeadline}T12:00:00-05:00`).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
-    : "April 30, 2027";
-
-  const storyTimeline = [
-    {
-      year: "2017",
-      title: "The beginning",
-      copy: "A first conversation that made ordinary time feel a little brighter.",
-      image: "/photos/andre-bebe-close.jpg",
-    },
-    {
-      year: "2019",
-      title: "Life in motion",
-      copy: "The little rituals started to add up: dinners, playlists, family tables, and plans for what came next.",
-      image: "/photos/andre-bebe-car-laugh.jpg",
-    },
-    {
-      year: "2024",
-      title: "The yes",
-      copy: settings.proposalStory || "A quiet, intentional proposal and the easiest yes.",
-      image: "/photos/andre-bebe-car-embrace.jpg",
-    },
-    {
-      year: "2027",
-      title: "The celebration",
-      copy: "A full weekend in Minneapolis with the people who shaped us, loved us, and cheered us on.",
-      image: "/photos/bebe-foreground.jpg",
-    },
-  ];
-  const eventDetails = events.map((event) => ({
-    event,
-    date: event.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" }),
-    time: formatEventTimeRange(event.startTime, event.endTime),
-    details: [
-      ["Date", event.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" })],
-      ["Time", formatEventTimeRange(event.startTime, event.endTime)],
-      ["Location", eventLocation(event)],
-      ["Attire", event.dressCode || "Details to come."],
-      ["Parking", event.parkingInfo || "Parking details to come."],
-      ["Transportation", event.transportationInfo || "Transportation details to come."],
-      ["Kids", event.childrenPolicy || "Children are welcome when they are listed on your household invitation."],
-      ["Plus-ones", event.plusOnePolicy || "Please only bring named guests and approved plus-ones shown on your invitation."],
-      ["RSVP", event.rsvpRequired ? "Please RSVP for this event through your household invitation." : "No RSVP is required for this event."],
-    ],
-  }));
+export default function Home() {
   return (
-    <GuestPage>
-      <section className="relative overflow-hidden bg-[#15110f] text-[#fffaf4]">
-        <div className="wide-container grid min-h-[calc(100dvh-3.75rem)] gap-7 py-5 sm:min-h-[calc(100vh-4.25rem)] sm:gap-10 sm:py-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-12">
-          <div className="animate-in relative z-10 order-2 pb-8 lg:order-1 lg:pb-0">
-            <p className="eyebrow text-[#d6ae76]">Are getting married</p>
-            <h1 className="serif mt-4 max-w-2xl text-[3.35rem] font-semibold uppercase leading-[0.86] tracking-[0.055em] text-white sm:mt-5 sm:text-8xl sm:tracking-[0.08em] lg:text-[8.8rem]">
-              Andre
-              <span className="script block text-[#d4a86a]">&</span>
-              Bebe
-            </h1>
-            <div className="mt-6 grid max-w-2xl gap-3 border-y border-white/18 py-4 text-[0.64rem] font-bold uppercase tracking-[0.14em] text-[#ead9c6] sm:mt-7 sm:grid-cols-3 sm:gap-4 sm:py-5 sm:text-[0.72rem] sm:tracking-[0.2em]">
-              <p>{displayDate}</p>
-              <p>{formatTimeForDisplay(ceremonyStartTime)}</p>
-              <p>Minneapolis, MN</p>
-            </div>
-            <p className="mt-5 max-w-xl text-[0.98rem] leading-7 text-[#eadfd4] sm:mt-7 sm:text-lg sm:leading-8">
-              {settings.homepageIntro || "We cannot wait to gather the people we love most for a weekend of joy, music, food, and the beginning of our marriage."}
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/rsvp" className="btn bg-[#fffaf4] text-[#211915] hover:bg-white">
-                RSVP
-              </Link>
-              <Link href="#celebration" className="btn border border-white/35 text-white hover:bg-white/10">
-                Our Celebration
-              </Link>
-            </div>
-            <Countdown targetIso={targetIso} />
-          </div>
+    <GuestPage className="cinematic-home">
+      <FilmHero dateLabel="May 30, 2027" locationLabel="Saint Paul + Minneapolis, Minnesota" />
 
-          <div className="relative order-1 min-h-[25rem] sm:min-h-[34rem] lg:order-2 lg:min-h-[45rem]">
-            <div className="image-frame hero-photo absolute inset-x-0 top-0 mx-auto h-[80%] w-[92%] max-w-[42rem] sm:w-[82%] lg:right-0 lg:left-auto">
-              <img src="/photos/andre-bebe-portrait.jpg" alt="Andre and Bebe in formal engagement attire" fetchPriority="high" className="object-[58%_36%]" />
-            </div>
-            <div className="float-paper paper-panel absolute bottom-0 left-1 z-10 w-[min(19rem,86vw)] p-4 text-[#211915] sm:left-0 sm:w-[min(21rem,78vw)] sm:p-6 lg:left-5">
-              <p className="fine-print text-[#9a6932]">{displayWeekday}</p>
-              <p className="serif mt-1 text-4xl font-semibold uppercase leading-none sm:text-5xl">May 30</p>
-              <p className="mt-3 text-sm leading-6 text-[#5d5048]">Urban Daisy / Minneapolis, Minnesota</p>
-            </div>
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_30%,rgba(214,174,118,0.16),transparent_24rem)]" />
+      <section id="invitation" className="cinematic-invitation" aria-labelledby="invitation-heading">
+        <div className="cinematic-narrow">
+          <p className="editorial-eyebrow">Together with their families</p>
+          <h2 id="invitation-heading">You are invited to celebrate with us</h2>
+          <p className="cinematic-lede">
+            We cannot wait to gather the people we love most for a day of joy, music, food, and the beginning of our marriage.
+          </p>
+          <div className="invitation-ledger" aria-label="Wedding date, time, and location">
+            <p><span>When</span><strong>Sunday, May 30, 2027</strong></p>
+            <p><span>Time</span><strong>3:30 PM</strong></p>
+            <p><span>Where</span><strong>Hamline Church</strong></p>
+          </div>
+          <WeddingCountdown targetDate="2027-05-30T15:30:00-05:00" />
+        </div>
+      </section>
+
+      <section id="story" className="cinematic-story" aria-labelledby="story-heading">
+        <div className="cinematic-wide cinematic-story-grid">
+          <figure className="cinematic-portrait cinematic-portrait-primary">
+            <img src="/media/andre-bebe-car-portrait.jpg" alt="Andre and Bebe kissing beside a black vintage car" loading="lazy" decoding="async" />
+          </figure>
+          <div className="cinematic-story-copy">
+            <p className="editorial-eyebrow">Our story</p>
+            <h2 id="story-heading">The best things began simply.</h2>
+            <p>Our story has been built in the ordinary magic: long walks, shared playlists, late dinners, family tables, and the steady decision to choose each other every day.</p>
+            <p>The proposal was intimate, intentional, and very us: a quiet moment, a beautiful view, and the easiest yes. Now we get to celebrate the next chapter with everyone who helped shape us.</p>
           </div>
         </div>
       </section>
 
-      <StoryTimeline moments={storyTimeline} />
+      <section id="weekend" className="cinematic-weekend" aria-labelledby="weekend-heading">
+        <div className="cinematic-wide">
+          <div className="cinematic-heading-row">
+            <div>
+              <p className="editorial-eyebrow">Save the date</p>
+              <h2 id="weekend-heading">The wedding day</h2>
+            </div>
+            <p>Our ceremony begins in Saint Paul, followed by dinner and dancing in Minneapolis.</p>
+          </div>
 
-      <section aria-label="Engagement photos" className="bg-[#15110f] py-3 sm:py-4">
-        <div className="wide-container grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-          {[
-            ["/photos/bebe-veil-car-bw.jpg", "Bebe with a veil beside the classic car", "md:col-span-1"],
-            ["/photos/andre-bebe-car-laugh.jpg", "Andre and Bebe laughing in the car", "md:col-span-1"],
-            ["/photos/bebe-foreground.jpg", "Bebe with Andre behind her", "md:col-span-1"],
-            ["/photos/andre-bebe-car-embrace.jpg", "Andre and Bebe embracing in the car", "md:col-span-1"],
-          ].map(([src, alt, className]) => (
-            <figure key={src} className={`image-frame h-40 sm:h-72 ${className}`}>
-              <img src={src} alt={alt} loading="lazy" decoding="async" />
-            </figure>
-          ))}
-        </div>
-      </section>
-
-      <section id="celebration" className="dark-editorial scroll-mt-24 overflow-hidden py-12 sm:py-20">
-        <div className="container">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.72fr)] lg:items-start">
-            <div className="min-w-0">
-              <div className="grid gap-7 lg:grid-cols-[minmax(0,0.88fr)_minmax(17rem,0.72fr)] lg:items-end">
-                <div>
-                  <p className="eyebrow text-[#d6ae76]">Our celebration</p>
-                  <h2 className="serif mt-4 max-w-2xl text-4xl font-medium leading-[0.98] text-[#f0c8bd] sm:text-6xl lg:text-7xl">The wedding weekend</h2>
+          <div className="cinematic-schedule">
+            {events.map((event, index) => (
+              <article key={event.title} className="cinematic-event-row">
+                <p className="cinematic-event-number">{String(index + 1).padStart(2, "0")}</p>
+                <div className="cinematic-event-date">
+                  <span>{event.weekday}</span>
+                  <strong>{event.date}</strong>
                 </div>
-                <p className="max-w-xl text-[1.04rem] leading-8 text-[#e1c1ba]">
-                  We are getting married at Urban Daisy in Minneapolis. It is the perfect blend of warm, modern, and intimate, and we cannot wait to celebrate with great food, music, and your company.
-                </p>
-              </div>
-
-              <article className="mt-11 border-y border-[#f0c8bd]/20 py-8">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <p className="eyebrow text-[#d6ae76]">Main event</p>
-                    <h3 className="serif mt-2 text-4xl text-[#fffaf4] sm:text-5xl">Ceremony</h3>
-                  </div>
-                  <p className="text-xl font-semibold text-[#f4c7bd] sm:text-2xl">{displayDate}</p>
+                <div className="cinematic-event-main">
+                  <h3>{event.title}</h3>
+                  <p>{event.description}</p>
                 </div>
-                <div className="mt-7 grid max-w-2xl gap-5 border-l border-[#6e4c47] pl-5 sm:mt-8 sm:grid-cols-2 sm:gap-6 sm:pl-6">
-                  <div>
-                    <p className="serif text-4xl leading-none text-[#f0c8bd] sm:text-5xl">{guestArrivalTime}</p>
-                    <p className="mt-3 text-[#e1c1ba]">Guests arrive</p>
-                  </div>
-                  <div>
-                    <p className="serif text-4xl leading-none text-[#f0c8bd] sm:text-5xl">{formatTimeForDisplay(ceremonyStartTime).toLowerCase()}</p>
-                    <p className="mt-3 text-[#e1c1ba]">Ceremony begins</p>
-                  </div>
-                </div>
-                <div className="mt-8 flex max-w-3xl flex-wrap items-center gap-x-8 gap-y-3 border border-[#f0c8bd]/35 px-5 py-4 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-[#f0c8bd]">
-                  <span>{ceremony?.venueName || "Urban Daisy"}</span>
-                  <span className="hidden text-[#8f6d64] sm:inline">/</span>
-                  <span>{ceremony?.addressLine1 || "1621 E Hennepin Ave"}</span>
-                  <span className="hidden text-[#8f6d64] sm:inline">/</span>
-                  <span>{ceremony ? `${ceremony.city}, ${ceremony.state}` : "Minneapolis, MN"}</span>
-                </div>
-                <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                  <Link href="/rsvp" className="btn bg-[#f47e66] text-[#211915] hover:bg-[#ff937e]">RSVP today</Link>
-                  <Link href="/events" className="btn border border-[#f0c8bd]/50 text-[#f0c8bd] hover:bg-white/5">View full event page</Link>
+                <div className="cinematic-event-meta">
+                  <strong>{event.time}</strong>
+                  <span>{event.venue}</span>
                 </div>
               </article>
+            ))}
+          </div>
 
-              <div className="mt-11 max-w-3xl">
-                <h3 className="text-2xl font-semibold text-[#f0c8bd]">The finer details</h3>
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-[#d9b6ae]">Expand each event for the date, time, location, attire, parking, kids, plus-ones, and RSVP notes.</p>
-                <div className="mt-7 divide-y divide-[#f0c8bd]/16 border-y border-[#f0c8bd]/16">
-                  {eventDetails.map(({ event, date, time, details }) => (
-                    <details key={event.id} className="celebration-detail group">
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[#f0c8bd]">
-                        <span>
-                          <span className="block text-base font-semibold">{event.title}</span>
-                          <span className="mt-1 block text-xs font-bold uppercase tracking-[0.16em] text-[#bfa097]">{date} · {time}</span>
-                        </span>
-                        <ChevronDown className="detail-icon shrink-0" size={17} aria-hidden="true" />
-                      </summary>
-                      <div className="pb-5">
-                        <p className="max-w-2xl text-[0.98rem] leading-7 text-[#d9b6ae]">{event.description}</p>
-                        <dl className="mt-5 grid gap-4 sm:grid-cols-2">
-                          {details.map(([label, value]) => (
-                            <div key={`${event.id}-${label}`} className="border-t border-[#f0c8bd]/16 pt-3">
-                              <dt className="fine-print text-[#d6ae76]">{label}</dt>
-                              <dd className="mt-2 text-sm leading-6 text-[#f4d8cf]">{value}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                        <div className="mt-5 flex flex-wrap gap-3">
-                          {hasKnownTime(event.startTime) ? (
-                            <a href={googleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn btn-primary">
-                              <CalendarPlus size={15} aria-hidden="true" />
-                              Calendar
-                            </a>
-                          ) : null}
-                          {event.mapUrl ? (
-                            <a href={event.mapUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                              <MapPin size={15} aria-hidden="true" />
-                              Map
-                            </a>
-                          ) : null}
-                        </div>
-                      </div>
-                    </details>
-                  ))}
-                </div>
+          <div className="cinematic-practical-grid">
+            {events.map((event) => (
+              <div key={event.venue}>
+                <span>{event.title}</span>
+                <strong>{event.venue}</strong>
+                <p>{event.address}</p>
+                <a href={event.mapUrl} target="_blank" rel="noreferrer" className="editorial-text-link" aria-label={`Open directions to ${event.venue} in a new tab`}>
+                  <MapPin size={15} aria-hidden="true" /> Directions
+                </a>
               </div>
-            </div>
-
-            <div className="relative min-h-0 lg:min-h-[48rem]">
-              <div className="image-frame h-[24rem] rounded-[0.8rem] border-[#f0c8bd]/16 shadow-[0_30px_90px_rgba(0,0,0,0.34)] sm:h-[30rem] lg:sticky lg:top-28 lg:h-[42rem] lg:rounded-[1.1rem]">
-                <img src={ceremony ? eventImage(ceremony.slug, 0) : "/photos/bebe-veil-car-bw.jpg"} alt="Andre and Bebe wedding celebration portrait" loading="lazy" decoding="async" className="object-[50%_42%]" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-[#15110f] py-12 text-[#fffaf4] sm:py-24">
-        <img src="/photos/andre-bebe-close.jpg" alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-28" />
-        <div className="absolute inset-0 bg-[#15110f]/72" />
-        <div className="container relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <p className="eyebrow text-[#d6ae76]">RSVP</p>
-            <h2 className="editorial-title-sm mt-3 max-w-[36rem] text-balance text-white">Let us know if you can make it</h2>
-          </div>
-          <div>
-            <p className="text-lg leading-8 text-[#eadfd4]">
-              Please RSVP by {rsvpDeadline}. Your invite code unlocks your household, your invited events, and each guest&apos;s response.
-            </p>
-            <Link href="/rsvp" className="btn mt-7 bg-[#fffaf4] text-[#211915] hover:bg-white">
-              Open RSVP
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <MinneapolisGuide />
-
-      <section id="registry" className="editorial-band scroll-mt-24 py-12 sm:py-16">
-        <div className="container">
-          <div className="grid gap-6 border-y border-[#cbb89f] py-8 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+            ))}
             <div>
-              <p className="eyebrow">Registry</p>
-              <h2 className="serif mt-3 text-3xl font-semibold text-[#211915] sm:text-4xl">Your presence is our favorite gift.</h2>
+              <span>Attire</span>
+              <strong>Elegant cocktail</strong>
+              <p>Polished, celebratory, and comfortable enough for the dance floor.</p>
             </div>
-            <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
-              <p className="max-w-2xl text-[1rem] leading-8 text-[#5f5149]">For loved ones who have asked, registry and fund options are collected on one simple page.</p>
-              <Link href="/registry" className="btn btn-secondary">View registry</Link>
+            <div>
+              <span>Arrival</span>
+              <strong>Plan ahead</strong>
+              <p>Please allow time for parking and be seated before the 3:30 PM processional.</p>
             </div>
           </div>
+
+          <div id="travel" className="cinematic-travel-callout">
+            <div>
+              <p className="editorial-eyebrow">Coming to the Twin Cities?</p>
+              <h3>Travel, stay, and arrive with ease.</h3>
+              <p>Minneapolis-Saint Paul International Airport serves the area. Hotel, parking, and transportation recommendations will be added here as plans are finalized.</p>
+            </div>
+            <p className="travel-note">Saint Paul ceremony<br />Minneapolis reception</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="registry" className="cinematic-registry" aria-labelledby="registry-heading">
+        <div className="cinematic-wide cinematic-registry-grid">
+          <figure className="cinematic-still-life">
+            <img src="/media/calla-lilies-car.jpg" alt="White calla lilies resting on a black vintage car" loading="lazy" decoding="async" />
+          </figure>
+          <div>
+            <p className="editorial-eyebrow">Registry</p>
+            <h2 id="registry-heading">Your presence is the greatest gift.</h2>
+            <p>For loved ones who have asked, our Zola registry will gather our home and honeymoon wishes in one place. We are most grateful simply to celebrate with you.</p>
+            <Link href="/registry" className="editorial-button">View our registry</Link>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" className="cinematic-faq" aria-labelledby="faq-heading">
+        <div className="cinematic-wide cinematic-faq-grid">
+          <div className="cinematic-faq-intro">
+            <p className="editorial-eyebrow">Good to know</p>
+            <h2 id="faq-heading">A few answers before the day.</h2>
+            <p>We will keep this page current as travel and transportation details are finalized.</p>
+          </div>
+          <div className="cinematic-faq-list">
+            {faqs.map((faq, index) => (
+              <details key={faq.question}>
+                <summary>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{faq.question}</strong>
+                  <ChevronDown size={18} aria-hidden="true" />
+                </summary>
+                <p>{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="cinematic-rsvp" aria-labelledby="rsvp-heading">
+        <div className="cinematic-wide cinematic-rsvp-grid">
+          <div>
+            <p className="editorial-eyebrow">Kindly reply by April 30, 2027</p>
+            <h2 id="rsvp-heading">Will you be joining us?</h2>
+            <p>Find your name on Zola to respond for everyone included in your party.</p>
+            <Link href="/rsvp" className="editorial-button">RSVP on Zola</Link>
+          </div>
+          <figure className="cinematic-portrait cinematic-portrait-closing">
+            <img src="/media/andre-bebe-staircase.jpg" alt="Andre and Bebe walking down a grand staircase" loading="lazy" decoding="async" />
+          </figure>
         </div>
       </section>
     </GuestPage>
