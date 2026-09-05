@@ -2319,6 +2319,8 @@ section[id] {
   --cinematic-text-soft: #b9bbaf;
   --cinematic-text-muted: #85897c;
   --cinematic-accent: #c9cdbd;
+  --cinematic-copper: #d1865b;
+  --cinematic-copper-bright: #dfa27d;
   --cinematic-line: rgba(243, 240, 232, 0.16);
   background: var(--cinematic-background);
   color: var(--cinematic-text);
@@ -2326,8 +2328,19 @@ section[id] {
 }
 
 .guest-site .guest-flow.cinematic-home > section:not(.inner-page-hero) {
-  background-color: var(--cinematic-background);
+  background-color: var(--cinematic-section-background, var(--cinematic-background));
   background-image: none;
+}
+
+.cinematic-story,
+.cinematic-registry,
+.cinematic-rsvp {
+  --cinematic-section-background: #15130f;
+}
+
+.cinematic-weekend,
+.cinematic-faq {
+  --cinematic-section-background: #0d0f0d;
 }
 
 .cinematic-home h2,
@@ -2342,7 +2355,7 @@ section[id] {
 }
 
 .cinematic-home .editorial-eyebrow {
-  color: var(--cinematic-accent);
+  color: var(--cinematic-copper);
 }
 
 .cinematic-wide {
@@ -2534,7 +2547,7 @@ section[id] {
 
 .invitation-ledger span,
 .cinematic-practical-grid span {
-  color: var(--cinematic-accent);
+  color: var(--cinematic-copper);
   font-size: 0.64rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2565,6 +2578,7 @@ section[id] {
 }
 
 .wedding-countdown strong {
+  color: var(--cinematic-copper-bright);
   font-family: var(--font-cormorant), Georgia, serif;
   font-size: 2.4rem;
   font-weight: 500;
@@ -2652,14 +2666,14 @@ section[id] {
   margin-top: 2rem;
   border-bottom: 1px solid currentColor;
   padding-bottom: 0.4rem;
-  color: var(--cinematic-text);
+  color: var(--cinematic-copper-bright);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .editorial-text-link:hover {
-  color: var(--cinematic-accent);
+  color: var(--cinematic-text);
 }
 
 .cinematic-heading-row {
@@ -2701,6 +2715,11 @@ section[id] {
   font-size: 0.63rem;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.cinematic-event-number,
+.cinematic-event-meta strong {
+  color: var(--cinematic-copper-bright);
 }
 
 .cinematic-event-date,
@@ -2775,7 +2794,7 @@ section[id] {
   gap: 2rem;
   align-items: end;
   margin-top: 5rem;
-  border-left: 0.35rem solid var(--cinematic-accent);
+  border-left: 0.35rem solid var(--cinematic-copper);
   padding: 2.5rem 0 2.5rem 2.5rem;
   scroll-margin-top: 6rem;
 }
@@ -2899,7 +2918,7 @@ section[id] {
 }
 
 .cinematic-faq-list summary span {
-  color: var(--cinematic-text-muted);
+  color: var(--cinematic-copper);
   font-size: 0.62rem;
   font-weight: 700;
 }
@@ -2912,7 +2931,7 @@ section[id] {
 }
 
 .cinematic-faq-list summary svg {
-  color: var(--cinematic-accent);
+  color: var(--cinematic-copper-bright);
   transition: transform 220ms ease;
 }
 
@@ -2948,14 +2967,18 @@ section[id] {
 }
 
 .cinematic-home .editorial-button:hover {
-  border-color: var(--cinematic-accent);
-  background: var(--cinematic-accent);
+  border-color: var(--cinematic-copper-bright);
+  background: var(--cinematic-copper-bright);
   color: var(--cinematic-background);
 }
 
 .cinematic-home + .editorial-footer {
   border-top: 1px solid rgba(243, 240, 232, 0.16);
   background: #10110e;
+}
+
+.cinematic-home + .editorial-footer .editorial-footer-names {
+  color: #d1865b;
 }
 
 .vintage-rsvp-page .btn-primary {
