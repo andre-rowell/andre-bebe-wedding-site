@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { CalendarHeart, Gift, Home, Menu } from "lucide-react";
 import { SectionTransitions } from "@/components/section-transitions";
+import { zolaRegistryUrl, zolaRsvpUrl } from "@/lib/zola";
 
 const navigation = [
-  { label: "Home", href: "/", icon: Home },
-  { label: "Registry", href: "/registry", icon: Gift },
+  { label: "Home", href: "/", icon: Home, opensNewTab: false },
+  { label: "Registry", href: zolaRegistryUrl, icon: Gift, opensNewTab: true },
 ];
 
 export function SiteHeader() {
@@ -16,12 +17,25 @@ export function SiteHeader() {
         </Link>
 
         <nav className="site-primary-nav hidden items-center gap-7 md:flex" aria-label="Primary navigation">
-          {navigation.map(({ label, href }) => (
-            <Link key={href} href={href} className="story-link">
+          {navigation.map(({ label, href, opensNewTab }) => (
+            <Link
+              key={href}
+              href={href}
+              className="story-link"
+              target={opensNewTab ? "_blank" : undefined}
+              rel={opensNewTab ? "noopener noreferrer" : undefined}
+              aria-label={opensNewTab ? `${label} on Zola (opens in a new tab)` : undefined}
+            >
               {label}
             </Link>
           ))}
-          <Link href="/rsvp" className="btn btn-primary">
+          <Link
+            href={zolaRsvpUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+            aria-label="RSVP on Zola (opens in a new tab)"
+          >
             <CalendarHeart size={16} aria-hidden="true" />
             RSVP
           </Link>
@@ -32,12 +46,25 @@ export function SiteHeader() {
             <Menu size={18} aria-hidden="true" />
           </summary>
           <nav className="site-menu-panel absolute right-0 mt-3 grid w-[min(19rem,calc(100vw-1.5rem))] gap-1 p-3 shadow-2xl" aria-label="Mobile navigation">
-            {navigation.map(({ label, href, icon: Icon }) => (
-              <Link key={href} href={href} className="site-menu-link flex items-center gap-3 px-3 py-3 text-sm font-semibold uppercase">
+            {navigation.map(({ label, href, icon: Icon, opensNewTab }) => (
+              <Link
+                key={href}
+                href={href}
+                target={opensNewTab ? "_blank" : undefined}
+                rel={opensNewTab ? "noopener noreferrer" : undefined}
+                className="site-menu-link flex items-center gap-3 px-3 py-3 text-sm font-semibold uppercase"
+                aria-label={opensNewTab ? `${label} on Zola (opens in a new tab)` : undefined}
+              >
                 <Icon size={17} aria-hidden="true" /> {label}
               </Link>
             ))}
-            <Link href="/rsvp" className="site-menu-link flex items-center gap-3 px-3 py-3 text-sm font-semibold uppercase">
+            <Link
+              href={zolaRsvpUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-menu-link flex items-center gap-3 px-3 py-3 text-sm font-semibold uppercase"
+              aria-label="RSVP on Zola (opens in a new tab)"
+            >
               <CalendarHeart size={17} aria-hidden="true" /> RSVP
             </Link>
           </nav>
@@ -62,8 +89,8 @@ export function SiteFooter() {
         </div>
         <nav className="footer-nav" aria-label="Footer navigation">
           <Link href="/">Home</Link>
-          <Link href="/registry">Registry</Link>
-          <Link href="/rsvp">RSVP</Link>
+          <Link href={zolaRegistryUrl} target="_blank" rel="noopener noreferrer" aria-label="Registry on Zola (opens in a new tab)">Registry</Link>
+          <Link href={zolaRsvpUrl} target="_blank" rel="noopener noreferrer" aria-label="RSVP on Zola (opens in a new tab)">RSVP</Link>
         </nav>
       </div>
     </footer>

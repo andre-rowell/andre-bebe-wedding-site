@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowDown, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { zolaRsvpUrl } from "@/lib/zola";
 
 export function FilmHero({ dateLabel, locationLabel }: { dateLabel: string; locationLabel: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -69,7 +69,15 @@ export function FilmHero({ dateLabel, locationLabel }: { dateLabel: string; loca
           <span>Bebe</span>
         </h1>
         <p className="film-date">{dateLabel} · {locationLabel}</p>
-        <Link href="/rsvp" className="film-rsvp-link">RSVP</Link>
+        <a
+          href={zolaRsvpUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="film-rsvp-link"
+          aria-label="RSVP on Zola (opens in a new tab)"
+        >
+          RSVP
+        </a>
       </div>
 
       <div className="film-controls" aria-label="Film controls">

@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { ChevronDown, MapPin } from "lucide-react";
 import { FilmHero } from "@/components/film-hero";
 import { GuestPage } from "@/components/site-shell";
 import { WeddingCountdown } from "@/components/wedding-countdown";
+import { zolaRegistryUrl, zolaRsvpUrl } from "@/lib/zola";
 
 const events = [
   {
@@ -158,7 +158,15 @@ export default function Home() {
             <p className="editorial-eyebrow">Registry</p>
             <h2 id="registry-heading">Your presence is the greatest gift.</h2>
             <p>For loved ones who have asked, our Zola registry will gather our home and honeymoon wishes in one place. We are most grateful simply to celebrate with you.</p>
-            <Link href="/registry" className="editorial-button">View our registry</Link>
+            <a
+              href={zolaRegistryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="editorial-button"
+              aria-label="View our registry on Zola (opens in a new tab)"
+            >
+              View our registry
+            </a>
           </div>
         </div>
       </section>
@@ -191,7 +199,15 @@ export default function Home() {
             <p className="editorial-eyebrow">Kindly reply by April 30, 2027</p>
             <h2 id="rsvp-heading">Will you be joining us?</h2>
             <p>Find your name on Zola to respond for everyone included in your party.</p>
-            <Link href="/rsvp" className="editorial-button">RSVP on Zola</Link>
+            <a
+              href={zolaRsvpUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="editorial-button"
+              aria-label="RSVP on Zola (opens in a new tab)"
+            >
+              RSVP on Zola
+            </a>
           </div>
           <figure className="cinematic-portrait cinematic-portrait-closing">
             <img src="/media/andre-bebe-staircase.jpg" alt="Andre and Bebe walking down a grand staircase" loading="lazy" decoding="async" />
