@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Allura, Cormorant_Garamond, Manrope } from "next/font/google";
 import { siteDescription, siteName, siteOrigin, siteTitle } from "@/lib/site";
-import "./globals.css";
+import "./modern-romance.css";
 
 const manrope = Manrope({
   variable: "--font-body",

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* The approved Modern Romance theme, independent of the retired stylesheet. */
 :root {
   --background: #111313;
   --surface: #181719;
