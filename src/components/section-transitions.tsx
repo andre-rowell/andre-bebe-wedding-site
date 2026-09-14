@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export function SectionTransitions() {
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>(".guest-flow > section"));
+    const sections = Array.from(document.querySelectorAll<HTMLElement>(".guest-flow [data-reveal]"));
     if (!sections.length) return;
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -16,8 +16,8 @@ export function SectionTransitions() {
       return;
     }
 
-    sections.forEach((section, index) => {
-      section.dataset.sectionReveal = index === 0 ? "visible" : "pending";
+    sections.forEach((section) => {
+      section.dataset.sectionReveal = section.getBoundingClientRect().top < window.innerHeight ? "visible" : "pending";
     });
 
     const observer = new IntersectionObserver(
@@ -31,14 +31,15 @@ export function SectionTransitions() {
       },
       {
         rootMargin: "0px 0px -10% 0px",
-        threshold: 0.08,
+        threshold: 0,
       },
     );
 
-    sections.slice(1).forEach((section) => observer.observe(section));
+    sections.forEach((section) => observer.observe(section));
 
     return () => {
       observer.disconnect();
+      sections.forEach((section) => { delete section.dataset.sectionReveal; });
     };
   }, []);
 

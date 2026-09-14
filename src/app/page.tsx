@@ -1,15 +1,14 @@
-import { ChevronDown, MapPin } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight, MapPin, Plus } from "lucide-react";
 import { FilmHero } from "@/components/film-hero";
 import { GuestPage } from "@/components/site-shell";
-import { WeddingCountdown } from "@/components/wedding-countdown";
 import { zolaRegistryUrl, zolaRsvpUrl } from "@/lib/zola";
 
 const events = [
   {
     title: "Ceremony",
-    weekday: "Sunday",
-    date: "May 30",
     time: "3:30 PM",
+    note: "The vows",
     venue: "Hamline Church",
     address: "1514 Englewood Ave, St. Paul, MN 55104",
     description: "Please arrive early so everyone can be seated before the processional.",
@@ -17,12 +16,11 @@ const events = [
   },
   {
     title: "Cocktail Hour & Reception",
-    weekday: "Sunday",
-    date: "May 30",
-    time: "5:30-11:30 PM",
+    time: "5:30 PM",
+    note: "Until 11:30 PM",
     venue: "Urban Daisy",
     address: "1621 E Hennepin Ave, Minneapolis, MN 55414",
-    description: "Cocktails, dinner, toasts, and dancing immediately following the ceremony.",
+    description: "Cocktails, dinner, toasts, and dancing following the ceremony.",
     mapUrl: "https://maps.google.com/?q=Urban+Daisy+1621+E+Hennepin+Ave+Minneapolis+MN+55414",
   },
 ];
@@ -52,79 +50,61 @@ const faqs = [
 
 export default function Home() {
   return (
-    <GuestPage className="cinematic-home">
-      <FilmHero dateLabel="May 30, 2027" locationLabel="Saint Paul + Minneapolis, Minnesota" />
+    <GuestPage>
+      <FilmHero dateLabel="Sunday, May 30, 2027" locationLabel="Saint Paul & Minneapolis, Minnesota" />
 
-      <section id="invitation" className="cinematic-invitation" aria-labelledby="invitation-heading">
-        <div className="cinematic-narrow">
-          <p className="editorial-eyebrow">Together with their families</p>
-          <h2 id="invitation-heading">You are invited to celebrate with us</h2>
-          <p className="cinematic-lede">
-            We cannot wait to gather the people we love most for a day of joy, music, food, and the beginning of our marriage.
-          </p>
-          <div className="invitation-ledger" aria-label="Wedding date, time, and location">
-            <p><span>When</span><strong>Sunday, May 30, 2027</strong></p>
-            <p><span>Time</span><strong>3:30 PM</strong></p>
-            <p><span>Where</span><strong>Hamline Church</strong></p>
+      <section id="invitation" className="invitation-section" aria-labelledby="invitation-heading">
+        <div className="content-width invitation-layout">
+          <div className="invitation-copy" data-reveal>
+            <p className="eyebrow">Together with their families</p>
+            <h2 id="invitation-heading" className="section-title">The beginning of<br />our <em>forever.</em></h2>
+            <p className="body-copy">
+              We invite you to celebrate our wedding. A day of joy, music, and the people we love most, as we begin our marriage together.
+            </p>
+            <p className="signature">With love, Andre &amp; Bebe</p>
+            <p className="date-note">May 30, 2027 <span aria-hidden="true">&middot;</span> Minnesota</p>
           </div>
-          <WeddingCountdown targetDate="2027-05-30T15:30:00-05:00" />
-        </div>
-      </section>
-
-      <section id="story" className="cinematic-story" aria-labelledby="story-heading">
-        <div className="cinematic-wide cinematic-story-grid">
-          <figure className="cinematic-portrait cinematic-portrait-primary">
-            <img src="/media/andre-bebe-car-portrait.jpg" alt="Andre and Bebe kissing beside a black vintage car" loading="lazy" decoding="async" />
+          <figure id="story" className="invitation-photo" data-reveal>
+            <div className="portrait">
+              <Image src="/media/andre-bebe-car-portrait.jpg" alt="Andre and Bebe kissing beside a black vintage car" width={1320} height={1979} sizes="(max-width: 600px) 310px, (max-width: 850px) 36vw, 360px" />
+            </div>
+            <figcaption><span>Our next chapter</span><span>Andre &amp; Bebe</span></figcaption>
           </figure>
-          <div className="cinematic-story-copy">
-            <p className="editorial-eyebrow">Our story</p>
-            <h2 id="story-heading">The best things began simply.</h2>
-            <p>Our story has been built in the ordinary magic: long walks, shared playlists, late dinners, family tables, and the steady decision to choose each other every day.</p>
-            <p>The proposal was intimate, intentional, and very us: a quiet moment, a beautiful view, and the easiest yes. Now we get to celebrate the next chapter with everyone who helped shape us.</p>
-          </div>
         </div>
       </section>
 
-      <section id="weekend" className="cinematic-weekend" aria-labelledby="weekend-heading">
-        <div className="cinematic-wide">
-          <div className="cinematic-heading-row">
+      <section id="weekend" className="wedding-day-section" aria-labelledby="weekend-heading">
+        <div className="content-width">
+          <div className="section-heading" data-reveal>
             <div>
-              <p className="editorial-eyebrow">Save the date</p>
-              <h2 id="weekend-heading">The wedding day</h2>
+              <p className="eyebrow">The celebration</p>
+              <h2 id="weekend-heading" className="section-title">Our wedding <em>day.</em></h2>
             </div>
-            <div className="cinematic-heading-copy">
-              <p>Our ceremony begins in Saint Paul, followed by dinner and dancing in Minneapolis.</p>
-              <p className="cinematic-attire-note">
-                <span>Attire</span>
-                <strong>Elegant cocktail</strong>
-              </p>
-            </div>
+            <p className="body-copy">From our vows in Saint Paul to dinner and dancing in Minneapolis.</p>
           </div>
-
-          <div className="cinematic-schedule">
-            {events.map((event, index) => (
-              <article key={event.title} className="cinematic-event-row">
-                <p className="cinematic-event-number">{String(index + 1).padStart(2, "0")}</p>
-                <div className="cinematic-event-date">
-                  <span>{event.weekday}</span>
-                  <strong>{event.date}</strong>
-                </div>
-                <div className="cinematic-event-main">
+          <div className="schedule-date">
+            <p>Sunday, May 30, 2027</p>
+            <p>Elegant cocktail attire</p>
+          </div>
+          <div className="schedule">
+            {events.map((event) => (
+              <article key={event.title} className="event-row" data-reveal>
+                <div className="event-time">{event.time}<span>{event.note}</span></div>
+                <div className="event-description">
                   <h3>{event.title}</h3>
                   <p>{event.description}</p>
                 </div>
-                <div className="cinematic-event-meta">
-                  <strong>{event.time}</strong>
-                  <span>{event.venue}</span>
+                <div className="event-venue">
+                  <h4>{event.venue}</h4>
                   <address>{event.address}</address>
                   <a
                     href={event.mapUrl}
                     target="_blank"
-                    rel="noreferrer"
-                    className="editorial-text-link cinematic-event-directions"
+                    rel="noopener noreferrer"
+                    className="text-link"
                     aria-label={`Open directions to ${event.venue} in a new tab`}
                   >
-                    <MapPin size={15} aria-hidden="true" /> Directions
+                    <MapPin size={14} aria-hidden="true" /> Directions <ArrowUpRight size={14} aria-hidden="true" />
                   </a>
                 </div>
               </article>
@@ -133,43 +113,32 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="registry" className="cinematic-registry" aria-labelledby="registry-heading">
-        <div className="cinematic-wide cinematic-registry-grid">
-          <figure className="cinematic-still-life">
-            <img src="/media/calla-lilies-car.jpg" alt="White calla lilies resting on a black vintage car" loading="lazy" decoding="async" />
+      <section id="registry" className="registry-section" aria-labelledby="registry-heading">
+        <div className="content-width registry-layout">
+          <figure className="flowers-photo" data-reveal>
+            <Image src="/media/calla-lilies-car.jpg" alt="White calla lilies resting on a black vintage car" width={1320} height={1977} sizes="(max-width: 600px) 240px, 255px" />
           </figure>
-          <div>
-            <p className="editorial-eyebrow">Registry</p>
-            <h2 id="registry-heading">Your presence is the greatest gift.</h2>
-            <p>For loved ones who have asked, our Zola registry will gather our home and honeymoon wishes in one place. We are most grateful simply to celebrate with you.</p>
-            <a
-              href={zolaRegistryUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="editorial-button"
-              aria-label="View our registry on Zola (opens in a new tab)"
-            >
-              View our registry
+          <div data-reveal>
+            <p className="eyebrow">Registry</p>
+            <h2 id="registry-heading" className="section-title">Your presence is<br />the greatest <em>gift.</em></h2>
+            <p className="body-copy">For loved ones who have asked, our registry gathers our home and honeymoon wishes in one place. We are most grateful simply to celebrate with you.</p>
+            <a href={zolaRegistryUrl} target="_blank" rel="noopener noreferrer" className="wedding-button" aria-label="View our registry on Zola (opens in a new tab)">
+              View our registry <ArrowUpRight size={16} aria-hidden="true" />
             </a>
           </div>
         </div>
       </section>
 
-      <section id="faq" className="cinematic-faq" aria-labelledby="faq-heading">
-        <div className="cinematic-wide cinematic-faq-grid">
-          <div className="cinematic-faq-intro">
-            <p className="editorial-eyebrow">Good to know</p>
-            <h2 id="faq-heading">A few answers before the day.</h2>
-            <p>We will keep this page current as the final details are confirmed.</p>
+      <section id="faq" className="faq-section" aria-labelledby="faq-heading">
+        <div className="content-width faq-layout">
+          <div data-reveal>
+            <p className="eyebrow">Good to know</p>
+            <h2 id="faq-heading" className="section-title">The little<br /><em>details.</em></h2>
           </div>
-          <div className="cinematic-faq-list">
-            {faqs.map((faq, index) => (
+          <div className="faq-list" data-reveal>
+            {faqs.map((faq) => (
               <details key={faq.question} name="wedding-faq">
-                <summary>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <strong>{faq.question}</strong>
-                  <ChevronDown size={18} aria-hidden="true" />
-                </summary>
+                <summary><span>{faq.question}</span><Plus size={16} aria-hidden="true" /></summary>
                 <p>{faq.answer}</p>
               </details>
             ))}
@@ -177,25 +146,20 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="cinematic-rsvp" aria-labelledby="rsvp-heading">
-        <div className="cinematic-wide cinematic-rsvp-grid">
-          <div>
-            <p className="editorial-eyebrow">Kindly reply by April 30, 2027</p>
-            <h2 id="rsvp-heading">Will you be joining us?</h2>
-            <p>Find your name on Zola to respond for everyone included in your party.</p>
-            <a
-              href={zolaRsvpUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="editorial-button"
-              aria-label="RSVP on Zola (opens in a new tab)"
-            >
-              RSVP on Zola
-            </a>
-          </div>
-          <figure className="cinematic-portrait cinematic-portrait-closing">
-            <img src="/media/andre-bebe-staircase.jpg" alt="Andre and Bebe walking down a grand staircase" loading="lazy" decoding="async" />
+      <section id="rsvp" className="rsvp-section" aria-labelledby="rsvp-heading">
+        <div className="content-width rsvp-layout">
+          <figure className="closing-photo" data-reveal>
+            <Image src="/media/andre-bebe-staircase.jpg" alt="Andre and Bebe walking down a grand staircase" width={1320} height={1962} sizes="(max-width: 600px) 340px, (max-width: 850px) 45vw, 510px" />
           </figure>
+          <div className="rsvp-copy" data-reveal>
+            <p className="eyebrow">A seat is waiting for you</p>
+            <h2 id="rsvp-heading" className="section-title">Be part of<br />our <em>forever.</em></h2>
+            <p className="body-copy">We cannot wait to celebrate with you. Find your invitation and reply for your party.</p>
+            <a href={zolaRsvpUrl} target="_blank" rel="noopener noreferrer" className="wedding-button" aria-label="Kindly reply on Zola (opens in a new tab)">
+              Kindly reply <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+            <p className="rsvp-deadline">Please RSVP by April 30, 2027.</p>
+          </div>
         </div>
       </section>
     </GuestPage>

@@ -1,28 +1,27 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Geist, Geist_Mono } from "next/font/google";
+import { Allura, Cormorant_Garamond, Manrope } from "next/font/google";
 import { siteDescription, siteName, siteOrigin, siteTitle } from "@/lib/site";
-import "@fontsource/courier-prime/400-italic.css";
-import "@fontsource/courier-prime/400.css";
-import "@fontsource/courier-prime/700.css";
-import "@fontsource/italianno/400.css";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const manrope = Manrope({
+  variable: "--font-body",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-display",
   subsets: ["latin"],
-});
-
-const bodoni = Bodoni_Moda({
-  variable: "--font-bodoni",
-  subsets: ["latin"],
-  weight: "variable",
   style: ["normal", "italic"],
-  axes: ["opsz"],
+  display: "swap",
+});
+
+const allura = Allura({
+  variable: "--font-signature",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -83,7 +82,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} ${bodoni.variable} antialiased`}
+      className={`${manrope.variable} ${cormorant.variable} ${allura.variable} antialiased`}
     >
       <body>{children}</body>
     </html>
