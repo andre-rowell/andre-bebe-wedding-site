@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
-/* The approved Modern Romance theme, independent of the retired stylesheet. */
+/* A light Modern Romance palette with a separate cinematic film surface. */
 :root {
-  --background: #111313;
-  --surface: #181719;
-  --foreground: #eeeae5;
-  --muted: #bdb9b5;
-  --wine: #cd98a6;
-  --line: rgba(221, 202, 203, 0.2);
+  color-scheme: light;
+  --background: #ffffff;
+  --surface: #faf8f9;
+  --foreground: #302b2f;
+  --muted: #665f64;
+  --wine: #80445a;
+  --wine-hover: #602d40;
+  --wine-wash: #f5eef1;
+  --line: #e4dce0;
   --section-space: 100px;
 }
 
@@ -80,8 +83,8 @@ a:hover { color: var(--wine); }
 .site-wordmark span { color: var(--wine); font-style: normal; }
 .site-navigation { display: flex; align-items: center; gap: 30px; font-size: 12px; font-weight: 500; }
 .site-navigation a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
-.site-navigation .nav-rsvp { padding: 8px 22px; border: 1px solid rgba(211, 161, 175, 0.5); }
-.nav-rsvp:hover { background: #38252d; border-color: var(--wine); }
+.site-navigation .nav-rsvp { padding: 8px 22px; border: 1px solid #b58b9b; color: var(--wine); }
+.nav-rsvp:hover { background: var(--wine-wash); border-color: var(--wine); color: var(--wine-hover); }
 
 .film-hero {
   height: min(680px, calc(100svh - 230px));
@@ -92,6 +95,7 @@ a:hover { color: var(--wine); }
   justify-content: center;
   isolation: isolate;
   background: #101111;
+  color: #eeeae5;
   overflow: hidden;
 }
 .film-hero-video {
@@ -138,8 +142,10 @@ a:hover { color: var(--wine); }
   background: rgba(17, 19, 19, 0.62);
   color: #f7f0ee;
 }
-.film-control:hover { background: #4b303c; border-color: var(--wine); }
+.film-control:hover { background: #4b303c; border-color: #d8a9b6; }
 .film-scroll-cue { position: absolute; bottom: 20px; left: 28px; display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 11px; color: #dfd8d5; }
+.film-scroll-cue:hover { color: #eed1db; }
+.film-hero :focus-visible { outline-color: #d8a9b6; }
 
 .eyebrow { text-transform: uppercase; font-size: 11px; line-height: 1.6; font-weight: 500; color: var(--wine); }
 .section-title { font-family: var(--font-display), Georgia, serif; font-size: 57px; line-height: 1.04; font-weight: 300; text-wrap: balance; }
@@ -171,15 +177,15 @@ a:hover { color: var(--wine); }
 .event-description p { max-width: 340px; color: var(--muted); font-size: 13px; line-height: 1.8; margin-top: 12px; }
 .event-venue h4 { font-size: 14px; font-weight: 400; }
 .event-venue address { color: var(--muted); font-size: 12px; font-style: normal; margin-top: 8px; line-height: 1.8; }
-.text-link { display: inline-flex; align-items: center; gap: 9px; font-size: 12px; color: var(--wine); margin-top: 14px; min-height: 44px; border-bottom: 1px solid #70535e; }
-.text-link:hover { color: #eed1db; border-color: var(--wine); }
+.text-link { display: inline-flex; align-items: center; gap: 9px; font-size: 12px; color: var(--wine); margin-top: 14px; min-height: 44px; border-bottom: 1px solid #b58b9b; }
+.text-link:hover { color: var(--wine-hover); border-color: var(--wine); }
 
 .registry-section { padding-block: var(--section-space); }
 .registry-layout { display: grid; grid-template-columns: 0.62fr 1fr; align-items: center; gap: 85px; }
 .flowers-photo { width: 100%; max-width: 255px; aspect-ratio: 4 / 5; justify-self: center; }
 .registry-section .section-title { margin: 18px 0 22px; max-width: 510px; }
-.wedding-button { display: inline-flex; justify-content: center; align-items: center; gap: 25px; padding: 13px 24px; min-height: 48px; border: 1px solid #85606e; color: #f6eded; background: #38252d; font-size: 12px; margin-top: 28px; }
-.wedding-button:hover { background: #49313c; color: #fff7f1; border-color: var(--wine); }
+.wedding-button { display: inline-flex; justify-content: center; align-items: center; gap: 25px; padding: 13px 24px; min-height: 48px; border: 1px solid var(--wine); color: #ffffff; background: var(--wine); font-size: 12px; margin-top: 28px; }
+.wedding-button:hover { background: var(--wine-hover); color: #ffffff; border-color: var(--wine-hover); }
 .wedding-button svg { transition: transform 180ms ease; }
 .wedding-button:hover svg { transform: translate(2px, -2px); }
 
@@ -188,7 +194,7 @@ a:hover { color: var(--wine); }
 .faq-section .section-title { font-size: 43px; margin-top: 14px; max-width: 280px; }
 .faq-list { border-top: 1px solid var(--line); }
 .faq-list details { border-bottom: 1px solid var(--line); transition: background 220ms ease, box-shadow 220ms ease; }
-.faq-list details[open] { background: rgba(188, 128, 147, 0.065); box-shadow: inset 2px 0 0 #71505d; }
+.faq-list details[open] { background: var(--wine-wash); box-shadow: inset 2px 0 0 #b58b9b; }
 .faq-list summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 68px; padding: 17px 16px; list-style: none; cursor: pointer; }
 .faq-list summary::-webkit-details-marker { display: none; }
 .faq-list summary:hover { color: var(--wine); }
