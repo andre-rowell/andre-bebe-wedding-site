@@ -115,10 +115,15 @@ export default function Home() {
 
       <section id="registry" className="registry-section" aria-labelledby="registry-heading">
         <div className="content-width registry-layout">
-          <figure className="flowers-photo" data-reveal>
-            <Image src="/media/calla-lilies-car.jpg" alt="White calla lilies resting on a black vintage car" width={1320} height={1977} sizes="(max-width: 600px) 240px, 255px" />
-          </figure>
-          <div data-reveal>
+          <div className="registry-photo-stack" data-reveal>
+            <figure className="flowers-photo">
+              <Image src="/media/calla-lilies-car.jpg" alt="White calla lilies resting on a black vintage car" width={1320} height={1977} sizes="(max-width: 600px) 224px, (max-width: 850px) 200px, 241px" />
+            </figure>
+            <figure className="walking-photo">
+              <Image src="/media/andre-bebe-walking-car.jpg" alt="Andre and Bebe holding hands as they walk past a black vintage car" width={1320} height={1934} sizes="(max-width: 600px) 218px, (max-width: 850px) 194px, 234px" />
+            </figure>
+          </div>
+          <div className="registry-copy" data-reveal>
             <p className="eyebrow">Registry</p>
             <h2 id="registry-heading" className="section-title">Your presence is<br />the greatest <em>gift.</em></h2>
             <p className="body-copy">For loved ones who have asked, our registry gathers our home and honeymoon wishes in one place. We are most grateful simply to celebrate with you.</p>

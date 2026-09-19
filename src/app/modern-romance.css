@@ -182,7 +182,10 @@ a:hover { color: var(--wine); }
 
 .registry-section { padding-block: var(--section-space); }
 .registry-layout { display: grid; grid-template-columns: 0.62fr 1fr; align-items: center; gap: 85px; }
-.flowers-photo { width: 100%; max-width: 255px; aspect-ratio: 4 / 5; justify-self: center; }
+.registry-photo-stack { position: relative; isolation: isolate; width: 100%; max-width: 365px; aspect-ratio: 4 / 5; justify-self: center; }
+.flowers-photo { position: absolute; top: 0; left: 0; width: 66%; aspect-ratio: 4 / 5; }
+.walking-photo { position: absolute; right: 0; bottom: 0; z-index: 1; width: 64%; aspect-ratio: 3 / 4; border: 6px solid var(--background); box-shadow: 0 12px 28px rgba(48, 43, 47, 0.1); }
+.walking-photo img { object-position: 50% 70%; }
 .registry-section .section-title { margin: 18px 0 22px; max-width: 510px; }
 .wedding-button { display: inline-flex; justify-content: center; align-items: center; gap: 25px; padding: 13px 24px; min-height: 48px; border: 1px solid var(--wine); color: #ffffff; background: var(--wine); font-size: 12px; margin-top: 28px; }
 .wedding-button:hover { background: var(--wine-hover); color: #ffffff; border-color: var(--wine-hover); }
@@ -268,8 +271,9 @@ a:hover { color: var(--wine); }
   .event-description p { font-size: 13px; }
   .event-venue address { font-size: 13px; }
   .registry-layout { display: flex; flex-direction: column; gap: 42px; align-items: stretch; }
-  .registry-layout > div { order: -1; }
-  .flowers-photo { max-width: 240px; align-self: center; }
+  .registry-copy { order: -1; }
+  .registry-photo-stack { max-width: 340px; align-self: center; }
+  .walking-photo { border-width: 5px; }
   .faq-layout { display: block; padding-top: 45px; }
   .faq-list { margin-top: 32px; }
   .faq-list summary { min-height: 70px; padding-inline: 14px; }
