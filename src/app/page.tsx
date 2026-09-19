@@ -66,7 +66,7 @@ export default function Home() {
           </div>
           <figure id="story" className="invitation-photo" data-reveal>
             <div className="portrait">
-              <Image src="/media/andre-bebe-car-portrait.jpg" alt="Andre and Bebe kissing beside a black vintage car" width={1320} height={1979} sizes="(max-width: 600px) 310px, (max-width: 850px) 36vw, 360px" />
+              <Image src="/media/andre-bebe-walking-car.jpg" alt="Andre and Bebe holding hands as they walk past a black vintage car" width={1320} height={1934} sizes="(max-width: 600px) 310px, (max-width: 850px) 36vw, 360px" />
             </div>
             <figcaption><span>Our next chapter</span><span>Andre &amp; Bebe</span></figcaption>
           </figure>
@@ -115,12 +115,12 @@ export default function Home() {
 
       <section id="registry" className="registry-section" aria-labelledby="registry-heading">
         <div className="content-width registry-layout">
-          <div className="registry-photo-stack" data-reveal>
+          <div className="registry-photo-pair" data-reveal>
             <figure className="flowers-photo">
-              <Image src="/media/calla-lilies-car.jpg" alt="White calla lilies resting on a black vintage car" width={1320} height={1977} sizes="(max-width: 600px) 224px, (max-width: 850px) 200px, 241px" />
+              <Image src="/media/calla-lilies-car.jpg" alt="White calla lilies resting on a black vintage car" width={1320} height={1977} sizes="(max-width: 600px) 163px, (max-width: 850px) 174px, 222px" />
             </figure>
-            <figure className="walking-photo">
-              <Image src="/media/andre-bebe-walking-car.jpg" alt="Andre and Bebe holding hands as they walk past a black vintage car" width={1320} height={1934} sizes="(max-width: 600px) 218px, (max-width: 850px) 194px, 234px" />
+            <figure className="kissing-photo">
+              <Image src="/media/andre-bebe-car-portrait.jpg" alt="Andre and Bebe kissing beside a black vintage car" width={1320} height={1979} sizes="(max-width: 600px) 163px, (max-width: 850px) 174px, 222px" />
             </figure>
           </div>
           <div className="registry-copy" data-reveal>
