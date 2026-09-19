@@ -53,7 +53,6 @@ export function FilmHero({ dateLabel, locationLabel }: { dateLabel: string; loca
         <source src="/media/andre-bebe-film.mp4" type="video/mp4" />
       </video>
       <div className="film-hero-copy">
-        <p className="film-kicker">Together is a beautiful place to be</p>
         <h1 id="film-hero-title" className="film-title">
           <span>Andre</span>
           <span className="film-ampersand">&amp;</span>

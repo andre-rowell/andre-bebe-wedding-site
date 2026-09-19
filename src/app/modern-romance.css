@@ -116,7 +116,6 @@ a:hover { color: var(--wine); }
   pointer-events: none;
 }
 .film-hero-copy { text-align: center; padding: 0 30px 70px; width: 100%; text-shadow: 0 2px 22px rgba(0, 0, 0, 0.4); }
-.film-kicker { font-size: 11px; color: #f5e8e7; margin-bottom: 14px; }
 .film-title {
   display: flex;
   align-items: baseline;
@@ -154,19 +153,15 @@ a:hover { color: var(--wine); }
 .invitation-section { padding-block: var(--section-space); }
 .invitation-layout { display: grid; grid-template-columns: 1fr 0.78fr; gap: 90px; align-items: center; }
 .invitation-copy { padding-block: 18px; }
-.invitation-copy .section-title { margin: 22px 0 26px; max-width: 530px; }
-.signature { font-family: var(--font-signature), cursive; font-size: 35px; line-height: 1.4; margin-top: 26px; color: var(--wine); }
-.date-note { display: flex; align-items: center; gap: 12px; margin-top: 32px; color: var(--muted); font-size: 11px; }
-.date-note::before { content: ""; width: 32px; height: 1px; background: var(--wine); }
+.invitation-copy .section-title { margin: 24px 0 0; max-width: 530px; font-size: 60px; }
+.date-note { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; margin-top: 32px; color: var(--muted); font-size: 12px; }
+.date-note time { font-family: var(--font-display), Georgia, serif; font-size: 24px; font-style: italic; color: var(--foreground); }
 .invitation-photo { max-width: 360px; justify-self: end; width: 100%; }
 .portrait { width: 100%; aspect-ratio: 2 / 3; overflow: hidden; }
 .portrait img { object-position: 50% 48%; }
-.invitation-photo figcaption { display: flex; justify-content: space-between; padding-top: 12px; gap: 10px; color: var(--muted); font-size: 11px; }
 
 .wedding-day-section { padding-block: var(--section-space); background: var(--surface); }
-.section-heading { display: flex; justify-content: space-between; gap: 45px; align-items: end; padding-bottom: 45px; }
-.section-heading .section-title { margin-top: 14px; }
-.section-heading .body-copy { max-width: 260px; font-size: 13px; }
+.section-heading { padding-bottom: 45px; }
 .schedule-date { display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 1px solid var(--line); padding-block: 18px; color: var(--muted); font-size: 12px; }
 .schedule-date p:last-child { color: var(--wine); }
 .schedule { border-bottom: 1px solid var(--line); }
@@ -174,7 +169,6 @@ a:hover { color: var(--wine); }
 .event-time { color: var(--wine); font-size: 14px; font-weight: 500; line-height: 1.55; }
 .event-time span { display: block; color: var(--muted); font-size: 11px; font-weight: 400; margin-top: 6px; }
 .event-description h3 { font-family: var(--font-display), Georgia, serif; font-size: 33px; font-weight: 400; line-height: 1.07; }
-.event-description p { max-width: 340px; color: var(--muted); font-size: 13px; line-height: 1.8; margin-top: 12px; }
 .event-venue h4 { font-size: 14px; font-weight: 400; }
 .event-venue address { color: var(--muted); font-size: 12px; font-style: normal; margin-top: 8px; line-height: 1.8; }
 .text-link { display: inline-flex; align-items: center; gap: 9px; font-size: 12px; color: var(--wine); margin-top: 14px; min-height: 44px; border-bottom: 1px solid #b58b9b; }
@@ -186,7 +180,7 @@ a:hover { color: var(--wine); }
 .flowers-photo { width: 100%; aspect-ratio: 4 / 5; }
 .kissing-photo { width: 100%; aspect-ratio: 2 / 3; margin-top: 48px; }
 .kissing-photo img { object-position: 50% 48%; }
-.registry-section .section-title { margin: 18px 0 22px; max-width: 510px; }
+.registry-section .section-title { margin: 18px 0 0; max-width: 510px; }
 .wedding-button { display: inline-flex; justify-content: center; align-items: center; gap: 25px; padding: 13px 24px; min-height: 48px; border: 1px solid var(--wine); color: #ffffff; background: var(--wine); font-size: 12px; margin-top: 28px; }
 .wedding-button:hover { background: var(--wine-hover); color: #ffffff; border-color: var(--wine-hover); }
 .wedding-button svg { transition: transform 180ms ease; }
@@ -194,7 +188,7 @@ a:hover { color: var(--wine); }
 
 .faq-section { padding-bottom: var(--section-space); }
 .faq-layout { display: grid; grid-template-columns: 0.68fr 1fr; align-items: start; gap: 80px; padding-top: 60px; border-top: 1px solid var(--line); }
-.faq-section .section-title { font-size: 43px; margin-top: 14px; max-width: 280px; }
+.faq-section .section-title { font-size: 43px; max-width: 280px; }
 .faq-list { border-top: 1px solid var(--line); }
 .faq-list details { border-bottom: 1px solid var(--line); transition: background 220ms ease, box-shadow 220ms ease; }
 .faq-list details[open] { background: var(--wine-wash); box-shadow: inset 2px 0 0 #b58b9b; }
@@ -211,8 +205,7 @@ a:hover { color: var(--wine); }
 .closing-photo { width: 100%; aspect-ratio: 4 / 5; overflow: hidden; }
 .closing-photo img { object-position: 50% 45%; }
 .rsvp-copy { padding-block: 50px; }
-.rsvp-copy .section-title { margin: 19px 0 22px; }
-.rsvp-copy .body-copy { font-size: 13px; }
+.rsvp-copy .section-title { margin: 0; }
 .rsvp-deadline { font-size: 11px; margin-top: 19px; color: var(--muted); }
 .site-footer { padding: 45px 40px; display: flex; justify-content: space-between; align-items: center; gap: 22px; color: var(--muted); font-size: 11px; }
 .footer-signature { font-family: var(--font-signature), cursive; font-size: 30px; color: var(--wine); white-space: nowrap; }
@@ -228,7 +221,6 @@ a:hover { color: var(--wine); }
   .invitation-layout, .registry-layout, .faq-layout, .rsvp-layout { gap: 40px; }
   .section-title { font-size: 48px; }
   .invitation-copy .section-title { font-size: 46px; }
-  .section-heading { gap: 32px; }
   .event-row { grid-template-columns: 85px minmax(0, 1fr) minmax(0, 1fr); gap: 22px; }
   .event-description h3 { font-size: 29px; }
   .faq-section .section-title { font-size: 40px; }
@@ -261,14 +253,12 @@ a:hover { color: var(--wine); }
   .section-title, .invitation-copy .section-title { font-size: 46px; }
   .invitation-photo { max-width: 310px; }
   .body-copy { font-size: 14px; }
-  .section-heading { display: block; padding-bottom: 30px; }
-  .section-heading .body-copy { margin-top: 22px; max-width: 100%; }
+  .section-heading { padding-bottom: 30px; }
   .schedule-date { align-items: start; flex-direction: column; gap: 6px; }
   .event-row { grid-template-columns: minmax(0, 1fr); gap: 19px; padding-block: 31px; }
   .event-time { display: flex; gap: 10px; align-items: baseline; }
   .event-time span { margin: 0; }
   .event-description h3 { font-size: 33px; }
-  .event-description p { font-size: 13px; }
   .event-venue address { font-size: 13px; }
   .registry-layout { display: flex; flex-direction: column; gap: 42px; align-items: stretch; }
   .registry-copy { order: -1; }
@@ -286,7 +276,6 @@ a:hover { color: var(--wine); }
 
 @media (max-width: 359px) {
   .section-title, .invitation-copy .section-title { font-size: 40px; }
-  .signature { font-size: 30px; }
 }
 
 @media (max-height: 500px) and (min-width: 601px) {
@@ -294,7 +283,6 @@ a:hover { color: var(--wine); }
   .film-title { font-size: 78px; }
   .film-ampersand { font-size: 46px; }
   .film-hero-copy { padding-bottom: 64px; }
-  .film-kicker { margin-bottom: 0; }
   .film-date { margin-top: 6px; }
 }
 

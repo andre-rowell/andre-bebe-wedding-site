@@ -8,10 +8,9 @@ const events = [
   {
     title: "Ceremony",
     time: "3:30 PM",
-    note: "The vows",
+    note: null,
     venue: "Hamline Church",
     address: "1514 Englewood Ave, St. Paul, MN 55104",
-    description: "Please arrive early so everyone can be seated before the processional.",
     mapUrl: "https://maps.google.com/?q=Hamline+Church+1514+Englewood+Ave+St+Paul+MN+55104",
   },
   {
@@ -20,7 +19,6 @@ const events = [
     note: "Until 11:30 PM",
     venue: "Urban Daisy",
     address: "1621 E Hennepin Ave, Minneapolis, MN 55414",
-    description: "Cocktails, dinner, toasts, and dancing following the ceremony.",
     mapUrl: "https://maps.google.com/?q=Urban+Daisy+1621+E+Hennepin+Ave+Minneapolis+MN+55414",
   },
 ];
@@ -57,18 +55,13 @@ export default function Home() {
         <div className="content-width invitation-layout">
           <div className="invitation-copy" data-reveal>
             <p className="eyebrow">Together with their families</p>
-            <h2 id="invitation-heading" className="section-title">The beginning of<br />our <em>forever.</em></h2>
-            <p className="body-copy">
-              We invite you to celebrate our wedding. A day of joy, music, and the people we love most, as we begin our marriage together.
-            </p>
-            <p className="signature">With love, Andre &amp; Bebe</p>
-            <p className="date-note">May 30, 2027 <span aria-hidden="true">&middot;</span> Minnesota</p>
+            <h2 id="invitation-heading" className="section-title">The beginning of our <em>forever.</em></h2>
+            <p className="date-note"><time dateTime="2027-05-30">May 30, 2027</time><span>Minnesota</span></p>
           </div>
           <figure id="story" className="invitation-photo" data-reveal>
             <div className="portrait">
               <Image src="/media/andre-bebe-walking-car.jpg" alt="Andre and Bebe holding hands as they walk past a black vintage car" width={1320} height={1934} sizes="(max-width: 600px) 310px, (max-width: 850px) 36vw, 360px" />
             </div>
-            <figcaption><span>Our next chapter</span><span>Andre &amp; Bebe</span></figcaption>
           </figure>
         </div>
       </section>
@@ -76,11 +69,7 @@ export default function Home() {
       <section id="weekend" className="wedding-day-section" aria-labelledby="weekend-heading">
         <div className="content-width">
           <div className="section-heading" data-reveal>
-            <div>
-              <p className="eyebrow">The celebration</p>
-              <h2 id="weekend-heading" className="section-title">Our wedding <em>day.</em></h2>
-            </div>
-            <p className="body-copy">From our vows in Saint Paul to dinner and dancing in Minneapolis.</p>
+            <h2 id="weekend-heading" className="section-title">The wedding <em>day.</em></h2>
           </div>
           <div className="schedule-date">
             <p>Sunday, May 30, 2027</p>
@@ -89,10 +78,9 @@ export default function Home() {
           <div className="schedule">
             {events.map((event) => (
               <article key={event.title} className="event-row" data-reveal>
-                <div className="event-time">{event.time}<span>{event.note}</span></div>
+                <div className="event-time">{event.time}{event.note && <span>{event.note}</span>}</div>
                 <div className="event-description">
                   <h3>{event.title}</h3>
-                  <p>{event.description}</p>
                 </div>
                 <div className="event-venue">
                   <h4>{event.venue}</h4>
@@ -126,7 +114,6 @@ export default function Home() {
           <div className="registry-copy" data-reveal>
             <p className="eyebrow">Registry</p>
             <h2 id="registry-heading" className="section-title">Your presence is<br />the greatest <em>gift.</em></h2>
-            <p className="body-copy">For loved ones who have asked, our registry gathers our home and honeymoon wishes in one place. We are most grateful simply to celebrate with you.</p>
             <a href={zolaRegistryUrl} target="_blank" rel="noopener noreferrer" className="wedding-button" aria-label="View our registry on Zola (opens in a new tab)">
               View our registry <ArrowUpRight size={16} aria-hidden="true" />
             </a>
@@ -137,7 +124,6 @@ export default function Home() {
       <section id="faq" className="faq-section" aria-labelledby="faq-heading">
         <div className="content-width faq-layout">
           <div data-reveal>
-            <p className="eyebrow">Good to know</p>
             <h2 id="faq-heading" className="section-title">The little<br /><em>details.</em></h2>
           </div>
           <div className="faq-list" data-reveal>
@@ -157,11 +143,9 @@ export default function Home() {
             <Image src="/media/andre-bebe-staircase.jpg" alt="Andre and Bebe walking down a grand staircase" width={1320} height={1962} sizes="(max-width: 600px) 340px, (max-width: 850px) 45vw, 510px" />
           </figure>
           <div className="rsvp-copy" data-reveal>
-            <p className="eyebrow">A seat is waiting for you</p>
-            <h2 id="rsvp-heading" className="section-title">Be part of<br />our <em>forever.</em></h2>
-            <p className="body-copy">We cannot wait to celebrate with you. Find your invitation and reply for your party.</p>
-            <a href={zolaRsvpUrl} target="_blank" rel="noopener noreferrer" className="wedding-button" aria-label="Kindly reply on Zola (opens in a new tab)">
-              Kindly reply <ArrowUpRight size={16} aria-hidden="true" />
+            <h2 id="rsvp-heading" className="section-title">Kindly <em>reply.</em></h2>
+            <a href={zolaRsvpUrl} target="_blank" rel="noopener noreferrer" className="wedding-button" aria-label="RSVP on Zola (opens in a new tab)">
+              RSVP <ArrowUpRight size={16} aria-hidden="true" />
             </a>
             <p className="rsvp-deadline">Please RSVP by April 30, 2027.</p>
           </div>
